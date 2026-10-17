@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>클로드 코드 세션 오버레이 (Windows): 세션 상태, 컨텍스트, 사용량 한도를 한눈에</title>
-<meta name="description" content="Claude Code(클로드 코드) 세션을 한눈에 보여 주는 무료 오픈소스 Windows 오버레이. 작업 중·입력 대기 세션, 컨텍스트 사용량, 주간·5시간 사용량 한도를 항상 위에 띄워 보고, 눌러서 바로 그 세션으로 이동합니다.">
-<meta name="keywords" content="클로드 코드, Claude Code, 클로드 코드 사용량, 클로드 사용량 한도, 컨텍스트, 세션 모니터, 오버레이, 윈도우, Claude 데스크톱 앱">
+<title>클로드 코드 세션 오버레이 (Windows·macOS): 세션 상태, 컨텍스트, 사용량 한도를 한눈에</title>
+<meta name="description" content="Claude Code(클로드 코드) 세션을 한눈에 보여 주는 무료 오픈소스 Windows·macOS 오버레이. 작업 중·입력 대기 세션, 컨텍스트 사용량, 주간·5시간 사용량 한도를 항상 위에 띄워 보고, 눌러서 바로 그 세션으로 이동합니다.">
+<meta name="keywords" content="클로드 코드, Claude Code, 클로드 코드 사용량, 클로드 사용량 한도, 컨텍스트, 세션 모니터, 오버레이, 윈도우, 맥, macOS, 메뉴 막대, 위젯, Claude 데스크톱 앱">
 <link rel="canonical" href="https://claude-overlay.jsuk.cloud/ko/">
 <link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/">
 <link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/">
 <link rel="alternate" hreflang="x-default" href="https://claude-overlay.jsuk.cloud/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Claude Session Overlay">
-<meta property="og:title" content="클로드 코드 세션 오버레이 (Windows)">
+<meta property="og:title" content="클로드 코드 세션 오버레이 (Windows·macOS)">
 <meta property="og:description" content="돌고 있는 Claude Code 세션, 컨텍스트 사용량, 사용량 한도를 항상 위에 띄워 보여 주는 오버레이.">
 <meta property="og:url" content="https://claude-overlay.jsuk.cloud/ko/">
 <meta property="og:image" content="https://claude-overlay.jsuk.cloud/screenshot-ko-dark.png">
@@ -40,10 +40,10 @@
   "@type": "SoftwareApplication",
   "name": "Claude Session Overlay",
   "alternateName": "클로드 코드 세션 오버레이",
-  "description": "돌고 있는 Claude Code 세션, 컨텍스트 사용량, 주간·5시간 사용량 한도를 항상 위에 띄워 보여 주는 Windows 오버레이.",
+  "description": "돌고 있는 Claude Code 세션, 컨텍스트 사용량, 주간·5시간 사용량 한도를 항상 위에 띄워 보여 주는 Windows·macOS 오버레이.",
   "applicationCategory": "DeveloperApplication",
-  "operatingSystem": "Windows 10, Windows 11",
-  "softwareVersion": "0.1.0",
+  "operatingSystem": "Windows 10, Windows 11, macOS 11+",
+  "softwareVersion": "0.2.0",
   "license": "https://opensource.org/licenses/MIT",
   "url": "https://claude-overlay.jsuk.cloud/ko/",
   "downloadUrl": "https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay.exe",
@@ -68,12 +68,14 @@
   <main>
     <div class="hero">
       <h1>클로드 코드 세션을 한눈에</h1>
-      <p class="lead">항상 위에 떠 있는 Windows 오버레이입니다. 어떤 Claude Code 세션이 작업 중이고 어떤 세션이 내 입력을 기다리는지, 컨텍스트가 얼마나 찼는지, 사용량 한도가 얼마나 남았는지 보이고, 누르면 그 세션으로 바로 갑니다.</p>
+      <p class="lead">항상 위에 떠 있는 Windows·macOS 오버레이입니다. 어떤 Claude Code 세션이 작업 중이고 어떤 세션이 내 입력을 기다리는지, 컨텍스트가 얼마나 찼는지, 사용량 한도가 얼마나 남았는지 보이고, 누르면 그 세션으로 바로 갑니다.</p>
       <div class="cta">
-        <a class="btn primary" href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay.exe" data-track="download_click">Windows용 내려받기 (.exe)</a>
+        <a class="btn primary" id="dl-win" href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay.exe" data-track="download_click">Windows용 내려받기 (.exe)</a>
+        <a class="btn" id="dl-mac" href="#mac" data-track="download_mac_click" data-label-arm="macOS용 내려받기 (Apple Silicon)" data-label-intel="macOS용 내려받기 (Intel)">macOS용 내려받기</a>
         <a class="btn" href="https://github.com/jsuk10/claude-overlay/blob/main/README.ko.md" data-track="github_click">GitHub에서 보기</a>
       </div>
-      <p class="meta">무료 오픈소스(MIT) · Windows 10/11 x64 · .NET 설치 필요 없음</p>
+      <p class="meta">무료 오픈소스(MIT) · Windows 10/11 x64 · macOS 11 이상 · .NET 설치 필요 없음</p>
+      <p class="meta" id="mac-note" hidden>다른 칩용 DMG: <a href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay-macos-arm64.dmg" data-track="download_mac_arm64">Apple Silicon</a> · <a href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay-macos-x64.dmg" data-track="download_mac_x64">Intel</a> · 처음 열 때 경고가 뜨면 <a href="#mac">macOS 설치 방법</a>을 보세요.</p>
       <div class="shots">
         <img src="../screenshot-ko-dark.png" width="340" height="315" alt="클로드 코드 세션 오버레이 다크 테마. 세션 네 개와 컨텍스트 %, 사용량 한도가 보인다">
         <img src="../screenshot-ko-light.png" width="340" height="315" alt="클로드 코드 세션 오버레이 라이트 테마" loading="lazy">
@@ -89,18 +91,38 @@
         <div class="card"><h3>사용량 한도</h3><p>맨 위 줄은 주간 사용량, 맨 아래 줄은 5시간 한도입니다.</p></div>
         <div class="card"><h3>백그라운드 작업</h3><p>백그라운드로 돌린 서브에이전트, 셸, 파생 세션은 원래 세션 밑에 접혀 있습니다.</p></div>
         <div class="card"><h3>알림</h3><p>세션이 끝나거나, 입력을 기다리거나, 압축이 가까워지면 소리와 음성으로 알려 줍니다.<br>화면이 잠겼거나 꺼져 있을 땐 울리지 않습니다.</p></div>
-        <div class="card"><h3>방해하지 않기</h3><p>게임처럼 전체 화면인 앱 앞에서는 알아서 숨습니다.<br>트레이로 내리거나 한 줄로 접을 수 있고, Windows를 켤 때 같이 켜지게 할 수도 있습니다.</p></div>
+        <div class="card"><h3>방해하지 않기</h3><p>게임처럼 전체 화면인 앱 앞에서는 알아서 숨습니다.<br>트레이로 내리거나 한 줄로 접을 수 있고, Windows를 켤 때(맥은 로그인할 때) 같이 켜지게 할 수도 있습니다.</p></div>
+        <div class="card"><h3>메뉴 막대·위젯 (macOS)</h3><p>메뉴 막대에 상태별 세션 수가 뜹니다.<br>알림 센터나 바탕화면 위젯으로도 세션과 사용량을 볼 수 있습니다.</p></div>
         <div class="card"><h3>다크/라이트, 한국어/영어</h3><p>테마는 맨 아래 버튼으로 바꿉니다.<br>언어는 맨 위 줄을 오른쪽 클릭해서 고릅니다.</p></div>
       </div>
     </section>
 
+    <section id="macos">
+      <h2>macOS: 메뉴 막대와 위젯</h2>
+      <p>메뉴 막대의 ✻ 옆에 입력 대기·작업 중·완료 세션 수가 색 점으로 뜹니다.<br>누르면 세션 목록, 주간·5시간 사용량, 설정이 펼쳐지고, 세션을 고르면 그 세션으로 갑니다.<br>Terminal·iTerm2에서 띄운 세션은 그 탭까지 찾아갑니다.</p>
+      <p>위젯은 작게(상태별 개수와 5시간 한도), 중간(세션 3개), 크게(세션 7개와 사용량 바) 세 가지입니다.<br>작업 중인 세션의 경과 시간은 위젯이 알아서 셉니다.</p>
+      <img class="wide" src="../widget-ko.png" width="550" height="189" alt="macOS 위젯: 작은 크기는 입력 대기 1, 작업 중 2, 완료 1과 세션 한도 65%, 중간 크기는 세션 세 개와 컨텍스트 %를 보여 준다" loading="lazy">
+    </section>
+
     <section>
       <h2>설치</h2>
+      <h3>Windows</h3>
       <ol>
         <li><a href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay.exe" data-track="download_click"><code>ClaudeSessionOverlay.exe</code></a>를 받아 실행합니다. 파일 하나라 원하는 폴더에 두면 됩니다. README와 선택 사항인 Mod가 든 zip은 <a href="https://github.com/jsuk10/claude-overlay/releases/latest">릴리스 페이지</a>에 있습니다.</li>
         <li>선택: 트레이 아이콘 메뉴에서 <strong>Windows 시작 시 실행</strong>을 켭니다.</li>
       </ol>
       <p>서명되지 않은 앱이라 처음 실행할 때 Windows SmartScreen 경고가 뜰 수 있습니다. <strong>추가 정보 → 실행</strong>을 누르면 됩니다.</p>
+
+      <h3 id="mac">macOS</h3>
+      <p>macOS 11 이상(위젯은 macOS 14 이상), Apple Silicon과 Intel 모두 됩니다.</p>
+      <ol>
+        <li><a href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay-macos-arm64.dmg" data-track="download_mac_arm64">Apple Silicon(M1 이후)용 DMG</a> 또는 <a href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay-macos-x64.dmg" data-track="download_mac_x64">Intel용 DMG</a>를 받습니다.</li>
+        <li>DMG를 열고 <strong>Claude Session Overlay</strong>를 <strong>Applications</strong> 폴더로 끌어다 놓습니다.</li>
+        <li>응용 프로그램 폴더에서 실행하면 메뉴 막대에 ✻ 아이콘이 생깁니다. 메뉴에서 <strong>로그인 시 열기</strong>를 켤 수 있습니다.</li>
+        <li>위젯: 바탕화면을 오른쪽 클릭 → <strong>위젯 편집</strong> → "Claude Session Overlay"를 찾아 추가합니다.</li>
+      </ol>
+      <p>아직 Apple 공증을 받지 않은 앱이라 처음 열 때 경고가 뜹니다. <strong>시스템 설정 → 개인정보 보호 및 보안</strong> 아래쪽의 <strong>그래도 열기</strong>를 누르세요.<br>터미널에서 한 줄로 설치하면 경고 없이 설치되고 바로 실행됩니다.</p>
+      <pre><code>curl -fsSL https://claude-overlay.jsuk.cloud/install.sh | bash</code></pre>
     </section>
 
     <section>
@@ -123,7 +145,7 @@
       <details><summary>클로드 코드 세션의 컨텍스트 사용량은 어떻게 보나요?</summary><p>세션마다 % 숫자가 보입니다. Claude Code가 대화를 자동 압축하는 지점을 100%로 잡은 값이고, 75% 미만은 파랑, 90% 미만은 노랑, 그 이상은 빨강입니다.</p></details>
       <details><summary>Windows에서 클로드 주간 사용량과 5시간 한도를 볼 수 있나요?</summary><p>네. 머리 줄에 주간 사용량, 맨 아래 줄에 5시간 세션 한도가 보입니다. Claude 데스크톱 앱이 남기는 로컬 사용량 기록을 읽습니다.</p></details>
       <details><summary>Claude Code CLI와 데스크톱 앱 둘 다 되나요?</summary><p>네. 어느 터미널에서 띄운 CLI 세션이든, 데스크톱 앱 Code 탭 세션이든 한 목록에 함께 보입니다.</p></details>
-      <details><summary>맥(macOS) 버전도 있나요?</summary><p>아직은 Windows 전용입니다.</p></details>
+      <details><summary>맥(macOS) 버전도 있나요?</summary><p>네. macOS 11 이상에서 메뉴 막대 앱으로 돌고, Apple Silicon·Intel용 DMG를 받을 수 있습니다. 메뉴 막대에 상태별 세션 수를, 위젯에 세션 목록과 사용량을 보여 줍니다. 데스크톱 앱 세션은 눌러서 바로 열고, 터미널 세션은 Terminal·iTerm2면 그 탭까지 골라 앞으로 가져옵니다.</p></details>
     </section>
   </main>
 
@@ -132,5 +154,6 @@
     Anthropic과 관련이 없거나 Anthropic이 보증하지 않는 개인 프로젝트입니다. "Claude"와 "Claude Code"는 Anthropic의 상표입니다.
   </footer>
 </div>
+<script src="../download.js"></script>
 </body>
 </html>

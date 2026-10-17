@@ -1,8 +1,8 @@
 **English** | [한국어](README.ko.md) | [Website](https://claude-overlay.jsuk.cloud/)
 
-# Claude Code Session Overlay for Windows
+# Claude Code Session Overlay for Windows and macOS
 
-An always-on-top Windows overlay that shows every running **Claude Code** session at a glance — CLI and the Claude desktop app's Code tab alike. See which sessions are working, which need your input, how full each context window is, and how much of your weekly and 5-hour session limits you have left. Click a session to jump straight to it.
+An always-on-top overlay for Windows and macOS that shows every running **Claude Code** session at a glance — CLI and the Claude desktop app's Code tab alike. See which sessions are working, which need your input, how full each context window is, and how much of your weekly and 5-hour session limits you have left. Click a session to jump straight to it.
 
 <p align="center">
   <img src="docs/screenshot-en-dark.png" alt="Claude Code session overlay, dark theme" width="340">
@@ -45,11 +45,33 @@ dotnet publish app -c Release -o bin
 .\bin\ClaudeSessionOverlay.exe
 ```
 
-## macOS (preview)
+## macOS
 
-A cross-platform build of the overlay lives in `avalonia/` (Avalonia UI, .NET 9) and shares `core/` with the Windows WPF app. It shows the same list and runs as a menu bar app. It has been built for `osx-arm64` and `osx-x64` but **not yet tested on a real Mac**.
+Runs as a menu bar app on macOS 11 or later (widgets need macOS 14 or later). The Avalonia overlay in `avalonia/` shares `core/` with the Windows app; the menu bar item and the widgets are a small amount of Swift in `macos/`. Tested on an Apple Silicon Mac (macOS 15). See [macos/README.md](macos/README.md) for how the pieces fit together (in Korean).
 
-Requirements: macOS 11 or later and the [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0).
+### Install
+
+1. Download `ClaudeSessionOverlay-macos-arm64.dmg` (Apple Silicon) or `ClaudeSessionOverlay-macos-x64.dmg` (Intel) from the [latest release](https://github.com/jsuk10/claude-overlay/releases/latest).
+2. Open it, drag **Claude Session Overlay** into **Applications** and launch it. A ✻ icon appears in the menu bar.
+3. The app is not notarized yet, so macOS warns on first launch. Go to **System Settings → Privacy & Security → Open Anyway**.
+
+Or install from Terminal in one line, which skips the warning and launches the app:
+
+```bash
+curl -fsSL https://claude-overlay.jsuk.cloud/install.sh | bash
+```
+
+### Menu bar and widgets
+
+- **Menu bar**: next to ✻, colored counts of sessions that need input (yellow), are working (orange) or are done (green), plus the 5-hour limit once it passes 75%. Click it for the session list (pick one to jump to it), weekly and 5-hour usage, and the overlay's commands (show/hide, alerts, open at login, quit).
+- **Widgets**: right-click the desktop → **Edit Widgets** → "Claude Session Overlay". Small (counts and the 5-hour limit), medium (three sessions) or large (seven sessions and usage bars). Click a session to jump to it.
+- Widgets read `~/.claude/session-hud/status.json`, which the overlay writes. If the overlay isn't running, they switch to "The overlay isn't running" after a few minutes.
+
+<p align="center"><img src="docs/widget-en.png" alt="macOS widgets, small and medium" width="550"></p>
+
+### Build from source
+
+Needs the [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0) and Xcode or the Command Line Tools (`xcode-select --install`).
 
 ```bash
 git clone https://github.com/jsuk10/claude-overlay.git
@@ -58,9 +80,9 @@ cd claude-overlay
 open "out/Claude Session Overlay.app"
 ```
 
-The script publishes a self-contained build, wraps it in a `.app` (menu bar only, no Dock icon) and ad-hoc signs it. Turn on **Open at login** from the menu bar icon.
+The script builds the Swift parts (menu bar library and widget) as universal binaries, wraps them with a self-contained .NET build in a `.app` (menu bar only, no Dock icon), signs it and writes `out/ClaudeSessionOverlay-macos-<arm64|x64>.dmg`. It ad-hoc signs by default; set `SIGN_IDENTITY` to a Developer ID certificate name to sign with it and the hardened runtime. Pushing a `v*` tag makes GitHub Actions ([release.yml](.github/workflows/release.yml)) build the Windows zip and exe and both DMGs and attach them to that release.
 
-Differences from Windows: clicking a desktop-app session always opens it with the `claude://` deep link (no split-view pane focus); clicking a terminal session brings its app (Terminal, iTerm, VS Code …) to the front but not the exact tab; voice alerts use `say`; the overlay appears on every Space but not over fullscreen apps. Desktop-app data is read from `~/Library/Application Support/Claude/`.
+Differences from Windows: clicking a desktop-app session always opens it with the `claude://` deep link (no split-view pane focus); clicking a terminal session selects its exact tab in Terminal or iTerm2 (macOS asks once for automation permission) and otherwise brings its app (VS Code …) to the front; voice alerts use `say` with a natural voice for the UI language (novelty and low-quality voices are skipped); the overlay appears on every Space but not over fullscreen apps. Desktop-app data is read from `~/Library/Application Support/Claude/`.
 
 ## How it works
 
@@ -111,7 +133,8 @@ To load it in every new session, point `CLAUDE_CODE_PLUGIN_DIRS` at the mod fold
 | `app/` | The Windows overlay (C#, WPF, .NET 9) |
 | `core/` | Shared session reading and list logic (no UI) |
 | `avalonia/` | Cross-platform overlay for macOS (Avalonia, .NET 9) |
-| `scripts/` | `make-macos-app.sh`: builds the macOS `.app` |
+| `macos/` | macOS menu bar item and widgets (Swift) |
+| `scripts/` | `make-macos-app.sh`: builds the macOS `.app` and `.dmg` |
 | `mod/session-hud/` | The optional Claude Code mod (TypeScript) |
 | `docs/` | Screenshots and the [project website](https://claude-overlay.jsuk.cloud/) |
 

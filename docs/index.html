@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Claude Code Session Overlay for Windows: monitor sessions, context and usage limits</title>
-<meta name="description" content="Free, open-source always-on-top Windows overlay for Claude Code. See which sessions are working or waiting for input, context window usage, weekly and 5-hour usage limits, and jump to any session in one click.">
-<meta name="keywords" content="Claude Code, Claude Code overlay, Claude Code session monitor, Claude usage limit, context window, Windows overlay, Claude desktop app, AI coding agent">
+<title>Claude Code Session Overlay for Windows and macOS: monitor sessions, context and usage limits</title>
+<meta name="description" content="Free, open-source always-on-top overlay for Claude Code on Windows and macOS. See which sessions are working or waiting for input, context window usage, weekly and 5-hour usage limits, and jump to any session in one click.">
+<meta name="keywords" content="Claude Code, Claude Code overlay, Claude Code session monitor, Claude usage limit, context window, Windows overlay, macOS menu bar, macOS widget, Claude desktop app, AI coding agent">
 <link rel="canonical" href="https://claude-overlay.jsuk.cloud/">
 <link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/">
 <link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/">
 <link rel="alternate" hreflang="x-default" href="https://claude-overlay.jsuk.cloud/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Claude Session Overlay">
-<meta property="og:title" content="Claude Code Session Overlay for Windows">
+<meta property="og:title" content="Claude Code Session Overlay for Windows and macOS">
 <meta property="og:description" content="Always-on-top overlay that shows every running Claude Code session, its context usage and your usage limits.">
 <meta property="og:url" content="https://claude-overlay.jsuk.cloud/">
 <meta property="og:image" content="https://claude-overlay.jsuk.cloud/screenshot-en-dark.png">
@@ -40,10 +40,10 @@
   "@type": "SoftwareApplication",
   "name": "Claude Session Overlay",
   "alternateName": "Claude Code Session Overlay",
-  "description": "Always-on-top Windows overlay that shows every running Claude Code session, its context window usage and your weekly and 5-hour usage limits.",
+  "description": "Always-on-top Windows and macOS overlay that shows every running Claude Code session, its context window usage and your weekly and 5-hour usage limits.",
   "applicationCategory": "DeveloperApplication",
-  "operatingSystem": "Windows 10, Windows 11",
-  "softwareVersion": "0.1.0",
+  "operatingSystem": "Windows 10, Windows 11, macOS 11+",
+  "softwareVersion": "0.2.0",
   "license": "https://opensource.org/licenses/MIT",
   "url": "https://claude-overlay.jsuk.cloud/",
   "downloadUrl": "https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay.exe",
@@ -68,12 +68,14 @@
   <main>
     <div class="hero">
       <h1>Every Claude Code session, at a glance</h1>
-      <p class="lead">An always-on-top Windows overlay that shows which Claude Code sessions are working, which need your input, how full each context window is, and how much of your usage limits is left. Click a session to jump straight to it.</p>
+      <p class="lead">An always-on-top overlay for Windows and macOS that shows which Claude Code sessions are working, which need your input, how full each context window is, and how much of your usage limits is left. Click a session to jump straight to it.</p>
       <div class="cta">
-        <a class="btn primary" href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay.exe" data-track="download_click">Download for Windows (.exe)</a>
+        <a class="btn primary" id="dl-win" href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay.exe" data-track="download_click">Download for Windows (.exe)</a>
+        <a class="btn" id="dl-mac" href="#mac" data-track="download_mac_click" data-label-arm="Download for Mac (Apple Silicon)" data-label-intel="Download for Mac (Intel)">Download for Mac</a>
         <a class="btn" href="https://github.com/jsuk10/claude-overlay" data-track="github_click">View on GitHub</a>
       </div>
-      <p class="meta">Free and open source (MIT) · Windows 10/11 x64 · No .NET install needed</p>
+      <p class="meta">Free and open source (MIT) · Windows 10/11 x64 · macOS 11+ · No .NET install needed</p>
+      <p class="meta" id="mac-note" hidden>Other chip: <a href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay-macos-arm64.dmg" data-track="download_mac_arm64">Apple Silicon</a> · <a href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay-macos-x64.dmg" data-track="download_mac_x64">Intel</a> · If macOS blocks it on first launch, see <a href="#mac">installing on macOS</a>.</p>
       <div class="shots">
         <img src="screenshot-en-dark.png" width="340" height="315" alt="Claude Code session overlay, dark theme, showing four sessions with context percentages and usage limits">
         <img src="screenshot-en-light.png" width="340" height="315" alt="Claude Code session overlay, light theme" loading="lazy">
@@ -89,18 +91,38 @@
         <div class="card"><h3>Usage limits</h3><p>Weekly usage on the top line, the 5-hour limit on the bottom line.</p></div>
         <div class="card"><h3>Background tasks</h3><p>Background subagents, shells and side sessions fold under the session that started them.</p></div>
         <div class="card"><h3>Alerts</h3><p>A chime and a short voice line when a session finishes, needs input or is close to compacting.<br>Silent while the screen is locked or off.</p></div>
-        <div class="card"><h3>Stays out of the way</h3><p>Hides behind fullscreen apps and games.<br>Minimizes to the tray, collapses to one line, and can start with Windows.</p></div>
+        <div class="card"><h3>Stays out of the way</h3><p>Hides behind fullscreen apps and games.<br>Minimizes to the tray, collapses to one line, and can start with Windows or at Mac login.</p></div>
+        <div class="card"><h3>Menu bar and widgets (macOS)</h3><p>Session counts by state in the menu bar.<br>Notification Center and desktop widgets show your sessions and usage.</p></div>
         <div class="card"><h3>Dark / light, English / Korean</h3><p>Switch the theme with the button at the bottom.<br>Pick the language by right-clicking the top line.</p></div>
       </div>
     </section>
 
+    <section id="macos">
+      <h2>macOS: menu bar and widgets</h2>
+      <p>Next to the ✻ icon, the menu bar shows colored counts of sessions that need input, are working or are done.<br>Click it for the session list, weekly and 5-hour usage, and settings; pick a session to jump to it.<br>Sessions in Terminal or iTerm2 jump to their exact tab.</p>
+      <p>Widgets come in small (counts and the 5-hour limit), medium (three sessions) and large (seven sessions with usage bars).<br>Elapsed time for working sessions keeps ticking on its own.</p>
+      <img class="wide" src="widget-en.png" width="550" height="189" alt="macOS widgets: the small one shows 1 needs input, 2 working, 1 done and the 5-hour session limit at 65%; the medium one lists three sessions with context percentages" loading="lazy">
+    </section>
+
     <section>
       <h2>Install</h2>
+      <h3>Windows</h3>
       <ol>
         <li>Download <a href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay.exe" data-track="download_click"><code>ClaudeSessionOverlay.exe</code></a> and run it. It is a single file; put it anywhere you like. A zip with the README and the optional mod is on the <a href="https://github.com/jsuk10/claude-overlay/releases/latest">release page</a>.</li>
         <li>Optional: turn on <strong>Start with Windows</strong> from the tray icon's menu.</li>
       </ol>
       <p>Windows SmartScreen may warn about an unsigned app the first time; choose <strong>More info → Run anyway</strong>.</p>
+
+      <h3 id="mac">macOS</h3>
+      <p>macOS 11 or later (widgets need macOS 14 or later), Apple Silicon and Intel.</p>
+      <ol>
+        <li>Download the <a href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay-macos-arm64.dmg" data-track="download_mac_arm64">Apple Silicon (M1 and later) DMG</a> or the <a href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay-macos-x64.dmg" data-track="download_mac_x64">Intel DMG</a>.</li>
+        <li>Open it and drag <strong>Claude Session Overlay</strong> into <strong>Applications</strong>.</li>
+        <li>Launch it from Applications; a ✻ icon appears in the menu bar. Turn on <strong>Open at login</strong> from its menu.</li>
+        <li>Widgets: right-click the desktop → <strong>Edit Widgets</strong> → search for "Claude Session Overlay".</li>
+      </ol>
+      <p>The app is not notarized by Apple yet, so the first launch shows a warning. Open <strong>System Settings → Privacy &amp; Security</strong> and click <strong>Open Anyway</strong> near the bottom.<br>Or install from Terminal in one line, which skips the warning and launches the app:</p>
+      <pre><code>curl -fsSL https://claude-overlay.jsuk.cloud/install.sh | bash</code></pre>
     </section>
 
     <section>
@@ -123,7 +145,7 @@
       <details><summary>How do I see how much context a Claude Code session has used?</summary><p>The overlay shows a percentage next to each session, measured against the point where Claude Code auto-compacts the conversation. Blue is under 75%, yellow under 90%, red at 90% and above.</p></details>
       <details><summary>Can I see my Claude weekly and 5-hour usage limits on Windows?</summary><p>Yes. The header shows weekly usage and the footer shows the 5-hour session limit, read from the Claude desktop app's local usage history.</p></details>
       <details><summary>Does it work with both the Claude Code CLI and the desktop app?</summary><p>Yes. CLI sessions in any terminal and Code-tab sessions in the Claude desktop app appear in the same list.</p></details>
-      <details><summary>Is there a macOS version?</summary><p>Not yet. The overlay is Windows-only for now.</p></details>
+      <details><summary>Is there a macOS version?</summary><p>Yes. On macOS 11 and later it runs as a menu bar app, with DMGs for Apple Silicon and Intel. The menu bar shows session counts by state and the widgets show your sessions and usage. Desktop-app sessions open directly; sessions in Terminal or iTerm2 jump to their exact tab.</p></details>
     </section>
   </main>
 
@@ -132,5 +154,6 @@
     Not affiliated with or endorsed by Anthropic. "Claude" and "Claude Code" are trademarks of Anthropic.
   </footer>
 </div>
+<script src="download.js"></script>
 </body>
 </html>

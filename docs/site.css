@@ -74,3 +74,6 @@ details { background: var(--surface); border: 1px solid var(--border); border-ra
 details summary { cursor: pointer; font-weight: 600; }
 details p { margin: 10px 0 0; color: var(--muted); }
 footer { padding: 28px 0 40px; border-top: 1px solid var(--border); font-size: 13px; color: var(--muted); }
+section > h3 { font-size: 18px; margin: 22px 0 8px; }
+section > h3:first-of-type { margin-top: 0; }
+img.wide { display: block; width: 100%; max-width: 550px; height: auto; margin: 18px auto 0; }
