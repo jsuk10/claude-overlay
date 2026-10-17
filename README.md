@@ -27,11 +27,12 @@ An always-on-top Windows overlay that shows every running **Claude Code** sessio
 
 Requires Windows 10 or 11 and Claude Code (CLI) and/or the Claude desktop app.
 
-1. Download `ClaudeSessionOverlay-v*-win-x64.zip` from the [latest release](https://github.com/jsuk10/claude-overlay/releases/latest).
-2. Unzip it anywhere and run `ClaudeSessionOverlay.exe`. No .NET install needed.
-3. Optional: turn on **Start with Windows** from the tray icon's menu.
+1. Download [`ClaudeSessionOverlay.exe`](https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay.exe) and run it. It is a single file with no .NET install needed; put it anywhere you like.
+2. Optional: turn on **Start with Windows** from the tray icon's menu.
 
 Windows SmartScreen may warn about an unsigned app the first time; choose **More info → Run anyway**.
+
+The [release page](https://github.com/jsuk10/claude-overlay/releases/latest) also has a zip with the exe, this README and the optional mod.
 
 ### Build from source
 

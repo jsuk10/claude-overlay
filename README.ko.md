@@ -27,11 +27,12 @@
 
 Windows 10 또는 11과 Claude Code(CLI) 또는 Claude 데스크톱 앱이 필요합니다.
 
-1. [최신 릴리스](https://github.com/jsuk10/claude-overlay/releases/latest)에서 `ClaudeSessionOverlay-v*-win-x64.zip`을 받습니다.
-2. 아무 곳에나 압축을 풀고 `ClaudeSessionOverlay.exe`를 실행합니다. .NET을 따로 설치할 필요가 없습니다.
-3. 선택: 트레이 아이콘 메뉴에서 **Windows 시작 시 실행**을 켭니다.
+1. [`ClaudeSessionOverlay.exe`](https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay.exe)를 받아 실행합니다. 파일 하나라 원하는 폴더에 두면 되고, .NET을 따로 설치할 필요가 없습니다.
+2. 선택: 트레이 아이콘 메뉴에서 **Windows 시작 시 실행**을 켭니다.
 
 서명되지 않은 앱이라 처음 실행할 때 Windows SmartScreen 경고가 뜰 수 있습니다. **추가 정보 → 실행**을 누르면 됩니다.
+
+[릴리스 페이지](https://github.com/jsuk10/claude-overlay/releases/latest)에는 exe와 README, 선택 사항인 Mod를 묶은 zip도 있습니다.
 
 ### 소스에서 빌드
 
