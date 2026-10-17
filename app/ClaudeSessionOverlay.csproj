@@ -25,4 +25,8 @@
     <PackageReference Include="System.Speech" Version="9.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\core\ClaudeSessionOverlay.Core.csproj" />
+  </ItemGroup>
+
 </Project>

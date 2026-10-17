@@ -44,6 +44,23 @@ dotnet publish app -c Release -o bin
 .\bin\ClaudeSessionOverlay.exe
 ```
 
+## macOS (미리보기)
+
+`avalonia/`에 여러 OS에서 도는 오버레이(Avalonia UI, .NET 9)가 있고, Windows WPF 앱과 `core/`를 함께 씁니다. 같은 목록을 보여 주고 메뉴 막대 앱으로 돕니다. `osx-arm64`·`osx-x64`로 빌드까지는 확인했지만 **실제 Mac에서는 아직 시험하지 않았습니다**.
+
+필요한 것: macOS 11 이상, [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0).
+
+```bash
+git clone https://github.com/jsuk10/claude-overlay.git
+cd claude-overlay
+./scripts/make-macos-app.sh          # Intel Mac: ./scripts/make-macos-app.sh osx-x64
+open "out/Claude Session Overlay.app"
+```
+
+스크립트가 자체 포함 빌드를 만들어 `.app`(Dock 아이콘 없는 메뉴 막대 앱)으로 묶고 임시 서명합니다. 매번 켜려면 메뉴 막대 아이콘에서 **로그인 시 열기**를 켭니다.
+
+Windows와 다른 점: 데스크톱 앱 세션은 늘 `claude://` 딥 링크로 엽니다(분할 화면 포커스 없음). 터미널 세션은 그 앱(Terminal, iTerm, VS Code …)을 앞으로 가져오지만 정확한 탭까지는 못 갑니다. 음성 알림은 `say`를 씁니다. 오버레이는 모든 Space에 보이지만 전체 화면 앱 위에는 뜨지 않습니다. 데스크톱 앱 데이터는 `~/Library/Application Support/Claude/`에서 읽습니다.
+
 ## 동작 방식
 
 오버레이는 Claude Code와 Claude 데스크톱 앱이 원래 남기는 **로컬 파일만 읽습니다**. 네트워크 요청을 보내지 않고, 로그인 정보도 건드리지 않습니다.
@@ -90,7 +107,10 @@ opus-5-5  ctx ████▎      42%  67k/160k  ⇣압축  $1.23        주간
 
 | 폴더 | 내용 |
 | --- | --- |
-| `app/` | 오버레이(C#, WPF, .NET 9) |
+| `app/` | Windows 오버레이(C#, WPF, .NET 9) |
+| `core/` | 세션 파일 읽기·목록 계산 공용 부분(화면 없음) |
+| `avalonia/` | macOS용 여러 OS 오버레이(Avalonia, .NET 9) |
+| `scripts/` | `make-macos-app.sh`: macOS `.app` 만들기 |
 | `mod/session-hud/` | 선택 사항인 Claude Code Mod(TypeScript) |
 | `docs/` | 스크린샷과 [소개 페이지](https://jsuk10.github.io/claude-overlay/ko/) |
 

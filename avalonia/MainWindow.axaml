@@ -1,0 +1,245 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:ClaudeSessionOverlay"
+        xmlns:core="clr-namespace:ClaudeSessionOverlay;assembly=ClaudeSessionOverlay.Core"
+        x:Class="ClaudeSessionOverlay.MainWindow"
+        Title="{DynamicResource L_WindowTitle}"
+        Width="364" SizeToContent="Height" CanResize="False"
+        SystemDecorations="None" Background="Transparent" TransparencyLevelHint="Transparent"
+        Topmost="True" ShowInTaskbar="False" ShowActivated="False"
+        UseLayoutRounding="True">
+
+    <Window.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- 작은 아이콘 버튼: 배경 없이, 올리면 옅게 -->
+        <Style Selector="Button.icon">
+            <Setter Property="Foreground" Value="{DynamicResource SubtleBrush}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Width" Value="22"/>
+            <Setter Property="Height" Value="22"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="MinWidth" Value="0"/>
+            <Setter Property="MinHeight" Value="0"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Focusable" Value="False"/>
+        </Style>
+        <Style Selector="Button.icon:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource HoverBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+        </Style>
+        <Style Selector="Button.icon:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource ChipHoverBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+        </Style>
+        <Style Selector="Button.icon:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+        <Style Selector="Button.icon:pressed">
+            <Setter Property="RenderTransform" Value="none"/>
+        </Style>
+
+        <!-- 백그라운드 작업 칩 -->
+        <Style Selector="Button.chip">
+            <Setter Property="Foreground" Value="{DynamicResource SubtleBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource ChipBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="CornerRadius" Value="9"/>
+            <Setter Property="Padding" Value="7,1,8,2"/>
+            <Setter Property="MinHeight" Value="0"/>
+            <Setter Property="FontSize" Value="10.5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button.chip:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource ChipHoverBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+        </Style>
+        <Style Selector="Button.chip:pressed">
+            <Setter Property="RenderTransform" Value="none"/>
+        </Style>
+
+        <!-- 목록 줄: 올리면 옅게 -->
+        <Style Selector="Border.row">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="Border.row:pointerover">
+            <Setter Property="Background" Value="{DynamicResource HoverBrush}"/>
+        </Style>
+
+        <!-- 작업 중 점: 숨 쉬듯 깜빡인다 -->
+        <Style Selector="Ellipse.pulse">
+            <Style.Animations>
+                <Animation Duration="0:0:0.8" IterationCount="Infinite" PlaybackDirection="Alternate">
+                    <KeyFrame Cue="0%">
+                        <Setter Property="Opacity" Value="1"/>
+                    </KeyFrame>
+                    <KeyFrame Cue="100%">
+                        <Setter Property="Opacity" Value="0.3"/>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+    </Window.Styles>
+
+    <!-- 그림자가 잘리지 않게 카드 둘레에 여백 -->
+    <Panel x:Name="Root">
+        <Border x:Name="Card" Margin="12" Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource CardBorderBrush}"
+                BorderThickness="1" CornerRadius="12" Padding="6,4,6,6" BoxShadow="0 2 18 0 #59000000">
+            <StackPanel>
+                <!-- 머리: 끌어서 옮기기, 두 번 눌러 접기, 오른쪽 클릭 메뉴 -->
+                <Grid x:Name="Header" Height="28" Background="Transparent" ColumnDefinitions="*,Auto,Auto">
+                    <Grid.ContextMenu>
+                        <ContextMenu x:Name="HeaderMenu">
+                            <MenuItem Header="{DynamicResource L_Theme}">
+                                <MenuItem x:Name="ThemeDarkItem" Header="{DynamicResource L_Dark}" ToggleType="Radio" Tag="Dark" Click="ThemeItem_Click"/>
+                                <MenuItem x:Name="ThemeLightItem" Header="{DynamicResource L_Light}" ToggleType="Radio" Tag="Light" Click="ThemeItem_Click"/>
+                                <MenuItem x:Name="ThemeSystemItem" Header="{DynamicResource L_FollowWindows}" ToggleType="Radio" Tag="System" Click="ThemeItem_Click"/>
+                            </MenuItem>
+                            <MenuItem Header="{DynamicResource L_Language}">
+                                <MenuItem x:Name="LangKoItem" Header="한국어" ToggleType="Radio" Tag="Korean" Click="LanguageItem_Click"/>
+                                <MenuItem x:Name="LangEnItem" Header="English" ToggleType="Radio" Tag="English" Click="LanguageItem_Click"/>
+                                <MenuItem x:Name="LangSystemItem" Header="{DynamicResource L_FollowWindows}" ToggleType="Radio" Tag="System" Click="LanguageItem_Click"/>
+                            </MenuItem>
+                            <Separator/>
+                            <MenuItem x:Name="HeaderCollapseItem" Click="HeaderCollapse_Click"/>
+                            <MenuItem Header="{DynamicResource L_ShowSeen}" Click="HeaderShowSeen_Click"/>
+                            <MenuItem Header="{DynamicResource L_HideToTray}" Click="HeaderHide_Click"/>
+                        </ContextMenu>
+                    </Grid.ContextMenu>
+                    <!-- 요약이 길면 요약 글자를 줄이고, 주간 바는 늘 보이게 -->
+                    <DockPanel Margin="6,0,0,0" LastChildFill="True">
+                        <Ellipse DockPanel.Dock="Left" Width="9" Height="9" Fill="{DynamicResource AccentBrush}" Margin="0,0,7,0" VerticalAlignment="Center"/>
+                        <TextBlock DockPanel.Dock="Left" Text="{DynamicResource L_AppTitle}" Foreground="{DynamicResource TextBrush}" FontSize="12.5" FontWeight="SemiBold"/>
+                        <TextBlock x:Name="SummaryText" Foreground="{DynamicResource SubtleBrush}" FontSize="11.5" Margin="8,0,0,0" TextTrimming="CharacterEllipsis"/>
+                    </DockPanel>
+                    <!-- 주간 사용량 바: 계정 단위라 머리 줄에 하나 -->
+                    <StackPanel x:Name="WeeklyPanel" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right"
+                                VerticalAlignment="Center" Margin="8,0,8,0" IsVisible="False">
+                        <TextBlock Text="{DynamicResource L_Weekly}" Foreground="{DynamicResource SubtleBrush}" FontSize="10.5" Margin="0,0,5,0"/>
+                        <Border Width="52" Height="4" CornerRadius="2" Background="{DynamicResource TrackBrush}" VerticalAlignment="Center">
+                            <Border x:Name="WeeklyFill" HorizontalAlignment="Left" CornerRadius="2"/>
+                        </Border>
+                        <TextBlock x:Name="WeeklyText" FontSize="10.5" Margin="5,0,0,0"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button x:Name="CollapseButton" Classes="icon" Content="▴" FontSize="11" Click="Collapse_Click"/>
+                        <Button Classes="icon" Content="–" ToolTip.Tip="{DynamicResource L_Minimize}" Click="Minimize_Click"/>
+                        <Button Classes="icon" Content="✕" FontSize="11" ToolTip.Tip="{DynamicResource L_Close}" Click="Close_Click"/>
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel x:Name="Body">
+                    <ItemsControl x:Name="RowList" Focusable="False">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="core:SessionRow">
+                                <StackPanel Opacity="{Binding Opacity}">
+                                    <Border Classes="row" Padding="8,6,4,6" Margin="0,1,0,0"
+                                            PointerReleased="Row_PointerReleased" ToolTip.Tip="{Binding Info.Cwd}">
+                                        <Border.ContextMenu>
+                                            <ContextMenu Opened="RowMenu_Opened" Closed="RowMenu_Closed">
+                                                <MenuItem Header="{DynamicResource L_Open}" Click="MenuOpen_Click" FontWeight="SemiBold"/>
+                                                <MenuItem Header="{DynamicResource L_MarkSeen}" Click="MenuSeen_Click"/>
+                                                <MenuItem Header="{DynamicResource L_ToggleFavorite}" Click="MenuFavorite_Click"/>
+                                                <Separator/>
+                                                <MenuItem Header="{DynamicResource L_OpenFolder}" Click="MenuFolder_Click"/>
+                                            </ContextMenu>
+                                        </Border.ContextMenu>
+                                        <Grid ColumnDefinitions="16,*,Auto,Auto">
+                                            <Ellipse Width="8" Height="8" Fill="{Binding DotTone, Converter={x:Static local:ToneBrush.Converter}}"
+                                                     Classes.pulse="{Binding IsPulsing}"
+                                                     VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,6,0,0"/>
+                                            <StackPanel Grid.Column="1" Margin="0,0,6,0">
+                                                <TextBlock Text="{Binding Title}" Foreground="{DynamicResource TextBrush}" FontSize="13"
+                                                           TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock FontSize="11" Margin="0,1,0,0" TextTrimming="CharacterEllipsis">
+                                                    <Run Text="{Binding StatusText}" Foreground="{Binding DotTone, Converter={x:Static local:ToneBrush.Converter}}"/><Run Text=" · " Foreground="{DynamicResource SubtleBrush}"/><Run Text="{Binding Detail}" Foreground="{DynamicResource SubtleBrush}"/>
+                                                </TextBlock>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Top" Margin="0,2,2,0">
+                                                <!-- 백그라운드 작업 열고 닫기 -->
+                                                <Button Classes="chip" Margin="0,0,6,0" Click="TasksToggle_Click"
+                                                        ToolTip.Tip="{Binding TasksTip}" IsVisible="{Binding HasTasks}">
+                                                    <TextBlock FontSize="10.5">
+                                                        <Run Text="{Binding TasksChevron}"/>
+                                                        <Run Text="{Binding TasksCountText}"/>
+                                                    </TextBlock>
+                                                </Button>
+                                                <!-- 컨텍스트(자동 압축 기준 %) · 압축 버튼 -->
+                                                <TextBlock Text="{Binding ContextLabel}" FontSize="11" FontWeight="SemiBold"
+                                                           Foreground="{Binding ContextTone, Converter={x:Static local:ToneBrush.Converter}}"
+                                                           ToolTip.Tip="{Binding ContextTip}" IsVisible="{Binding HasContext}"/>
+                                                <Button Classes="icon" Width="18" Height="20" FontSize="12" Margin="1,0,0,0"
+                                                        Content="{Binding CompactLabel}"
+                                                        Foreground="{Binding CompactTone, Converter={x:Static local:ToneBrush.Converter}}"
+                                                        Click="Compact_Click" ToolTip.Tip="{Binding CompactTip}" IsEnabled="{Binding CanRequestCompact}"
+                                                        IsVisible="{Binding ShowCompact}"/>
+                                            </StackPanel>
+                                            <Button Grid.Column="3" Classes="icon" Content="{Binding Star}"
+                                                    Foreground="{Binding StarTone, Converter={x:Static local:ToneBrush.Converter}}" VerticalAlignment="Top"
+                                                    Click="Star_Click" ToolTip.Tip="{DynamicResource L_FavoriteTip}"/>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- 백그라운드 작업: 상위 세션 바로 아래 -->
+                                    <ItemsControl ItemsSource="{Binding Tasks}" Margin="22,0,4,2" Focusable="False" IsVisible="{Binding ShowTasks}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate x:DataType="core:TaskRow">
+                                                <Border Classes="row" Padding="6,3" PointerReleased="Task_PointerReleased">
+                                                    <Grid ColumnDefinitions="12,*,Auto">
+                                                        <Ellipse Width="6" Height="6" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                                                 Fill="{Binding DotTone, Converter={x:Static local:ToneBrush.Converter}}"/>
+                                                        <TextBlock Grid.Column="1" Text="{Binding Label}" Foreground="{DynamicResource TaskTextBrush}" FontSize="11.5"
+                                                                   TextTrimming="CharacterEllipsis"/>
+                                                        <TextBlock Grid.Column="2" Text="{Binding StatusText}" Foreground="{DynamicResource SubtleBrush}"
+                                                                   FontSize="11" Margin="8,0,0,0"/>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <TextBlock x:Name="EmptyText" Text="{DynamicResource L_Empty}" Foreground="{DynamicResource SubtleBrush}"
+                               FontSize="11.5" Margin="8,2,8,4"/>
+                </StackPanel>
+
+                <!-- 맨 아래 줄: [테마] 5시간 사용량 [음성 알림]. 접어도 보인다 -->
+                <Grid x:Name="FooterPanel" Margin="2,4,2,0" ColumnDefinitions="Auto,Auto,*,Auto,Auto" Background="Transparent">
+                    <Button x:Name="ThemeToggleButton" Classes="icon" FontSize="12" Click="ThemeToggle_Click"/>
+                    <TextBlock Grid.Column="1" Text="{DynamicResource L_SessionLimit}" ToolTip.Tip="{DynamicResource L_SessionLimitTip}"
+                               Foreground="{DynamicResource SubtleBrush}" FontSize="10.5" Margin="4,0,8,0"/>
+                    <Border x:Name="FiveHourTrack" Grid.Column="2" Height="4" CornerRadius="2" Background="{DynamicResource TrackBrush}"
+                            VerticalAlignment="Center">
+                        <Border x:Name="FiveHourFill" HorizontalAlignment="Left" CornerRadius="2"/>
+                    </Border>
+                    <TextBlock Grid.Column="3" FontSize="10.5" Margin="8,0,4,0">
+                        <Run x:Name="FiveHourPercentText"/><Run x:Name="FiveHourResetText" Foreground="{DynamicResource SubtleBrush}"/>
+                    </TextBlock>
+                    <!-- 'TTS' 글자를 눌러도 스위치처럼 -->
+                    <StackPanel x:Name="VoicePanel" Grid.Column="4" Orientation="Horizontal" Margin="4,0,6,0" Background="Transparent"
+                                Cursor="Hand" PointerReleased="VoicePanel_PointerReleased">
+                        <TextBlock Text="TTS" Foreground="{DynamicResource SubtleBrush}" FontSize="10.5" Margin="0,0,5,0"/>
+                        <!-- 켜지면 오른쪽으로, 주황 -->
+                        <Border x:Name="VoiceTrack" Width="24" Height="14" CornerRadius="7" VerticalAlignment="Center">
+                            <Ellipse x:Name="VoiceKnob" Width="10" Height="10" Margin="2,0" VerticalAlignment="Center"/>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </Border>
+    </Panel>
+</Window>

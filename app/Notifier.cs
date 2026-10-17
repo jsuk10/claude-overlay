@@ -4,12 +4,11 @@ using System.Runtime.InteropServices;
 using System.Windows.Interop;
 using Microsoft.Win32;
 using System.Speech.Synthesis;
-using System.Text.RegularExpressions;
 
 namespace ClaudeSessionOverlay;
 
 /// <summary>세션이 끝나거나 사람을 기다릴 때 짧은 소리와 한국어 음성으로 알린다.</summary>
-internal sealed partial class Notifier : IDisposable
+internal sealed class Notifier : IDisposable
 {
     private static readonly string ChimeFile =
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Media", "Windows Notify System Generic.wav");
@@ -124,21 +123,14 @@ internal sealed partial class Notifier : IDisposable
 
         foreach (var notice in notices)
         {
-            string name = SpokenName(notice.Session);
-            string text = notice.Kind switch
-            {
-                NoticeKind.Done => Loc.T($"{name} 작업 종료", $"{name} done"),
-                NoticeKind.Waiting => Loc.T($"{name} 확인 필요", $"{name} needs input"),
-                _ => Loc.T($"{name} 컨텍스트 {notice.Session.ContextPercent ?? 90:0}퍼센트", $"{name} context {notice.Session.ContextPercent ?? 90:0} percent"),
-            };
-            _voice.SpeakAsync(text); // 차례로 쌓여서 겹치지 않는다
+            _voice.SpeakAsync(Overview.Spoken(notice)); // 차례로 쌓여서 겹치지 않는다
         }
     }
 
     public void Test()
     {
         PlayChime();
-        _voice?.SpeakAsync(Loc.T("알림 테스트", "Notification test"));
+        _voice?.SpeakAsync(Overview.TestSpoken);
     }
 
     private void PlayChime()
@@ -146,18 +138,6 @@ internal sealed partial class Notifier : IDisposable
         try { _chime?.Play(); }
         catch { SystemSounds.Asterisk.Play(); }
     }
-
-    /// <summary>읽기 좋은 길이로 자른 세션 이름: 기호를 빼고 앞쪽 몇 단어만</summary>
-    private static string SpokenName(SessionInfo session)
-    {
-        string title = session.Title != "" ? session.Title : Path.GetFileName(session.Cwd.TrimEnd('\\', '/'));
-        title = Symbols().Replace(title, " ").Trim();
-        if (title == "") return Loc.T("Claude 세션", "Claude session");
-        return title.Length <= 24 ? title : title[..24];
-    }
-
-    [GeneratedRegex(@"[^\p{L}\p{N}\s]+")]
-    private static partial Regex Symbols();
 
     public void Dispose()
     {

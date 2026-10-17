@@ -149,8 +149,8 @@ public partial class MainWindow : Window
         if (key == _lastFiveHour) return;
         _lastFiveHour = key;
 
-        var brush = UsagePalette.Fill(p);
-        FiveHourFill.Width = UsagePalette.FillWidth(p, Math.Max(0, FiveHourTrack.ActualWidth));
+        var brush = ToneBrushes.Of(Palette.Usage(p));
+        FiveHourFill.Width = Palette.FillWidth(p, Math.Max(0, FiveHourTrack.ActualWidth));
         FiveHourFill.Background = brush;
         FiveHourPercentText.Text = $"{p:0}%";
         FiveHourPercentText.Foreground = brush;
@@ -171,8 +171,8 @@ public partial class MainWindow : Window
             WeeklyPanel.Visibility = Visibility.Collapsed;
             return;
         }
-        var brush = UsagePalette.Fill(p);
-        WeeklyFill.Width = UsagePalette.FillWidth(p, 52);
+        var brush = ToneBrushes.Of(Palette.Usage(p));
+        WeeklyFill.Width = Palette.FillWidth(p, 52);
         WeeklyFill.Background = brush;
         WeeklyText.Text = $"{p:0}%";
         WeeklyText.Foreground = brush;
@@ -180,78 +180,8 @@ public partial class MainWindow : Window
         WeeklyPanel.Visibility = Visibility.Visible;
     }
 
-    internal static List<SessionRow> BuildRows(List<SessionInfo> sessions, HashSet<string> favorites, HashSet<string>? expanded = null)
-    {
-        static RowState StateOf(SessionInfo s) =>
-            !s.IsAlive ? RowState.Offline
-            : s.Status == LiveStatus.Waiting ? RowState.Waiting
-            : s.Status == LiveStatus.Working ? RowState.Working
-            : (s.LastCompletedAt ?? 0) > s.SeenAt ? RowState.Done
-            : RowState.Idle;
-
-        static string TaskStatusOf(RowState state) => state switch
-        {
-            RowState.Working => "running",
-            RowState.Waiting => "waiting",
-            RowState.Done => "completed",
-            _ => "idle",
-        };
-
-        // 데스크톱에서 다른 세션이 띄운 세션은 그 상위 세션 아래에 붙인다
-        var byHost = sessions.Where(s => s.HostSessionId is not null && s.IsAlive)
-            .GroupBy(s => s.HostSessionId!).ToDictionary(g => g.Key, g => g.First());
-        var children = sessions
-            .Where(s => s.IsAlive && s.ParentHostSessionId is string p && byHost.ContainsKey(p))
-            .ToLookup(s => s.ParentHostSessionId!);
-        var nested = children.SelectMany(g => g).Select(s => s.SessionId).ToHashSet();
-
-        var rows = new List<SessionRow>();
-        foreach (var info in sessions)
-        {
-            if (nested.Contains(info.SessionId) && !favorites.Contains(info.SessionId)) continue;
-
-            var state = StateOf(info);
-            var tasks = info.Tasks.Where(t => t.IsRunning).Select(t => new TaskRow { Doc = t }).ToList();
-            if (info.HostSessionId is string host)
-            {
-                foreach (var child in children[host])
-                {
-                    var childState = StateOf(child);
-                    if (childState == RowState.Idle && !favorites.Contains(child.SessionId)) continue;
-                    tasks.Add(new TaskRow
-                    {
-                        Doc = new TaskDoc
-                        {
-                            Id = child.SessionId,
-                            Kind = "session",
-                            Description = child.Title != "" ? child.Title : Loc.T("파생 세션", "Side session"),
-                            Status = TaskStatusOf(childState),
-                        },
-                        Session = child,
-                    });
-                }
-            }
-
-            bool isFavorite = favorites.Contains(info.SessionId);
-            bool isVisible = isFavorite || state is RowState.Waiting or RowState.Working or RowState.Done || tasks.Count > 0;
-            if (!isVisible) continue;
-
-            rows.Add(new SessionRow
-            {
-                Info = info,
-                State = state,
-                IsFavorite = isFavorite,
-                Tasks = tasks,
-                IsTasksExpanded = expanded?.Contains(info.SessionId) ?? false,
-            });
-        }
-
-        return rows
-            .OrderBy(r => r.SortKey)
-            .ThenByDescending(r => r.IsFavorite)
-            .ThenByDescending(r => r.Info.StatusSince ?? r.Info.LastCompletedAt ?? 0)
-            .ToList();
-    }
+    internal static List<SessionRow> BuildRows(List<SessionInfo> sessions, HashSet<string> favorites, HashSet<string>? expanded = null) =>
+        Overview.BuildRows(sessions, favorites, expanded);
 
     private void ForceRefresh()
     {

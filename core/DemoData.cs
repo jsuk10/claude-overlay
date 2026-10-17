@@ -3,7 +3,7 @@ namespace ClaudeSessionOverlay;
 /// <summary>
 /// 스크린샷·시연용 가짜 세션(--demo). 실제 프로젝트·세션 이름이 드러나지 않게 지어낸 값만 쓴다.
 /// </summary>
-internal static class DemoData
+public static class DemoData
 {
     public const string FavoriteId = "demo-1";
 
@@ -11,13 +11,16 @@ internal static class DemoData
     {
         double now = SessionStore.NowMs;
         double minutes(double m) => now - m * 60_000;
+        // Windows는 드라이브 경로, macOS·Linux는 홈 아래 경로(~/…로 줄여 보인다)
+        static string Cwd(string windows, string underHome) =>
+            OperatingSystem.IsWindows() ? windows : Path.Combine(PlatformPaths.Home, underHome);
 
         var sessions = new List<SessionInfo>
         {
             new()
             {
                 SessionId = FavoriteId, Pid = 1, IsAlive = true, Status = LiveStatus.Working,
-                Title = "Build checkout flow", Cwd = @"D:\work\shop\web", TurnStartedAt = minutes(12.4),
+                Title = "Build checkout flow", Cwd = Cwd(@"D:\work\shop\web", "work/shop/web"), TurnStartedAt = minutes(12.4),
                 Measure = Measure(3.42, 46), MeasuredAt = now, HasHud = true, CanCompact = true,
                 Tasks =
                 [
@@ -29,19 +32,19 @@ internal static class DemoData
             new()
             {
                 SessionId = "demo-2", Pid = 2, IsAlive = true, Status = LiveStatus.Waiting,
-                Title = "Migrate database schema", Cwd = @"C:\projects\api-server", StatusSince = minutes(1),
+                Title = "Migrate database schema", Cwd = Cwd(@"C:\projects\api-server", "projects/api-server"),StatusSince = minutes(1),
                 Measure = Measure(5.87, 92), MeasuredAt = now - 1000, HasHud = true, CanCompact = true,
             },
             new()
             {
                 SessionId = "demo-3", Pid = 3, IsAlive = true, Status = LiveStatus.Working,
-                Title = "Update API docs", Cwd = @"C:\projects\api-server\docs", TurnStartedAt = minutes(3.1),
+                Title = "Update API docs", Cwd = Cwd(@"C:\projects\api-server\docs", "projects/api-server/docs"), TurnStartedAt = minutes(3.1),
                 Measure = Measure(0.94, 78), MeasuredAt = now - 2000, HasHud = true, CanCompact = true,
             },
             new()
             {
                 SessionId = "demo-4", Pid = 4, IsAlive = true, Status = LiveStatus.Idle,
-                Title = "Fix login redirect", Cwd = @"D:\work\shop\web", LastCompletedAt = minutes(4), SeenAt = 0,
+                Title = "Fix login redirect", Cwd = Cwd(@"D:\work\shop\web", "work/shop/web"), LastCompletedAt = minutes(4), SeenAt = 0,
                 Measure = Measure(1.18, 23), MeasuredAt = now - 3000, HasHud = true, CanCompact = true,
                 Tasks = [new() { Id = "a3", Kind = "agent", Description = "Check e2e results", Status = "completed" }],
             },

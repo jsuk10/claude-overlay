@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- 화면이 없는 공용 부분: 세션 파일 읽기·합치기, 목록 줄 계산, 문구. WPF·Avalonia 앱이 함께 쓴다 -->
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>ClaudeSessionOverlay.Core</AssemblyName>
+    <RootNamespace>ClaudeSessionOverlay</RootNamespace>
+  </PropertyGroup>
+
+</Project>
