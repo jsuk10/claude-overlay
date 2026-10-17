@@ -27,6 +27,9 @@ public partial class MainWindow : Window
 
     public event Action<string>? SummaryChanged;
 
+    /// <summary>새로고침(1초)마다 그린 줄과 세션 전체: 메뉴 막대·위젯이 받는다</summary>
+    public event Action<List<SessionRow>, List<SessionInfo>>? Refreshed;
+
     public bool IsUserHidden => _store.State.IsHidden;
 
     // 디자이너용
@@ -114,7 +117,11 @@ public partial class MainWindow : Window
         var (summary, isQuiet) = Overview.Summary(rows);
         SummaryText.Text = isQuiet ? "" : summary;
         SummaryChanged?.Invoke(summary);
+        Refreshed?.Invoke(rows, sessions);
     }
+
+    /// <summary>메뉴 막대·위젯에서 상태를 바꾼 뒤 바로 다시 그린다</summary>
+    public void RefreshNow() => ForceRefresh();
 
     /// <summary>5시간 세션 한도(계정 단위): 맨 아래 바와 초기화까지 남은 시간</summary>
     private void ShowFiveHour(List<SessionInfo> sessions)
@@ -181,6 +188,15 @@ public partial class MainWindow : Window
         _platform.Focus(info);
         _store.MarkSeen(info.SessionId);
         ForceRefresh();
+    }
+
+    /// <summary>메뉴 막대 메뉴·위젯(claude-overlay://open?session=…)에서 고른 세션</summary>
+    public void OpenSessionById(string sessionId)
+    {
+        var info = _rows.Select(r => r.Info)
+            .Concat(_rows.SelectMany(r => r.Tasks).Select(t => t.Session).OfType<SessionInfo>())
+            .FirstOrDefault(s => s.SessionId == sessionId);
+        if (info is not null) OpenSession(info);
     }
 
     private void Row_PointerReleased(object? sender, PointerReleasedEventArgs e)
@@ -264,6 +280,13 @@ public partial class MainWindow : Window
         _store.State.IsHidden = !_store.State.IsHidden;
         _store.SaveState();
         UpdateVisibility();
+    }
+
+    /// <summary>위젯을 눌렀을 때(claude-overlay://show): 숨겨 두었으면 다시 보인다</summary>
+    public void ShowOverlay()
+    {
+        if (_store.State.IsHidden) ToggleUserHidden();
+        if (_store.State.IsCollapsed) ToggleCollapsed();
     }
 
     public void ShowSeenAgain()
@@ -410,10 +433,9 @@ public partial class MainWindow : Window
 
     internal void SaveSnapshot(string path)
     {
-        double scale = RenderScaling;
+        // 1배율로 그린다: Avalonia 11.2는 DPI를 두 번 곱해(레티나에서 4배) 카드가 잘린다
         var size = Root.Bounds.Size;
-        using var bitmap = new RenderTargetBitmap(
-            new PixelSize((int)Math.Ceiling(size.Width * scale), (int)Math.Ceiling(size.Height * scale)), new Vector(96 * scale, 96 * scale));
+        using var bitmap = new RenderTargetBitmap(new PixelSize((int)Math.Ceiling(size.Width), (int)Math.Ceiling(size.Height)));
         bitmap.Render(Root);
         bitmap.Save(path);
     }

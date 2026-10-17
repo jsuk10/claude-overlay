@@ -7,7 +7,8 @@ namespace ClaudeSessionOverlay.Platform;
 /// <summary>
 /// macOS.
 ///   데스크톱 앱 세션: claude://code/continue 딥 링크(앱이 그 세션을 열고 앞으로 나온다)
-///   터미널 세션: 부모 프로세스를 따라 올라가 처음 만나는 .app(Terminal, iTerm, VS Code …)을 앞으로
+///   터미널 세션: 부모 프로세스를 따라 올라가 처음 만나는 .app(Terminal, iTerm, VS Code …)을 앞으로.
+///     Terminal·iTerm2면 세션의 tty로 그 탭까지 고른다(AppleScript, 처음 한 번 자동화 허용을 묻는다)
 ///   음성: say, 소리: afplay, 로그인 시 실행: ~/Library/LaunchAgents의 plist
 ///   자리 비움: 화면 잠금(CGSession)·디스플레이 잠듦(CGDisplayIsAsleep)을 새로고침마다 확인
 /// </summary>
@@ -40,11 +41,68 @@ internal sealed class MacPlatform : IPlatform
             return true;
         }
         if (session.Pid is not int pid) return false;
-        string? bundle = AppBundleOf(pid);
-        if (bundle is null) return false;
-        Shell.Run("/usr/bin/open", "-a", bundle);
+        // ps 걷기와 AppleScript(처음엔 허용 창이 떠 답을 기다린다)는 느릴 수 있어 UI 스레드 밖에서
+        Task.Run(() => FocusTerminal(pid));
         return true;
     }
+
+    private static void FocusTerminal(int pid)
+    {
+        string? bundle = AppBundleOf(pid);
+        if (bundle is null) return;
+        string? script = TtyOf(pid) is string tty ? Path.GetFileName(bundle) switch
+        {
+            "Terminal.app" => TerminalTabScript(tty),
+            "iTerm.app" or "iTerm2.app" => ITermTabScript(tty),
+            _ => null,
+        } : null;
+        // 탭을 못 고르면(다른 터미널, 자동화 거부, 탭이 닫힘) 앱만 앞으로
+        if (script is null || Shell.Run("/usr/bin/osascript", "-e", script).Trim() != "true")
+            Shell.Run("/usr/bin/open", "-a", bundle);
+    }
+
+    /// <summary>프로세스가 붙은 터미널 장치: "/dev/ttys003". 없으면 null</summary>
+    private static string? TtyOf(int pid)
+    {
+        string tty = Shell.Run("/bin/ps", "-o", "tty=", "-p", pid.ToString()).Trim();
+        return System.Text.RegularExpressions.Regex.IsMatch(tty, "^tty[a-z0-9]+$") ? "/dev/" + tty : null;
+    }
+
+    internal static string TerminalTabScript(string tty) => $$"""
+        tell application id "com.apple.Terminal"
+            repeat with w in windows
+                repeat with t in tabs of w
+                    if tty of t is "{{tty}}" then
+                        set miniaturized of w to false
+                        set selected of t to true
+                        set index of w to 1
+                        activate
+                        return true
+                    end if
+                end repeat
+            end repeat
+            return false
+        end tell
+        """;
+
+    internal static string ITermTabScript(string tty) => $$"""
+        tell application id "com.googlecode.iterm2"
+            repeat with w in windows
+                repeat with t in tabs of w
+                    repeat with s in sessions of t
+                        if tty of s is "{{tty}}" then
+                            select w
+                            select t
+                            select s
+                            activate
+                            return true
+                        end if
+                    end repeat
+                end repeat
+            end repeat
+            return false
+        end tell
+        """;
 
     /// <summary>pid에서 부모 쪽으로 올라가며 실행 파일 경로에 .app이 든 첫 프로세스의 가장 바깥 .app 폴더</summary>
     private static string? AppBundleOf(int pid)
@@ -71,11 +129,37 @@ internal sealed class MacPlatform : IPlatform
     public void Speak(string text) => _speech.Enqueue(text);
     public void StopSpeaking() => _speech.Stop();
 
-    public void PlayChime() => Shell.Start("/usr/bin/afplay", "/System/Library/Sounds/Glass.aiff")?.Dispose();
+    // 음성과 같은 줄에 세운다: 알림음이 끝난 뒤에 읽어 둘이 겹치지 않는다
+    public void PlayChime() => _speech.EnqueueSound(() => Shell.Start("/usr/bin/afplay", "/System/Library/Sounds/Glass.aiff"));
 
-    /// <summary>화면 언어에 맞는 목소리(한국어면 Yuna 등). 없으면 시스템 기본 목소리</summary>
+    /// <summary>
+    /// say -v '?'는 이름순이라 언어만 맞춰 첫 줄을 고르면 장난감 목소리(Albert, Bells …)나
+    /// 저품질 Eloquence 목소리(Eddy, Flo …)가 걸린다. 이것들은 빼고, 고급·향상 목소리를 먼저 고른다
+    /// </summary>
+    private static readonly HashSet<string> OddVoices = new(StringComparer.OrdinalIgnoreCase)
+    {
+        // 장난감·효과음 목소리
+        "Albert", "Bad News", "Bahh", "Bells", "Boing", "Bubbles", "Cellos", "Good News", "Jester",
+        "Organ", "Superstar", "Trinoids", "Whisper", "Wobble", "Zarvox",
+        // 오래된 합성 목소리
+        "Fred", "Junior", "Kathy", "Ralph",
+        // Eloquence: 한국어를 뭉개 읽는다
+        "Eddy", "Flo", "Grandma", "Grandpa", "Reed", "Rocko", "Sandy", "Shelley",
+    };
+
+    private static readonly string[] BetterMarks = ["Premium", "Enhanced", "고급", "향상"];
+
+    /// <summary>화면 언어에 맞는 목소리(한국어면 Yuna 등). 쓸 만한 게 없으면 시스템 기본 목소리</summary>
     private string? VoiceFor(string language) =>
-        _voices.Value.FirstOrDefault(v => v.Locale.StartsWith(language + "_", StringComparison.OrdinalIgnoreCase)).Name;
+        _voices.Value
+            .Where(v => v.Locale.StartsWith(language + "_", StringComparison.OrdinalIgnoreCase))
+            .Where(v => !OddVoices.Contains(BaseName(v.Name)))
+            .OrderByDescending(v => BetterMarks.Any(m => v.Name.Contains(m, StringComparison.OrdinalIgnoreCase)))
+            .Select(v => v.Name)
+            .FirstOrDefault();
+
+    /// <summary>"Yuna (Premium)" → "Yuna", "Eddy (한국어(대한민국))" → "Eddy"</summary>
+    private static string BaseName(string voice) => voice.Split(" (", 2)[0].Trim();
 
     /// <summary>say -v '?' 줄: "Yuna                ko_KR    # 안녕하세요…"</summary>
     private static List<(string, string)> LoadVoices()

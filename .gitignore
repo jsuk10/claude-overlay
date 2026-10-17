@@ -17,3 +17,6 @@ core/obj/
 avalonia/bin/
 avalonia/obj/
 .wrangler/
+
+# macOS 네이티브(Swift) 빌드 결과
+macos/build/

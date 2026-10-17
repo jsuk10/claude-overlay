@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- 위젯 확장은 샌드박스여야 한다 -->
+    <key>com.apple.security.app-sandbox</key>
+    <true/>
+    <!-- 오버레이가 쓰는 요약판(~/.claude/session-hud/status.json)만 읽는다 -->
+    <key>com.apple.security.temporary-exception.files.home-relative-path.read-only</key>
+    <array>
+        <string>/.claude/session-hud/</string>
+    </array>
+</dict>
+</plist>
