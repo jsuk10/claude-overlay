@@ -28,7 +28,7 @@ cat > "$APP/Contents/Info.plist" <<EOF
     <key>CFBundleDisplayName</key>
     <string>Claude Session Overlay</string>
     <key>CFBundleIdentifier</key>
-    <string>io.github.jsuk10.claude-session-overlay</string>
+    <string>local.claude-session-overlay</string>
     <key>CFBundleExecutable</key>
     <string>ClaudeSessionOverlay</string>
     <key>CFBundlePackageType</key>
