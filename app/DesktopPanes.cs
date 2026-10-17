@@ -95,7 +95,6 @@ internal static class DesktopPanes
     // 그 아래에 프롬프트 입력창(ProseMirror)이 하나 있다.
     // 앱은 처음 조회될 때 접근성 정보를 켜느라 1초쯤 걸리므로, 오버레이에 마우스가 올라오면 미리 깨워 둔다.
 
-    private const string HeaderSuffix = ", 세션 이름 바꾸기";
 
     private static readonly Condition PaneCondition = new OrCondition(
         new AndCondition(
@@ -148,7 +147,8 @@ internal static class DesktopPanes
     /// </summary>
     public static bool FocusPrompt(IntPtr hwnd, string title, PanePos pos, bool waitForTitle)
     {
-        string headerName = title + HeaderSuffix;
+        // 머리 버튼 이름은 '<제목>, 세션 이름 바꾸기'(앱 언어에 따라 뒷부분이 다르다)
+        string headerPrefix = title + ", ";
         var deadline = DateTime.Now + TimeSpan.FromMilliseconds(waitForTitle ? 2500 : 1800);
         while (DateTime.Now < deadline)
         {
@@ -164,7 +164,8 @@ internal static class DesktopPanes
                         if ((info.ClassName ?? "").Contains("ProseMirror") && !info.BoundingRectangle.IsEmpty)
                             prompts.Add(new Found(e, info.BoundingRectangle));
                     }
-                    else if (title != "" && info.Name == headerName) header = info.BoundingRectangle;
+                    else if (title != "" && header is null && (info.Name ?? "").StartsWith(headerPrefix, StringComparison.Ordinal))
+                        header = info.BoundingRectangle;
                 }
 
                 // 아직 접근성 정보가 안 켜졌거나, 딥 링크로 연 화면이 아직 안 바뀌었으면 잠깐 뒤 다시

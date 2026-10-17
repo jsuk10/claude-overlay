@@ -24,9 +24,8 @@ internal sealed partial class Notifier : IDisposable
         try
         {
             _voice = new SpeechSynthesizer();
-            var korean = _voice.GetInstalledVoices()
-                .FirstOrDefault(v => v.Enabled && v.VoiceInfo.Culture.Name.StartsWith("ko", StringComparison.OrdinalIgnoreCase));
-            if (korean is not null) _voice.SelectVoice(korean.VoiceInfo.Name);
+            SelectVoice();
+            Loc.Changed += SelectVoice;
             _voice.SetOutputToDefaultAudioDevice();
             _voice.Rate = 1;
         }
@@ -103,6 +102,20 @@ internal sealed partial class Notifier : IDisposable
         else _quietUntil = DateTime.Now + QuietAfterReturn;
     }
 
+    /// <summary>화면 언어에 맞는 목소리(없으면 Windows 기본 목소리)</summary>
+    private void SelectVoice()
+    {
+        if (_voice is null) return;
+        string prefix = Loc.IsEnglish ? "en" : "ko";
+        try
+        {
+            var voice = _voice.GetInstalledVoices()
+                .FirstOrDefault(v => v.Enabled && v.VoiceInfo.Culture.Name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
+            if (voice is not null) _voice.SelectVoice(voice.VoiceInfo.Name);
+        }
+        catch (InvalidOperationException) { }
+    }
+
     public void Announce(IReadOnlyList<Notice> notices)
     {
         if (notices.Count == 0 || IsAway) return;
@@ -114,9 +127,9 @@ internal sealed partial class Notifier : IDisposable
             string name = SpokenName(notice.Session);
             string text = notice.Kind switch
             {
-                NoticeKind.Done => $"{name} 작업 종료",
-                NoticeKind.Waiting => $"{name} 확인 필요",
-                _ => $"{name} 컨텍스트 {notice.Session.ContextPercent ?? 90:0}퍼센트",
+                NoticeKind.Done => Loc.T($"{name} 작업 종료", $"{name} done"),
+                NoticeKind.Waiting => Loc.T($"{name} 확인 필요", $"{name} needs input"),
+                _ => Loc.T($"{name} 컨텍스트 {notice.Session.ContextPercent ?? 90:0}퍼센트", $"{name} context {notice.Session.ContextPercent ?? 90:0} percent"),
             };
             _voice.SpeakAsync(text); // 차례로 쌓여서 겹치지 않는다
         }
@@ -125,7 +138,7 @@ internal sealed partial class Notifier : IDisposable
     public void Test()
     {
         PlayChime();
-        _voice?.SpeakAsync("알림 테스트");
+        _voice?.SpeakAsync(Loc.T("알림 테스트", "Notification test"));
     }
 
     private void PlayChime()
@@ -139,7 +152,7 @@ internal sealed partial class Notifier : IDisposable
     {
         string title = session.Title != "" ? session.Title : Path.GetFileName(session.Cwd.TrimEnd('\\', '/'));
         title = Symbols().Replace(title, " ").Trim();
-        if (title == "") return "Claude 세션";
+        if (title == "") return Loc.T("Claude 세션", "Claude session");
         return title.Length <= 24 ? title : title[..24];
     }
 
@@ -148,6 +161,7 @@ internal sealed partial class Notifier : IDisposable
 
     public void Dispose()
     {
+        Loc.Changed -= SelectVoice;
         SystemEvents.SessionSwitch -= OnSessionSwitch;
         SystemEvents.PowerModeChanged -= OnPowerModeChanged;
         SystemEvents.SessionEnding -= OnSessionEnding;

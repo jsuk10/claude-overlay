@@ -77,7 +77,8 @@ public sealed partial class SessionStore
                 HostSessionId = reg.HostSessionId,
                 IsDesktop = reg.Entrypoint == "claude-desktop" || reg.HostSessionId is not null,
                 IsAlive = true,
-                Status = reg.Status switch { "busy" => LiveStatus.Working, "idle" => LiveStatus.Idle, _ => LiveStatus.Waiting },
+                // Claude Code가 직접 쓰는 상태: busy·shell(작업 중), waiting(권한 확인·질문 등 사람을 기다림), idle
+                Status = reg.Status switch { "busy" or "shell" => LiveStatus.Working, "waiting" => LiveStatus.Waiting, _ => LiveStatus.Idle },
                 StatusSince = reg.StatusUpdatedAt,
             };
             if (info.Status == LiveStatus.Working) info.TurnStartedAt = reg.StatusUpdatedAt;
@@ -112,8 +113,10 @@ public sealed partial class SessionStore
 
         foreach (var info in sessions.Values)
         {
+            string? desktopModel = null;
             if (info.HostSessionId is string host && LoadDesktopDoc(host) is { } desk)
             {
+                desktopModel = desk.Model;
                 if (!string.IsNullOrWhiteSpace(desk.Title)) info.Title = desk.Title!;
                 info.SeenAt = Math.Max(info.SeenAt, desk.LastFocusedAt ?? 0);
                 info.ParentHostSessionId = desk.SpawnedFrom?.SessionId;
@@ -122,6 +125,7 @@ public sealed partial class SessionStore
                     info.Status = LiveStatus.Waiting;
             }
 
+            if (!info.HasHud) FillWithoutMod(info, desktopModel, now);
             if (info.Tasks.Count == 0) info.Tasks = LoadBackgroundSubagents(info, now);
 
             TrackCompletion(info);
@@ -217,8 +221,12 @@ public sealed partial class SessionStore
         catch { return true; } // 권한 문제로 시작 시각을 못 읽으면 pid만 믿는다
     }
 
+    /// <summary>진단용(--no-mod): Mod 파일을 없는 것처럼 무시한다</summary>
+    public static bool IgnoreMod { get; set; }
+
     private Dictionary<string, HudDoc> LoadHudDocs()
     {
+        if (IgnoreMod) return [];
         var docs = new Dictionary<string, HudDoc>();
         foreach (var file in Directory.EnumerateFiles(HudDir, "*.json"))
         {
@@ -280,6 +288,44 @@ public sealed partial class SessionStore
         return ReadJson<DesktopDoc>(path);
     }
 
+    // ── Mod 없이: 대화 기록·모델 목록·데스크톱 사용량 파일 ─────────────────────
+
+    private readonly TranscriptReader _transcripts = new();
+
+    /// <summary>Mod가 없는 세션은 Claude Code가 원래 남기는 파일로 모델·컨텍스트·작업·사용량을 채운다(비용·초기화 시각·압축 버튼은 Mod 전용)</summary>
+    private void FillWithoutMod(SessionInfo info, string? desktopModel, double now)
+    {
+        if (!info.IsAlive) return;
+        var measure = info.Measure ??= new MeasureDoc();
+
+        var dir = ProjectDir(info);
+        if (dir is not null && _transcripts.Read(Path.Combine(dir, info.SessionId + ".jsonl")) is { } transcript)
+        {
+            string model = transcript.Model ?? desktopModel ?? measure.Model;
+            measure.Model = model.Replace("[1m]", "");
+            if (transcript.ContextTokens is double tokens && model != "")
+            {
+                var (window, limit) = ContextLimits.For(model, desktopModel);
+                measure.ContextTokens = tokens;
+                measure.ContextWindow = window;
+                measure.CompactLimit = limit;
+                measure.ContextPercent = Math.Round(tokens / window * 100);
+                measure.CompactPercent = Math.Round(tokens / limit * 100);
+            }
+            var tasks = TranscriptReader.VisibleTasks(transcript, now);
+            if (tasks.Count > 0) info.Tasks = tasks;
+        }
+
+        // 주간·세션 한도는 계정 단위: 데스크톱 앱이 남긴 마지막 표본(Mod가 있는 세션이 더 새 값이면 그쪽이 이긴다)
+        var usage = AccountUsage.Latest(DesktopRoots().Select(r => Path.GetDirectoryName(r)!).Distinct());
+        if (usage.At > 0)
+        {
+            measure.WeeklyPercent ??= usage.Weekly;
+            measure.FiveHourPercent ??= usage.FiveHour;
+            info.MeasuredAt = Math.Max(info.MeasuredAt, usage.At);
+        }
+    }
+
     // ── Mod가 없는 세션의 백그라운드 서브에이전트 ─────────────────────────────
 
     private List<TaskDoc> LoadBackgroundSubagents(SessionInfo info, double now)
@@ -302,7 +348,7 @@ public sealed partial class SessionStore
             {
                 Id = Path.GetFileName(log)["agent-".Length..^".jsonl".Length],
                 Kind = "agent",
-                Description = doc.Description ?? doc.AgentType ?? "백그라운드 작업",
+                Description = doc.Description ?? doc.AgentType ?? Loc.T("백그라운드 작업", "Background task"),
                 Type = doc.AgentType,
                 Status = "running",
             });
@@ -385,8 +431,12 @@ public sealed partial class SessionStore
         }
     }
 
+    /// <summary>시연(--demo)에서는 아무것도 쓰지 않는다: 사용자의 설정·즐겨찾기를 건드리지 않게</summary>
+    public static bool IsReadOnly { get; set; }
+
     private static void WriteJson<T>(string path, T value)
     {
+        if (IsReadOnly) return;
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);

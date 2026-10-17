@@ -28,11 +28,11 @@ public sealed class SessionRow : INotifyPropertyChanged
     public bool ShowTasks => HasTasks && IsTasksExpanded;
     public string TasksChevron => IsTasksExpanded ? "▾" : "▸";
     public string TasksCountText => $"{Tasks.Count}";
-    public string TasksTip => IsTasksExpanded ? $"백그라운드 작업 {Tasks.Count}개 접기" : $"백그라운드 작업 {Tasks.Count}개 펼치기";
+    public string TasksTip => IsTasksExpanded ? Loc.T($"백그라운드 작업 {Tasks.Count}개 접기", $"Collapse {Tasks.Count} background tasks") : Loc.T($"백그라운드 작업 {Tasks.Count}개 펼치기", $"Expand {Tasks.Count} background tasks");
 
     public string Title => Info.Title != "" ? Info.Title : Folder;
 
-    public string Folder => Info.Cwd == "" ? "(알 수 없는 폴더)"
+    public string Folder => Info.Cwd == "" ? Loc.T("(알 수 없는 폴더)", "(unknown folder)")
         : Path.GetFileName(Info.Cwd.TrimEnd('\\', '/')) is { Length: > 0 } name ? name : Info.Cwd;
 
     /// <summary>드라이브 + 마지막 두 폴더: C:\…\work\Taycan-client</summary>
@@ -51,11 +51,11 @@ public sealed class SessionRow : INotifyPropertyChanged
 
     public string StatusText => State switch
     {
-        RowState.Waiting => "입력 대기",
-        RowState.Working => Info.TurnStartedAt is double t ? $"작업 중 {Elapsed(t)}" : "작업 중",
-        RowState.Done => Info.LastCompletedAt is double c && c > 1000 ? $"완료 · {Ago(c)}" : "완료",
-        RowState.Idle => "대기",
-        _ => "꺼짐",
+        RowState.Waiting => Loc.T("입력 대기", "Needs input"),
+        RowState.Working => Info.TurnStartedAt is double t ? Loc.T($"작업 중 {Elapsed(t)}", $"Working {Elapsed(t)}") : Loc.T("작업 중", "Working"),
+        RowState.Done => Info.LastCompletedAt is double c && c > 1000 ? Loc.T($"완료 · {Ago(c)}", $"Done · {Ago(c)}") : Loc.T("완료", "Done"),
+        RowState.Idle => Loc.T("대기", "Idle"),
+        _ => Loc.T("꺼짐", "Offline"),
     };
 
     public string Detail
@@ -84,10 +84,11 @@ public sealed class SessionRow : INotifyPropertyChanged
     {
         get
         {
-            if (Info.Measure is not { } m) return "컨텍스트";
+            if (Info.Measure is not { } m) return Loc.T("컨텍스트", "Context");
             double limit = m.CompactLimit ?? m.ContextWindow;
             string used = m.ContextTokens is double t ? Kilo(t) : "—";
-            return $"컨텍스트 {used} / 자동 압축 {Kilo(limit)} ({ContextLabel}) · 모델 창 {Kilo(m.ContextWindow)}";
+            return Loc.T($"컨텍스트 {used} / 자동 압축 {Kilo(limit)} ({ContextLabel}) · 모델 창 {Kilo(m.ContextWindow)}",
+                $"Context {used} / auto-compact at {Kilo(limit)} ({ContextLabel}) · model window {Kilo(m.ContextWindow)}");
         }
     }
 
@@ -101,8 +102,8 @@ public sealed class SessionRow : INotifyPropertyChanged
     public string CompactLabel => Info.IsCompactRequested ? "⋯" : "⇣";
     public Brush CompactBrush => IsContextCritical ? UsagePalette.Critical : Brushes2.Idle;
     public string CompactTip => Info.IsCompactRequested
-        ? "압축 요청함: 그 세션의 턴이 끝나면 압축합니다"
-        : $"눌러서 이 세션을 압축(/compact) · {ContextTip}";
+        ? Loc.T("압축 요청함: 그 세션의 턴이 끝나면 압축합니다", "Compact requested: runs when that session's turn ends")
+        : Loc.T($"눌러서 이 세션을 압축(/compact) · {ContextTip}", $"Click to compact this session (/compact) · {ContextTip}");
 
     public Brush DotBrush => State switch
     {
@@ -138,10 +139,10 @@ public sealed class SessionRow : INotifyPropertyChanged
     internal static string Ago(double atMs)
     {
         var span = TimeSpan.FromMilliseconds(Math.Max(0, SessionStore.NowMs - atMs));
-        return span.TotalMinutes < 1 ? "방금"
-            : span.TotalHours < 1 ? $"{(int)span.TotalMinutes}분 전"
-            : span.TotalDays < 1 ? $"{(int)span.TotalHours}시간 전"
-            : $"{(int)span.TotalDays}일 전";
+        return span.TotalMinutes < 1 ? Loc.T("방금", "just now")
+            : span.TotalHours < 1 ? Loc.T($"{(int)span.TotalMinutes}분 전", $"{(int)span.TotalMinutes}m ago")
+            : span.TotalDays < 1 ? Loc.T($"{(int)span.TotalHours}시간 전", $"{(int)span.TotalHours}h ago")
+            : Loc.T($"{(int)span.TotalDays}일 전", $"{(int)span.TotalDays}d ago");
     }
 }
 
@@ -161,13 +162,13 @@ public sealed class TaskRow
 
     public string StatusText => Doc.Status switch
     {
-        "running" => "실행 중",
-        "pending" => "준비 중",
-        "waiting" => "대기",
-        "idle" => "유휴",
-        "completed" => "완료",
-        "failed" => "실패",
-        "killed" => "중지됨",
+        "running" => Loc.T("실행 중", "running"),
+        "pending" => Loc.T("준비 중", "pending"),
+        "waiting" => Loc.T("대기", "waiting"),
+        "idle" => Loc.T("유휴", "idle"),
+        "completed" => Loc.T("완료", "done"),
+        "failed" => Loc.T("실패", "failed"),
+        "killed" => Loc.T("중지됨", "stopped"),
         var other => other,
     };
 

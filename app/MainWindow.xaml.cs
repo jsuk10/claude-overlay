@@ -25,11 +25,12 @@ public partial class MainWindow : Window
 
     public bool IsUserHidden => _store.State.IsHidden;
 
-    public MainWindow(SessionStore store)
+    public MainWindow(SessionStore store, bool applyTheme = true)
     {
         _store = store;
         _notifier = new Notifier(store);
-        ClaudeSessionOverlay.Theme.Apply(store.State.Theme);
+        if (applyTheme) ClaudeSessionOverlay.Theme.Apply(store.State.Theme);
+        Loc.Apply(store.State.Language);
         InitializeComponent();
         FiveHourTrack.SizeChanged += (_, _) => _lastFiveHour = null;
         SourceInitialized += OnSourceInitialized;
@@ -62,13 +63,23 @@ public partial class MainWindow : Window
     {
         if (_isMenuOpen) return;
 
-        var favorites = _store.LoadFavorites();
-        var sessions = _store.LoadSessions(favorites);
-        bool isFirstLoad = _lastSessions.Count == 0;
-        _lastSessions = sessions;
-        if (isFirstLoad) WarmDesktop();
-        _notifier.Announce(_store.Notices);
-        var rows = BuildRows(sessions, favorites, _store.State.ExpandedTasks);
+        HashSet<string> favorites, expanded;
+        List<SessionInfo> sessions;
+        if (IsDemo)
+        {
+            (sessions, favorites, expanded) = DemoData.Load();
+        }
+        else
+        {
+            favorites = _store.LoadFavorites();
+            sessions = _store.LoadSessions(favorites);
+            expanded = _store.State.ExpandedTasks;
+            bool isFirstLoad = _lastSessions.Count == 0;
+            _lastSessions = sessions;
+            if (isFirstLoad) WarmDesktop();
+            _notifier.Announce(_store.Notices);
+        }
+        var rows = BuildRows(sessions, favorites, expanded);
 
         string signature = string.Join("|", rows.Select(r =>
             $"{r.SessionId}:{r.State}:{r.IsFavorite}:{r.IsTasksExpanded}:{r.Title}:{r.Detail}:{r.ContextLabel}:{r.CompactLabel}:{r.CanRequestCompact}:" +
@@ -94,10 +105,10 @@ public partial class MainWindow : Window
         int waiting = rows.Count(r => r.State == RowState.Waiting);
         int done = rows.Count(r => r.State == RowState.Done);
         var parts = new List<string>();
-        if (waiting > 0) parts.Add($"대기 {waiting}");
-        if (working > 0) parts.Add($"작업 {working}");
-        if (done > 0) parts.Add($"완료 {done}");
-        string summary = parts.Count == 0 ? "조용함" : string.Join(" · ", parts);
+        if (waiting > 0) parts.Add(Loc.T($"대기 {waiting}", $"{waiting} waiting"));
+        if (working > 0) parts.Add(Loc.T($"작업 {working}", $"{working} working"));
+        if (done > 0) parts.Add(Loc.T($"완료 {done}", $"{done} done"));
+        string summary = parts.Count == 0 ? Loc.T("조용함", "All quiet") : string.Join(" · ", parts);
         SummaryText.Text = parts.Count == 0 ? "" : summary;
         SummaryChanged?.Invoke(summary);
 
@@ -120,7 +131,8 @@ public partial class MainWindow : Window
             FiveHourPercentText.Text = "—";
             FiveHourPercentText.Foreground = (System.Windows.Media.Brush)FindResource("SubtleBrush");
             FiveHourResetText.Text = "";
-            FooterPanel.ToolTip = "5시간 세션 한도: 새 Mod로 시작한 세션이 알려 주면 표시됩니다";
+            FooterPanel.ToolTip = Loc.T("5시간 세션 한도: Claude 데스크톱 앱이 사용량을 기록하면 표시됩니다",
+                "5-hour session limit: shown once the Claude desktop app records usage");
             return;
         }
 
@@ -128,9 +140,9 @@ public partial class MainWindow : Window
         if (DateTimeOffset.TryParse(latest.FiveHourResetsAt, out var resetsAt))
         {
             var left = resetsAt - DateTimeOffset.Now;
-            reset = left <= TimeSpan.Zero ? " · reset 곧"
-                : left.TotalHours >= 1 ? $" · reset {(int)left.TotalHours}시간 {left.Minutes}분"
-                : $" · reset {Math.Max(1, left.Minutes)}분";
+            reset = left <= TimeSpan.Zero ? Loc.T(" · reset 곧", " · reset soon")
+                : left.TotalHours >= 1 ? Loc.T($" · reset {(int)left.TotalHours}시간 {left.Minutes}분", $" · reset {(int)left.TotalHours}h {left.Minutes}m")
+                : Loc.T($" · reset {Math.Max(1, left.Minutes)}분", $" · reset {Math.Max(1, left.Minutes)}m");
         }
 
         string key = $"{p}|{reset}";
@@ -143,7 +155,7 @@ public partial class MainWindow : Window
         FiveHourPercentText.Text = $"{p:0}%";
         FiveHourPercentText.Foreground = brush;
         FiveHourResetText.Text = reset;
-        FooterPanel.ToolTip = $"5시간 세션 한도 {p:0.#}% 사용{reset}";
+        FooterPanel.ToolTip = Loc.T($"5시간 세션 한도 {p:0.#}% 사용{reset}", $"5-hour session limit {p:0.#}% used{reset}");
     }
 
     /// <summary>주간 사용량은 계정 단위: Mod가 가장 최근에 알려 준 값을 쓴다</summary>
@@ -164,7 +176,7 @@ public partial class MainWindow : Window
         WeeklyFill.Background = brush;
         WeeklyText.Text = $"{p:0}%";
         WeeklyText.Foreground = brush;
-        WeeklyPanel.ToolTip = $"주간 사용량 {p:0.#}%";
+        WeeklyPanel.ToolTip = Loc.T($"주간 사용량 {p:0.#}%", $"Weekly usage {p:0.#}%");
         WeeklyPanel.Visibility = Visibility.Visible;
     }
 
@@ -212,7 +224,7 @@ public partial class MainWindow : Window
                         {
                             Id = child.SessionId,
                             Kind = "session",
-                            Description = child.Title != "" ? child.Title : "파생 세션",
+                            Description = child.Title != "" ? child.Title : Loc.T("파생 세션", "Side session"),
                             Status = TaskStatusOf(childState),
                         },
                         Session = child,
@@ -257,6 +269,9 @@ public partial class MainWindow : Window
     }
 
     private List<SessionInfo> _lastSessions = [];
+
+    /// <summary>시연용: 실제 세션 대신 DemoData의 가짜 세션을 보여 준다(--demo)</summary>
+    public bool IsDemo { get; init; }
 
     /// <summary>마우스가 오버레이에 올라오면 클릭에 앞서 데스크톱 앱의 접근성 정보를 깨워 둔다</summary>
     private void Card_MouseEnter(object sender, MouseEventArgs e) => WarmDesktop();
@@ -393,7 +408,11 @@ public partial class MainWindow : Window
         ThemeDarkItem.IsChecked = mode == OverlayTheme.Dark;
         ThemeLightItem.IsChecked = mode == OverlayTheme.Light;
         ThemeSystemItem.IsChecked = mode == OverlayTheme.System;
-        HeaderCollapseItem.Header = IsCollapsed ? "목록 펼치기" : "목록 접기";
+        HeaderCollapseItem.Header = IsCollapsed ? Loc.T("목록 펼치기", "Expand list") : Loc.T("목록 접기", "Collapse list");
+        var language = _store.State.Language;
+        LangKoItem.IsChecked = language == UiLanguage.Korean;
+        LangEnItem.IsChecked = language == UiLanguage.English;
+        LangSystemItem.IsChecked = language == UiLanguage.System;
     }
 
     private void ThemeItem_Click(object sender, RoutedEventArgs e)
@@ -433,11 +452,23 @@ public partial class MainWindow : Window
         bool isLight = ClaudeSessionOverlay.Theme.IsLight;
         // 누르면 바뀔 모습을 보여 준다: 다크일 때 해, 라이트일 때 달
         ThemeToggleButton.Content = isLight ? MoonGlyph : SunGlyph;
-        ThemeToggleButton.ToolTip = isLight ? "다크 모드로" : "라이트 모드로";
+        ThemeToggleButton.ToolTip = isLight ? Loc.T("다크 모드로", "Switch to dark") : Loc.T("라이트 모드로", "Switch to light");
 
         bool isVoiceOn = _store.State.IsVoiceOn;
         VoiceToggle.IsChecked = isVoiceOn;
-        VoicePanel.ToolTip = isVoiceOn ? "음성 알림(TTS) 켜짐: 눌러서 끄기" : "음성 알림(TTS) 꺼짐: 눌러서 켜기";
+        VoicePanel.ToolTip = isVoiceOn ? Loc.T("음성 알림(TTS) 켜짐: 눌러서 끄기", "Voice alerts (TTS) on: click to turn off")
+                                       : Loc.T("음성 알림(TTS) 꺼짐: 눌러서 켜기", "Voice alerts (TTS) off: click to turn on");
+    }
+
+    private void LanguageItem_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not MenuItem { Tag: string tag } || !Enum.TryParse<UiLanguage>(tag, out var language)) return;
+        _store.State.Language = language;
+        _store.SaveState();
+        Loc.Apply(language);
+        _lastFiveHour = null;
+        ApplyCollapsed();
+        ForceRefresh();
     }
 
     private void HeaderCollapse_Click(object sender, RoutedEventArgs e) => ToggleCollapsed();
@@ -508,7 +539,7 @@ public partial class MainWindow : Window
         bool isCollapsed = _store.State.IsCollapsed;
         Body.Visibility = isCollapsed ? Visibility.Collapsed : Visibility.Visible;
         CollapseButton.Content = isCollapsed ? "▾" : "▴";
-        CollapseButton.ToolTip = isCollapsed ? "펼치기" : "접기 (머리 줄만 보기)";
+        CollapseButton.ToolTip = isCollapsed ? Loc.T("펼치기", "Expand") : Loc.T("접기 (머리 줄만 보기)", "Collapse (header only)");
     }
 
     private void Collapse_Click(object sender, RoutedEventArgs e) => ToggleCollapsed();

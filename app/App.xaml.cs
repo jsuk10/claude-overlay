@@ -15,11 +15,12 @@ public partial class App : Application
         // 진단용: 오버레이가 지금 보여줄 목록을 글로 남기고 끝낸다
         if (e.Args.Contains("--dump"))
         {
+            SessionStore.IgnoreMod = e.Args.Contains("--no-mod");
             var dumpStore = new SessionStore();
             var favorites = dumpStore.LoadFavorites();
             var sessions = dumpStore.LoadSessions(favorites);
             var shown = ClaudeSessionOverlay.MainWindow.BuildRows(sessions, favorites).Select(r =>
-                $"[{r.State}] {r.Title} | {r.StatusText} · {r.Detail} | pid={r.Info.Pid} host={r.Info.HostSessionId}"
+                $"[{r.State}] {r.Title} | {r.StatusText} · {r.Detail} | ctx={r.ContextLabel} ({r.Info.Measure?.ContextTokens:0}/{r.Info.Measure?.CompactLimit:0}) week={r.Info.Measure?.WeeklyPercent} 5h={r.Info.Measure?.FiveHourPercent} compact={r.ShowCompact}"
                 + string.Concat(r.Tasks.Select(t => $"\n    {t.Label} ({t.StatusText})")));
             var all = sessions.Select(s =>
                 $"{s.Status,-8} alive={s.IsAlive} seen={s.SeenAt:0} done={s.LastCompletedAt:0} parent={s.ParentHostSessionId} | {s.Title}");
@@ -45,6 +46,30 @@ public partial class App : Application
                     $"session={e.Args[1]} found={target is not null} pane={pane?.ToString() ?? "(첫 화면, 딥 링크)"} promptFocused={t.Result} front={frontMs}ms focus={watch.ElapsedMilliseconds}ms");
                 Shutdown();
             }));
+            return;
+        }
+
+        // 시연용: 가짜 세션으로 띄운다. --theme dark|light, --lang en|ko, --snapshot <png>면 저장하고 끝낸다(실행 중인 오버레이와 별개)
+        if (e.Args.Contains("--demo"))
+        {
+            string? Arg(string name) => Array.IndexOf(e.Args, name) is int i and >= 0 && i + 1 < e.Args.Length ? e.Args[i + 1] : null;
+            SessionStore.IsReadOnly = true;
+            var demoStore = new SessionStore();
+            ClaudeSessionOverlay.Theme.Apply(Arg("--theme") == "light" ? OverlayTheme.Light : OverlayTheme.Dark);
+            var demo = new MainWindow(demoStore, applyTheme: false) { IsDemo = true };
+            if (Arg("--lang") is string lang) Loc.Apply(lang == "ko" ? UiLanguage.Korean : UiLanguage.English);
+            demo.Start();
+            if (Arg("--snapshot") is string output)
+            {
+                var shot = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(2) };
+                shot.Tick += (_, _) =>
+                {
+                    shot.Stop();
+                    demo.SaveSnapshot(output);
+                    Shutdown();
+                };
+                shot.Start();
+            }
             return;
         }
 

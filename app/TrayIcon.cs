@@ -23,33 +23,45 @@ internal sealed class TrayIcon : IDisposable
     {
         _window = window;
 
-        _toggleItem = new Forms.ToolStripMenuItem("오버레이 숨기기", null, (_, _) => _window.ToggleUserHidden());
-        _collapseItem = new Forms.ToolStripMenuItem("목록 접기", null, (_, _) => _window.ToggleCollapsed());
-        _autostartItem = new Forms.ToolStripMenuItem("Windows 시작 시 실행", null, (_, _) => ToggleAutostart())
+        _toggleItem = new Forms.ToolStripMenuItem("", null, (_, _) => _window.ToggleUserHidden());
+        _collapseItem = new Forms.ToolStripMenuItem("", null, (_, _) => _window.ToggleCollapsed());
+        _autostartItem = new Forms.ToolStripMenuItem("", null, (_, _) => ToggleAutostart())
         {
             Checked = IsAutostart(),
         };
 
-        _soundItem = new Forms.ToolStripMenuItem("알림 소리", null, (_, _) => _window.ToggleSound());
-        _voiceItem = new Forms.ToolStripMenuItem("음성으로 알려주기 (완료·확인 필요·컨텍스트)", null, (_, _) => _window.ToggleVoice());
+        _soundItem = new Forms.ToolStripMenuItem("", null, (_, _) => _window.ToggleSound());
+        _voiceItem = new Forms.ToolStripMenuItem("", null, (_, _) => _window.ToggleVoice());
 
         var menu = new Forms.ContextMenuStrip();
         menu.Items.Add(_toggleItem);
         menu.Items.Add(_collapseItem);
-        menu.Items.Add(new Forms.ToolStripMenuItem("확인한 세션 다시 보기", null, (_, _) => _window.ShowSeenAgain()));
-        menu.Items.Add(new Forms.ToolStripMenuItem("위치 초기화", null, (_, _) => _window.ResetPosition()));
+        var showSeenItem = new Forms.ToolStripMenuItem("", null, (_, _) => _window.ShowSeenAgain());
+        var resetItem = new Forms.ToolStripMenuItem("", null, (_, _) => _window.ResetPosition());
+        var testItem = new Forms.ToolStripMenuItem("", null, (_, _) => _window.TestNotice());
+        var quitItem = new Forms.ToolStripMenuItem("", null, (_, _) => _window.ExitApp());
+        menu.Items.Add(showSeenItem);
+        menu.Items.Add(resetItem);
         menu.Items.Add(new Forms.ToolStripSeparator());
         menu.Items.Add(_soundItem);
         menu.Items.Add(_voiceItem);
-        menu.Items.Add(new Forms.ToolStripMenuItem("알림 들어보기", null, (_, _) => _window.TestNotice()));
+        menu.Items.Add(testItem);
         menu.Items.Add(new Forms.ToolStripSeparator());
         menu.Items.Add(_autostartItem);
         menu.Items.Add(new Forms.ToolStripSeparator());
-        menu.Items.Add(new Forms.ToolStripMenuItem("종료", null, (_, _) => _window.ExitApp()));
+        menu.Items.Add(quitItem);
         menu.Opening += (_, _) =>
         {
-            _toggleItem.Text = _window.IsUserHidden ? "오버레이 보이기" : "오버레이 숨기기";
-            _collapseItem.Text = _window.IsCollapsed ? "목록 펼치기" : "목록 접기";
+            // 언어가 바뀌었을 수 있으니 열 때마다 문구를 채운다
+            _toggleItem.Text = _window.IsUserHidden ? Loc.T("오버레이 보이기", "Show overlay") : Loc.T("오버레이 숨기기", "Hide overlay");
+            _collapseItem.Text = _window.IsCollapsed ? Loc.T("목록 펼치기", "Expand list") : Loc.T("목록 접기", "Collapse list");
+            showSeenItem.Text = Loc.T("확인한 세션 다시 보기", "Show seen sessions again");
+            resetItem.Text = Loc.T("위치 초기화", "Reset position");
+            _soundItem.Text = Loc.T("알림 소리", "Notification sound");
+            _voiceItem.Text = Loc.T("음성으로 알려주기 (완료·확인 필요·컨텍스트)", "Voice alerts (done · needs input · context)");
+            testItem.Text = Loc.T("알림 들어보기", "Test notification");
+            _autostartItem.Text = Loc.T("Windows 시작 시 실행", "Start with Windows");
+            quitItem.Text = Loc.T("종료", "Quit");
             _soundItem.Checked = _window.IsSoundOn;
             _voiceItem.Checked = _window.IsVoiceOn;
         };
@@ -57,7 +69,7 @@ internal sealed class TrayIcon : IDisposable
         _icon = new Forms.NotifyIcon
         {
             Icon = BuildIcon(),
-            Text = "Claude 세션 오버레이",
+            Text = Loc.T("Claude 세션 오버레이", "Claude Session Overlay"),
             Visible = true,
             ContextMenuStrip = menu,
         };
@@ -66,7 +78,7 @@ internal sealed class TrayIcon : IDisposable
             if (e.Button == Forms.MouseButtons.Left) _window.ToggleUserHidden();
         };
 
-        _window.SummaryChanged += summary => _icon.Text = Truncate($"Claude 세션 — {summary}", 63);
+        _window.SummaryChanged += summary => _icon.Text = Truncate(Loc.T($"Claude 세션 — {summary}", $"Claude Sessions — {summary}"), 63);
     }
 
     private static string Truncate(string text, int max) => text.Length <= max ? text : text[..(max - 1)] + "…";

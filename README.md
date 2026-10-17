@@ -1,50 +1,95 @@
-# Claude 세션 오버레이
+**English** | [한국어](README.ko.md)
 
-화면 위에 떠서 지금 돌고 있는 Claude Code 세션을 보여주는 작은 창과, 각 세션의 프롬프트 위에 한 줄 HUD를 그리는 Mod(`session-hud`)입니다.
+# Claude Code Session Overlay for Windows
 
-## 구성
+An always-on-top Windows overlay that shows every running **Claude Code** session at a glance — CLI and the Claude desktop app's Code tab alike. See which sessions are working, which need your input, how full each context window is, and how much of your weekly and 5-hour session limits you have left. Click a session to jump straight to it.
 
-| 폴더 | 내용 |
+<p align="center">
+  <img src="docs/screenshot-en-dark.png" alt="Claude Code session overlay, dark theme" width="340">
+  <img src="docs/screenshot-en-light.png" alt="Claude Code session overlay, light theme" width="340">
+</p>
+
+> Not affiliated with or endorsed by Anthropic. "Claude" and "Claude Code" are trademarks of Anthropic.
+
+## Features
+
+- **Live session list** — working, waiting for input (permission prompts, questions) and finished-but-unseen sessions. Sessions you have already looked at are hidden; ★ favorites always stay.
+- **Click to jump** — brings the session to the front. For desktop-app sessions shown in split view, focus moves to that pane's prompt box instead of replacing the first pane.
+- **Context at a glance** — `46%` next to each session, measured against the **auto-compact threshold** (100% = compaction happens), colored like the Claude desktop usage meter: blue < 75%, yellow < 90%, red ≥ 90%.
+- **Usage limits** — weekly usage in the header and the 5-hour session limit in the footer.
+- **Background tasks** — background subagents, background shells and side sessions are folded under their parent session (`▸ 3`), click to expand.
+- **Alerts** — a chime plus a short voice alert (Windows built-in TTS) when a session finishes, needs input, or its context passes 90%. Muted while the screen is locked, the PC is asleep or the display is off.
+- **Stays out of the way** — hides itself when a fullscreen app or game is in front, minimizes to the tray, collapses to a single header line, remembers its position, and can start with Windows.
+- **Tells repos apart** — the path is shortened to `drive\…\last two folders`, so the same repo cloned on `C:` and `D:` is easy to tell apart.
+- **Dark / light theme and Korean / English UI** — toggle the theme in the footer; pick theme and language from the header's right-click menu.
+
+## Requirements
+
+- Windows 10 or 11
+- [.NET 9 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/9.0) (the SDK to build from source)
+- Claude Code (CLI) and/or the Claude desktop app
+
+## Install
+
+```powershell
+git clone https://github.com/jsuk10/claude-overlay.git
+cd claude-overlay
+dotnet publish app -c Release -o bin
+.\bin\ClaudeSessionOverlay.exe
+```
+
+Turn on **Start with Windows** from the tray icon's menu if you want it at every login.
+
+## How it works
+
+The overlay only **reads local files** that Claude Code and the Claude desktop app already write. It makes no network requests and never touches your credentials.
+
+| Data | Source |
 | --- | --- |
-| `bin\ClaudeSessionOverlay.exe` | 오버레이 실행 파일(.NET 9 데스크톱 런타임 필요) |
-| `app\` | 오버레이 소스(C# WPF) |
-| `mod\session-hud\` | Claude Mod 소스. `~/.claude/settings.json`의 `env.CLAUDE_CODE_PLUGIN_DIRS`가 이 폴더를 가리킨다 |
+| Sessions, status (working / idle / waiting for input) | `~/.claude/sessions/<pid>.json` |
+| Model, context tokens, background tasks | Session transcripts `~/.claude/projects/<project>/<session>.jsonl` |
+| Context window, auto-compact threshold | `~/.claude/cache/model-catalog/*.json`, `autoCompactWindow` in `~/.claude/settings.json` |
+| Weekly and 5-hour usage | `plan-usage-history.json` written by the Claude desktop app |
+| Titles, split-view layout | Claude desktop app session files and `claude_desktop_config.json` |
 
-## 오버레이
+Overlay settings (seen sessions, favorites, position, theme, language) are stored in `~/.claude/session-hud/`.
 
-- **보이는 세션**: 작업 중 · 입력 대기 · 끝났는데 아직 확인하지 않은 세션. 확인한 세션(눌러서 열었거나, 그 세션에 다시 프롬프트를 보냈거나, 데스크톱 앱에서 그 세션을 본 경우)은 숨긴다. ★ 즐겨찾기한 세션은 항상 보인다.
-- **줄을 누르면** 그 세션을 앞으로 가져온다. 데스크톱 앱 세션은 `claude://code/continue?session=…` 앱 창을 앞으로 가져온다. 그 세션이 이미 분할 화면 어딘가에 떠 있으면 딥 링크 없이 그 화면의 입력창으로 포커스를 옮기고(화면 머리의 제목을 UI Automation으로 찾는다), 떠 있지 않으면 `claude://code/continue?session=…` 딥 링크로 첫 번째 화면에 연다(딥 링크는 화면을 고를 수 없다). 터미널 세션은 그 세션을 띄운 터미널 창을 앞으로 올린다.
-- **줄 모양**: 첫 줄은 제목 · `▸ 개수`(백그라운드 작업) · `93%`(컨텍스트) · `⇣`(압축) · ☆. 컨텍스트 %는 **자동 압축 기준**이라 100%가 되면 압축된다(모델 창 기준이 아님, 마우스를 올리면 둘 다 보인다). 둘째 줄은 상태 · 모델 · 비용 · 경로. 경로는 `드라이브\…\마지막 두 폴더`로 줄여서, 같은 저장소를 C:·D:에 둬도 구분된다(전체 경로는 줄에 마우스를 올리면 보인다).
-- **압축 버튼 `⇣`**: % 바로 옆에 항상 있고, 90% 이상이면 빨갛게 바뀐다. 누르면 그 세션의 Mod에 압축을 요청하고(`requests\<세션id>.json`), 턴이 끝나 있으면 바로, 도는 중이면 끝난 뒤 압축한다. 요청을 처리할 줄 아는 Mod(schema 2)로 시작한 세션에만 보인다.
-- **맨 아래 줄**: `☀/☾`(라이트·다크 바로 바꾸기) · **세션 한도**(5시간 세션 한도 바 · % · `reset 1시간 40분`) · `TTS` 스위치(음성 알림 켜기·끄기, 글자를 눌러도 된다). 목록을 접어도 보인다.
-- **알림**: 세션이 끝나면(2.5초 넘게 대기로 머물 때), 입력을 기다리기 시작하면, 컨텍스트가 90%를 넘으면 짧은 소리와 한국어 음성(Windows 기본 음성)으로 알린다. 트레이 메뉴의 알림 소리 · 음성으로 알려주기로 끄고, 알림 들어보기로 시험한다. 화면 잠금 · 로그오프 · 절전 · 모니터 꺼짐 중에는 울리지 않고, 돌아온 뒤 15초 동안도 조용히 있다(밀린 알림이 한꺼번에 울리지 않게).
-- **오른쪽 클릭**: 열기 · 확인 처리(숨기기) · 즐겨찾기 · 폴더 열기
-- **백그라운드 작업**(백그라운드 서브에이전트, 백그라운드 셸, 이 세션이 띄운 파생 세션)은 상위 세션 줄의 `▸ 개수` 칩에 접혀 있고, 칩을 누르면 상위 세션 바로 아래에 펼쳐진다(세션마다 펼침 상태를 기억).
-- **전체 화면**(게임, 영상, 프레젠테이션)이 앞에 있으면 저절로 숨고, 빠져나오면 다시 나타난다.
-- **–** 는 트레이로 숨기기, **✕** 는 종료. 트레이 아이콘을 왼쪽 클릭하면 보이기/숨기기를 오가고, 오른쪽 클릭 메뉴에 확인한 세션 다시 보기 · 위치 초기화 · 알림 소리 · 음성으로 알려주기 · 알림 들어보기 · Windows 시작 시 실행 · 종료가 있다.
-- 머리 줄을 끌어 옮기면 위치를 기억한다.
-- **상단바 오른쪽 클릭**: 테마(다크 · 라이트 · Windows 설정 따라가기) · 목록 접기/펼치기 · 확인한 세션 다시 보기 · 트레이로 숨기기.
+## Optional: the `session-hud` mod
 
-진단: `ClaudeSessionOverlay.exe --dump`는 지금 보일 목록을 `~/.claude/session-hud/dump.txt`에 글로 남긴다.
+The overlay works on its own. Installing the bundled Claude Code mod adds:
 
-## 데이터 출처
-
-1. `~/.claude/sessions/<pid>.json` — Claude Code가 실행 중인 모든 세션에 대해 직접 쓰는 파일(상태 busy/idle, 제목, 데스크톱 세션 id). Mod가 없어도 이것만으로 동작한다.
-2. `~/.claude/session-hud/sessions/<세션id>.json` — `session-hud` Mod가 쓴다. 입력 대기(권한 확인·질문), 모델·컨텍스트·비용, 백그라운드 작업, 마지막 프롬프트 시각을 보탠다.
-3. 데스크톱 앱의 `claude-code-sessions\…\local_<id>.json` — 제목, 마지막으로 본 시각, 파생 세션의 부모.
-4. `~/.claude/session-hud/favorites.json` — 즐겨찾기(Mod의 ☆ 버튼과 오버레이가 같이 쓴다). `overlay-state.json` — 확인 시각과 창 위치.
-
-## Mod: session-hud
-
-프롬프트 바로 위 한 줄:
+- **Cost** per session and the **reset time** of the usage limits
+- A **compact button** (`⇣`) in the overlay that runs `/compact` in that session
+- A one-line HUD above the prompt inside Claude Code (its labels are currently Korean: `압축` = compact, `주간` = week):
 
 ```
 opus-5-5  ctx ████▎      42%  67k/160k  ⇣압축  $1.23        주간 ██▌      31%  ☆
 ```
 
-- 컨텍스트는 자동 압축 기준(`67k/160k`의 160k가 압축이 일어나는 지점)으로 잰다. 90%를 넘으면 한 번 알림이 뜬다.
-- 컨텍스트와 주간 사용량은 바로 그린다. 색은 Claude 데스크톱 우하단 사용량 링과 같다: 75% 미만 파랑(#2A78D6), 90% 미만 노랑(#FAB219), 그 이상 빨강(#D03B3B)
-- `⇣압축`은 `/compact`와 같다(턴이 도는 중에는 거절되고 알림이 뜬다)
-- `☆`를 누르면 즐겨찾기가 되어 오버레이에 항상 보인다
+To load it in every new session, point `CLAUDE_CODE_PLUGIN_DIRS` at the mod folder in `~/.claude/settings.json`:
 
-Mod는 새로 시작하는 세션부터 로드된다. 끄려면 `~/.claude/settings.json`의 `env.CLAUDE_CODE_PLUGIN_DIRS`를 지운다(수정 전 파일은 `settings.json.bak-session-hud`).
+```json
+{
+  "env": { "CLAUDE_CODE_PLUGIN_DIRS": "C:\\path\\to\\claude-overlay\\mod\\session-hud" }
+}
+```
+
+## Usage tips
+
+- **Right-click a session** — open, mark as seen, favorite, open folder.
+- **Right-click the header** — theme, language, collapse, show seen sessions again, hide to tray.
+- **Tray icon** — left-click shows/hides the overlay; the menu has sound/voice toggles, a test alert, reset position and start with Windows.
+- `ClaudeSessionOverlay.exe --demo` shows the overlay with made-up sessions (`--theme light`, `--lang ko`).
+- `ClaudeSessionOverlay.exe --dump` writes what the overlay currently sees to `~/.claude/session-hud/dump.txt`.
+
+## Project layout
+
+| Folder | Contents |
+| --- | --- |
+| `app/` | The overlay (C#, WPF, .NET 9) |
+| `mod/session-hud/` | The optional Claude Code mod (TypeScript) |
+| `docs/` | Screenshots |
+
+## License
+
+[MIT](LICENSE)

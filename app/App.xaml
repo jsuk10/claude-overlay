@@ -11,6 +11,8 @@
         <SolidColorBrush x:Key="HoverBrush" Color="#1FFFFFFF"/>
         <SolidColorBrush x:Key="AccentBrush" Color="#D97757"/>
         <SolidColorBrush x:Key="StarBrush" Color="#E8B931"/>
+        <!-- 언어 문구 기본값(Loc.Apply가 덮어쓴다) -->
+        <system:String x:Key="L_AppTitle" xmlns:system="clr-namespace:System;assembly=System.Runtime">Claude 세션</system:String>
         <SolidColorBrush x:Key="TaskTextBrush" Color="#D6D2CB"/>
         <SolidColorBrush x:Key="ChipBrush" Color="#14FFFFFF"/>
         <SolidColorBrush x:Key="ChipHoverBrush" Color="#2EFFFFFF"/>
