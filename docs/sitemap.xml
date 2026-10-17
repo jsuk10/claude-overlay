@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://jsuk10.github.io/claude-overlay/</loc>
+    <lastmod>2026-10-18</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jsuk10.github.io/claude-overlay/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://jsuk10.github.io/claude-overlay/ko/"/>
+  </url>
+  <url>
+    <loc>https://jsuk10.github.io/claude-overlay/ko/</loc>
+    <lastmod>2026-10-18</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jsuk10.github.io/claude-overlay/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://jsuk10.github.io/claude-overlay/ko/"/>
+  </url>
+</urlset>

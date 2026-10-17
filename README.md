@@ -1,4 +1,4 @@
-**English** | [한국어](README.ko.md)
+**English** | [한국어](README.ko.md) | [Website](https://jsuk10.github.io/claude-overlay/)
 
 # Claude Code Session Overlay for Windows
 
@@ -92,7 +92,7 @@ To load it in every new session, point `CLAUDE_CODE_PLUGIN_DIRS` at the mod fold
 | --- | --- |
 | `app/` | The overlay (C#, WPF, .NET 9) |
 | `mod/session-hud/` | The optional Claude Code mod (TypeScript) |
-| `docs/` | Screenshots |
+| `docs/` | Screenshots and the [project website](https://jsuk10.github.io/claude-overlay/) |
 
 ## License
 

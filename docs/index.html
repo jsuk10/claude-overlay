@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code Session Overlay for Windows: monitor sessions, context and usage limits</title>
+<meta name="description" content="Free, open-source always-on-top Windows overlay for Claude Code. See which sessions are working or waiting for input, context window usage, weekly and 5-hour usage limits, and jump to any session in one click.">
+<meta name="keywords" content="Claude Code, Claude Code overlay, Claude Code session monitor, Claude usage limit, context window, Windows overlay, Claude desktop app, AI coding agent">
+<link rel="canonical" href="https://jsuk10.github.io/claude-overlay/">
+<link rel="alternate" hreflang="en" href="https://jsuk10.github.io/claude-overlay/">
+<link rel="alternate" hreflang="ko" href="https://jsuk10.github.io/claude-overlay/ko/">
+<link rel="alternate" hreflang="x-default" href="https://jsuk10.github.io/claude-overlay/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Claude Session Overlay">
+<meta property="og:title" content="Claude Code Session Overlay for Windows">
+<meta property="og:description" content="Always-on-top overlay that shows every running Claude Code session, its context usage and your usage limits.">
+<meta property="og:url" content="https://jsuk10.github.io/claude-overlay/">
+<meta property="og:image" content="https://jsuk10.github.io/claude-overlay/screenshot-en-dark.png">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="site.css">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0XK79SYGFF"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-0XK79SYGFF', { anonymize_ip: true });
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[data-track]');
+    if (a) gtag('event', a.getAttribute('data-track'), { link_url: a.href });
+  });
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Claude Session Overlay",
+  "alternateName": "Claude Code Session Overlay",
+  "description": "Always-on-top Windows overlay that shows every running Claude Code session, its context window usage and your weekly and 5-hour usage limits.",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Windows 10, Windows 11",
+  "softwareVersion": "0.1.0",
+  "license": "https://opensource.org/licenses/MIT",
+  "url": "https://jsuk10.github.io/claude-overlay/",
+  "downloadUrl": "https://github.com/jsuk10/claude-overlay/releases/latest",
+  "codeRepository": "https://github.com/jsuk10/claude-overlay",
+  "screenshot": "https://jsuk10.github.io/claude-overlay/screenshot-en-dark.png",
+  "inLanguage": ["en", "ko"],
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "author": { "@type": "Person", "name": "jsuk10", "url": "https://github.com/jsuk10" }
+}
+</script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="./">Claude Session Overlay</a>
+    <nav>
+      <a href="ko/" hreflang="ko" lang="ko">한국어</a>
+      <a href="https://github.com/jsuk10/claude-overlay" data-track="github_click">GitHub</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="hero">
+      <h1>Every Claude Code session, at a glance</h1>
+      <p class="lead">An always-on-top Windows overlay that shows which Claude Code sessions are working, which need your input, how full each context window is, and how much of your usage limits is left. Click a session to jump straight to it.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://github.com/jsuk10/claude-overlay/releases/latest" data-track="download_click">Download for Windows</a>
+        <a class="btn" href="https://github.com/jsuk10/claude-overlay" data-track="github_click">View on GitHub</a>
+      </div>
+      <p class="meta">Free and open source (MIT) · Windows 10/11 x64 · No .NET install needed</p>
+      <div class="shots">
+        <img src="screenshot-en-dark.png" width="340" height="315" alt="Claude Code session overlay, dark theme, showing four sessions with context percentages and usage limits">
+        <img src="screenshot-en-light.png" width="340" height="315" alt="Claude Code session overlay, light theme" loading="lazy">
+      </div>
+    </div>
+
+    <section>
+      <h2>Features</h2>
+      <div class="features">
+        <div class="card"><h3>Live session list</h3><p>Working, waiting for input (permission prompts, questions) and finished-but-unseen sessions from the CLI and the Claude desktop app's Code tab. ★ favorites always stay.</p></div>
+        <div class="card"><h3>Click to jump</h3><p>Brings the session to the front. In the desktop app's split view, focus moves to that pane's prompt box.</p></div>
+        <div class="card"><h3>Context at a glance</h3><p>Context usage per session, measured against the auto-compact threshold, colored like the desktop usage meter.</p></div>
+        <div class="card"><h3>Usage limits</h3><p>Weekly usage in the header and the 5-hour session limit in the footer.</p></div>
+        <div class="card"><h3>Background tasks</h3><p>Background subagents, shells and side sessions are folded under their parent session.</p></div>
+        <div class="card"><h3>Alerts</h3><p>A chime and a short voice alert when a session finishes, needs input or nears compaction. Muted while locked, asleep or with the display off.</p></div>
+        <div class="card"><h3>Stays out of the way</h3><p>Hides behind fullscreen apps and games, minimizes to the tray, collapses to one line, starts with Windows.</p></div>
+        <div class="card"><h3>Dark / light, English / Korean</h3><p>Toggle the theme in the footer; pick theme and language from the header's right-click menu.</p></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Install</h2>
+      <ol>
+        <li>Download <code>ClaudeSessionOverlay-v*-win-x64.zip</code> from the <a href="https://github.com/jsuk10/claude-overlay/releases/latest" data-track="download_click">latest release</a>.</li>
+        <li>Unzip it anywhere and run <code>ClaudeSessionOverlay.exe</code>.</li>
+        <li>Optional: turn on <strong>Start with Windows</strong> from the tray icon's menu.</li>
+      </ol>
+      <p>Windows SmartScreen may warn about an unsigned app the first time; choose <strong>More info → Run anyway</strong>. To build from source:</p>
+      <pre><code>git clone https://github.com/jsuk10/claude-overlay.git
+cd claude-overlay
+dotnet publish app -c Release -o bin</code></pre>
+    </section>
+
+    <section>
+      <h2>How it works</h2>
+      <p>The overlay only reads local files that Claude Code and the Claude desktop app already write. It makes no network requests and never touches your credentials.</p>
+      <div class="table-scroll">
+      <table>
+        <tr><th>Data</th><th>Source</th></tr>
+        <tr><td>Sessions and status</td><td><code>~/.claude/sessions/&lt;pid&gt;.json</code></td></tr>
+        <tr><td>Model, context tokens, background tasks</td><td><code>~/.claude/projects/&lt;project&gt;/&lt;session&gt;.jsonl</code></td></tr>
+        <tr><td>Context window, auto-compact threshold</td><td><code>~/.claude/cache/model-catalog/*.json</code>, <code>~/.claude/settings.json</code></td></tr>
+        <tr><td>Weekly and 5-hour usage</td><td><code>plan-usage-history.json</code> from the Claude desktop app</td></tr>
+      </table>
+      </div>
+      <p>An optional bundled Claude Code mod, <code>session-hud</code>, adds per-session cost, usage-limit reset times and a compact button.</p>
+    </section>
+
+    <section>
+      <h2>FAQ</h2>
+      <details><summary>How do I see how much context a Claude Code session has used?</summary><p>The overlay shows a percentage next to each session, measured against the point where Claude Code auto-compacts the conversation. Blue is under 75%, yellow under 90%, red at 90% and above.</p></details>
+      <details><summary>Can I see my Claude weekly and 5-hour usage limits on Windows?</summary><p>Yes. The header shows weekly usage and the footer shows the 5-hour session limit, read from the Claude desktop app's local usage history.</p></details>
+      <details><summary>Does it work with both the Claude Code CLI and the desktop app?</summary><p>Yes. CLI sessions in any terminal and Code-tab sessions in the Claude desktop app appear in the same list.</p></details>
+      <details><summary>Is there a macOS version?</summary><p>Not yet. The overlay is Windows-only for now.</p></details>
+    </section>
+  </main>
+
+  <footer>
+    MIT License · <a href="https://github.com/jsuk10/claude-overlay">github.com/jsuk10/claude-overlay</a><br>
+    Not affiliated with or endorsed by Anthropic. "Claude" and "Claude Code" are trademarks of Anthropic.
+  </footer>
+</div>
+</body>
+</html>

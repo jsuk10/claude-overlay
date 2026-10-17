@@ -1,4 +1,4 @@
-[English](README.md) | **한국어**
+[English](README.md) | **한국어** | [소개 페이지](https://jsuk10.github.io/claude-overlay/ko/)
 
 # Claude Code 세션 오버레이 (Windows)
 
@@ -92,7 +92,7 @@ opus-5-5  ctx ████▎      42%  67k/160k  ⇣압축  $1.23        주간
 | --- | --- |
 | `app/` | 오버레이(C#, WPF, .NET 9) |
 | `mod/session-hud/` | 선택 사항인 Claude Code Mod(TypeScript) |
-| `docs/` | 스크린샷 |
+| `docs/` | 스크린샷과 [소개 페이지](https://jsuk10.github.io/claude-overlay/ko/) |
 
 ## 라이선스
 
