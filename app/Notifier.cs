@@ -133,6 +133,8 @@ internal sealed class Notifier : IDisposable
         _voice?.SpeakAsync(Overview.TestSpoken);
     }
 
+    public void SayVoiceOn() => _voice?.SpeakAsync(Overview.VoiceOnSpoken);
+
     private void PlayChime()
     {
         try { _chime?.Play(); }

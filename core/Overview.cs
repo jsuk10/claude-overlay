@@ -146,6 +146,8 @@ public static partial class Overview
 
     public static string TestSpoken => Loc.T("알림 테스트", "Notification test");
 
+    public static string VoiceOnSpoken => Loc.T("TTS 켜짐", "TTS on");
+
     /// <summary>읽기 좋은 길이로 자른 세션 이름: 기호를 빼고 앞쪽 몇 단어만</summary>
     private static string SpokenName(SessionInfo session)
     {

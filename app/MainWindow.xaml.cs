@@ -418,7 +418,7 @@ public partial class MainWindow : Window
     {
         _store.State.IsVoiceOn = !_store.State.IsVoiceOn;
         _store.SaveState();
-        if (_store.State.IsVoiceOn) _notifier.Test();
+        if (_store.State.IsVoiceOn) _notifier.SayVoiceOn();
         ShowFooterButtons();
     }
 

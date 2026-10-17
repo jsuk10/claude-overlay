@@ -41,4 +41,6 @@ internal sealed class Notifier(SessionStore store, IPlatform platform)
         platform.PlayChime();
         platform.Speak(Overview.TestSpoken);
     }
+
+    public void SayVoiceOn() => platform.Speak(Overview.VoiceOnSpoken);
 }
