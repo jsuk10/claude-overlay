@@ -16,3 +16,4 @@ core/bin/
 core/obj/
 avalonia/bin/
 avalonia/obj/
+.wrangler/
