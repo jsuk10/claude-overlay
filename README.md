@@ -1,4 +1,4 @@
-**English** | [한국어](README.ko.md) | [Website](https://jsuk10.github.io/claude-overlay/)
+**English** | [한국어](README.ko.md) | [Website](https://claude-overlay.jsuk.cloud/)
 
 # Claude Code Session Overlay for Windows
 
@@ -113,7 +113,7 @@ To load it in every new session, point `CLAUDE_CODE_PLUGIN_DIRS` at the mod fold
 | `avalonia/` | Cross-platform overlay for macOS (Avalonia, .NET 9) |
 | `scripts/` | `make-macos-app.sh`: builds the macOS `.app` |
 | `mod/session-hud/` | The optional Claude Code mod (TypeScript) |
-| `docs/` | Screenshots and the [project website](https://jsuk10.github.io/claude-overlay/) |
+| `docs/` | Screenshots and the [project website](https://claude-overlay.jsuk.cloud/) |
 
 ## License
 

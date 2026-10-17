@@ -1,4 +1,4 @@
-[English](README.md) | **한국어** | [소개 페이지](https://jsuk10.github.io/claude-overlay/ko/)
+[English](README.md) | **한국어** | [소개 페이지](https://claude-overlay.jsuk.cloud/ko/)
 
 # Claude Code 세션 오버레이 (Windows)
 
@@ -113,7 +113,7 @@ opus-5-5  ctx ████▎      42%  67k/160k  ⇣압축  $1.23        주간
 | `avalonia/` | macOS용 여러 OS 오버레이(Avalonia, .NET 9) |
 | `scripts/` | `make-macos-app.sh`: macOS `.app` 만들기 |
 | `mod/session-hud/` | 선택 사항인 Claude Code Mod(TypeScript) |
-| `docs/` | 스크린샷과 [소개 페이지](https://jsuk10.github.io/claude-overlay/ko/) |
+| `docs/` | 스크린샷과 [소개 페이지](https://claude-overlay.jsuk.cloud/ko/) |
 
 ## 라이선스
 

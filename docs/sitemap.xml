@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://jsuk10.github.io/claude-overlay/</loc>
+    <loc>https://claude-overlay.jsuk.cloud/</loc>
     <lastmod>2026-10-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="en" href="https://jsuk10.github.io/claude-overlay/"/>
-    <xhtml:link rel="alternate" hreflang="ko" href="https://jsuk10.github.io/claude-overlay/ko/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/"/>
   </url>
   <url>
-    <loc>https://jsuk10.github.io/claude-overlay/ko/</loc>
+    <loc>https://claude-overlay.jsuk.cloud/ko/</loc>
     <lastmod>2026-10-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="en" href="https://jsuk10.github.io/claude-overlay/"/>
-    <xhtml:link rel="alternate" hreflang="ko" href="https://jsuk10.github.io/claude-overlay/ko/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/"/>
   </url>
 </urlset>
