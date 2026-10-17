@@ -1,6 +1,7 @@
 # 빌드 결과
 bin/
 obj/
+dist/
 app/bin/
 app/obj/
 *.user

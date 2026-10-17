@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -10,6 +10,10 @@
     <AssemblyName>ClaudeSessionOverlay</AssemblyName>
     <RootNamespace>ClaudeSessionOverlay</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Version>0.1.0</Version>
+    <Product>Claude Session Overlay</Product>
+    <Description>Always-on-top Windows overlay for Claude Code sessions</Description>
+    <Copyright>Copyright (c) 2026 jsuk10</Copyright>
   </PropertyGroup>
 
   <ItemGroup>

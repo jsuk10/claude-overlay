@@ -23,13 +23,19 @@
 - **저장소 구분**: 경로를 `드라이브\…\마지막 두 폴더`로 줄여 보여 줘서, 같은 저장소를 C:와 D:에 둬도 구분됩니다.
 - **다크/라이트 테마, 한국어/영어 화면**: 맨 아래 버튼으로 테마를 바꾸고, 머리 줄 오른쪽 클릭 메뉴에서 테마와 언어를 고릅니다.
 
-## 필요한 것
-
-- Windows 10 또는 11
-- [.NET 9 데스크톱 런타임](https://dotnet.microsoft.com/download/dotnet/9.0) (소스에서 빌드하려면 SDK)
-- Claude Code(CLI) 또는 Claude 데스크톱 앱
-
 ## 설치
+
+Windows 10 또는 11과 Claude Code(CLI) 또는 Claude 데스크톱 앱이 필요합니다.
+
+1. [최신 릴리스](https://github.com/jsuk10/claude-overlay/releases/latest)에서 `ClaudeSessionOverlay-v*-win-x64.zip`을 받습니다.
+2. 아무 곳에나 압축을 풀고 `ClaudeSessionOverlay.exe`를 실행합니다. .NET을 따로 설치할 필요가 없습니다.
+3. 선택: 트레이 아이콘 메뉴에서 **Windows 시작 시 실행**을 켭니다.
+
+서명되지 않은 앱이라 처음 실행할 때 Windows SmartScreen 경고가 뜰 수 있습니다. **추가 정보 → 실행**을 누르면 됩니다.
+
+### 소스에서 빌드
+
+[.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)가 필요합니다.
 
 ```powershell
 git clone https://github.com/jsuk10/claude-overlay.git
@@ -37,8 +43,6 @@ cd claude-overlay
 dotnet publish app -c Release -o bin
 .\bin\ClaudeSessionOverlay.exe
 ```
-
-로그인할 때마다 켜지게 하려면 트레이 아이콘 메뉴에서 **Windows 시작 시 실행**을 켭니다.
 
 ## 동작 방식
 

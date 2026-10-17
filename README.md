@@ -23,13 +23,19 @@ An always-on-top Windows overlay that shows every running **Claude Code** sessio
 - **Tells repos apart** — the path is shortened to `drive\…\last two folders`, so the same repo cloned on `C:` and `D:` is easy to tell apart.
 - **Dark / light theme and Korean / English UI** — toggle the theme in the footer; pick theme and language from the header's right-click menu.
 
-## Requirements
-
-- Windows 10 or 11
-- [.NET 9 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/9.0) (the SDK to build from source)
-- Claude Code (CLI) and/or the Claude desktop app
-
 ## Install
+
+Requires Windows 10 or 11 and Claude Code (CLI) and/or the Claude desktop app.
+
+1. Download `ClaudeSessionOverlay-v*-win-x64.zip` from the [latest release](https://github.com/jsuk10/claude-overlay/releases/latest).
+2. Unzip it anywhere and run `ClaudeSessionOverlay.exe`. No .NET install needed.
+3. Optional: turn on **Start with Windows** from the tray icon's menu.
+
+Windows SmartScreen may warn about an unsigned app the first time; choose **More info → Run anyway**.
+
+### Build from source
+
+Needs the [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0).
 
 ```powershell
 git clone https://github.com/jsuk10/claude-overlay.git
@@ -37,8 +43,6 @@ cd claude-overlay
 dotnet publish app -c Release -o bin
 .\bin\ClaudeSessionOverlay.exe
 ```
-
-Turn on **Start with Windows** from the tray icon's menu if you want it at every login.
 
 ## How it works
 
