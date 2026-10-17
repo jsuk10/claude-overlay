@@ -1,0 +1,6 @@
+{
+  "name": "session-hud",
+  "version": "0.1.0",
+  "description": "프롬프트 위 한 줄 HUD(모델·컨텍스트·압축·비용·주간 사용량·즐겨찾기) + 데스크톱 오버레이용 세션 상태 내보내기",
+  "types": "./types/index.d.ts"
+}

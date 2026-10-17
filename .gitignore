@@ -1,0 +1,10 @@
+# 빌드 결과
+bin/
+obj/
+app/bin/
+app/obj/
+*.user
+.vs/
+
+# Mod를 로드하면 엔진이 만들어 두는 타입 파일
+mod/session-hud/.claude-plugin/types/

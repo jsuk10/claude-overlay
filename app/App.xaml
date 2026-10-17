@@ -1,0 +1,19 @@
+<Application x:Class="ClaudeSessionOverlay.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             ShutdownMode="OnExplicitShutdown">
+    <Application.Resources>
+        <FontFamily x:Key="UiFont">Segoe UI Variable Text, Segoe UI, Malgun Gothic</FontFamily>
+        <SolidColorBrush x:Key="CardBrush" Color="#EE1C1B1A"/>
+        <SolidColorBrush x:Key="CardBorderBrush" Color="#33FFFFFF"/>
+        <SolidColorBrush x:Key="TextBrush" Color="#F2EFEA"/>
+        <SolidColorBrush x:Key="SubtleBrush" Color="#9C978F"/>
+        <SolidColorBrush x:Key="HoverBrush" Color="#1FFFFFFF"/>
+        <SolidColorBrush x:Key="AccentBrush" Color="#D97757"/>
+        <SolidColorBrush x:Key="StarBrush" Color="#E8B931"/>
+        <SolidColorBrush x:Key="TaskTextBrush" Color="#D6D2CB"/>
+        <SolidColorBrush x:Key="ChipBrush" Color="#14FFFFFF"/>
+        <SolidColorBrush x:Key="ChipHoverBrush" Color="#2EFFFFFF"/>
+        <SolidColorBrush x:Key="TrackBrush" Color="#1AFFFFFF"/>
+    </Application.Resources>
+</Application>
