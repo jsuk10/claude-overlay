@@ -44,6 +44,23 @@ dotnet publish app -c Release -o bin
 .\bin\ClaudeSessionOverlay.exe
 ```
 
+## macOS (preview)
+
+A cross-platform build of the overlay lives in `avalonia/` (Avalonia UI, .NET 9) and shares `core/` with the Windows WPF app. It shows the same list and runs as a menu bar app. It has been built for `osx-arm64` and `osx-x64` but **not yet tested on a real Mac**.
+
+Requirements: macOS 11 or later and the [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0).
+
+```bash
+git clone https://github.com/jsuk10/claude-overlay.git
+cd claude-overlay
+./scripts/make-macos-app.sh          # Intel Mac: ./scripts/make-macos-app.sh osx-x64
+open "out/Claude Session Overlay.app"
+```
+
+The script publishes a self-contained build, wraps it in a `.app` (menu bar only, no Dock icon) and ad-hoc signs it. Turn on **Open at login** from the menu bar icon.
+
+Differences from Windows: clicking a desktop-app session always opens it with the `claude://` deep link (no split-view pane focus); clicking a terminal session brings its app (Terminal, iTerm, VS Code …) to the front but not the exact tab; voice alerts use `say`; the overlay appears on every Space but not over fullscreen apps. Desktop-app data is read from `~/Library/Application Support/Claude/`.
+
 ## How it works
 
 The overlay only **reads local files** that Claude Code and the Claude desktop app already write. It makes no network requests and never touches your credentials.
@@ -90,7 +107,10 @@ To load it in every new session, point `CLAUDE_CODE_PLUGIN_DIRS` at the mod fold
 
 | Folder | Contents |
 | --- | --- |
-| `app/` | The overlay (C#, WPF, .NET 9) |
+| `app/` | The Windows overlay (C#, WPF, .NET 9) |
+| `core/` | Shared session reading and list logic (no UI) |
+| `avalonia/` | Cross-platform overlay for macOS (Avalonia, .NET 9) |
+| `scripts/` | `make-macos-app.sh`: builds the macOS `.app` |
 | `mod/session-hud/` | The optional Claude Code mod (TypeScript) |
 | `docs/` | Screenshots and the [project website](https://jsuk10.github.io/claude-overlay/) |
 

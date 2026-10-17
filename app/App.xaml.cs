@@ -12,6 +12,12 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
+        // 언어가 바뀌면 XAML 문구({DynamicResource L_키})를 바로 바꾼다
+        Loc.Changed += () =>
+        {
+            foreach (var key in Loc.Xaml.Keys) Resources[key] = Loc.Get(key);
+        };
+
         // 진단용: 오버레이가 지금 보여줄 목록을 글로 남기고 끝낸다
         if (e.Args.Contains("--dump"))
         {

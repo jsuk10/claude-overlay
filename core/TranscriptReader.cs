@@ -10,7 +10,7 @@ namespace ClaudeSessionOverlay;
 /// 모델·컨텍스트 토큰·백그라운드 작업을 얻는다. Mod 없이도 동작하게 하는 주 출처.
 /// 파일마다 마지막으로 읽은 위치를 기억해 새로 붙은 줄만 읽는다.
 /// </summary>
-internal sealed partial class TranscriptReader
+public sealed partial class TranscriptReader
 {
     // 처음 여는 큰 파일은 끝부분만: 최근 상태를 아는 데 충분하다
     private const long InitialTailBytes = 2 * 1024 * 1024;
@@ -167,9 +167,9 @@ internal sealed partial class TranscriptReader
 }
 
 /// <summary>컨텍스트 창 크기와 자동 압축 기준</summary>
-internal static class ContextLimits
+public static class ContextLimits
 {
-    private static readonly string ClaudeDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".claude");
+    private static readonly string ClaudeDir = PlatformPaths.ClaudeDir;
     private static Dictionary<string, (double Input, double Output)> _models = [];
     private static double? _autoCompactWindow;
     private static DateTime _loadedAt;
@@ -238,7 +238,7 @@ internal static class ContextLimits
 }
 
 /// <summary>데스크톱 앱이 5분쯤마다 남기는 계정 사용량(plan-usage-history.json의 마지막 표본)</summary>
-internal static class AccountUsage
+public static class AccountUsage
 {
     private static (double? FiveHour, double? Weekly, double At) _last;
     private static DateTime _loadedAt;

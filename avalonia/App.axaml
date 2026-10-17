@@ -1,0 +1,22 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="ClaudeSessionOverlay.App"
+             Name="Claude Session Overlay"
+             RequestedThemeVariant="Dark">
+    <Application.Styles>
+        <FluentTheme/>
+    </Application.Styles>
+    <Application.Resources>
+        <!-- 테마 색과 문구는 Theme.Apply·Loc.Apply가 채운다(여기는 기본값) -->
+        <SolidColorBrush x:Key="CardBrush" Color="#EE1C1B1A"/>
+        <SolidColorBrush x:Key="CardBorderBrush" Color="#33FFFFFF"/>
+        <SolidColorBrush x:Key="TextBrush" Color="#F2EFEA"/>
+        <SolidColorBrush x:Key="SubtleBrush" Color="#9C978F"/>
+        <SolidColorBrush x:Key="TaskTextBrush" Color="#D6D2CB"/>
+        <SolidColorBrush x:Key="HoverBrush" Color="#1FFFFFFF"/>
+        <SolidColorBrush x:Key="ChipBrush" Color="#14FFFFFF"/>
+        <SolidColorBrush x:Key="ChipHoverBrush" Color="#2EFFFFFF"/>
+        <SolidColorBrush x:Key="TrackBrush" Color="#1AFFFFFF"/>
+        <SolidColorBrush x:Key="AccentBrush" Color="#D97757"/>
+    </Application.Resources>
+</Application>

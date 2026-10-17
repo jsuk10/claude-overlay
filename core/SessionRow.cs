@@ -1,12 +1,10 @@
 using System.ComponentModel;
-using System.IO;
-using System.Windows.Media;
 
 namespace ClaudeSessionOverlay;
 
 public enum RowState { Waiting, Working, Done, Idle, Offline }
 
-/// <summary>오버레이 목록의 한 줄(세션)과 그 아래 백그라운드 작업 줄들</summary>
+/// <summary>오버레이 목록의 한 줄(세션)과 그 아래 백그라운드 작업 줄들. 색은 Tone으로만 알려 주고 그리는 건 앱이 한다</summary>
 public sealed class SessionRow : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -35,18 +33,35 @@ public sealed class SessionRow : INotifyPropertyChanged
     public string Folder => Info.Cwd == "" ? Loc.T("(알 수 없는 폴더)", "(unknown folder)")
         : Path.GetFileName(Info.Cwd.TrimEnd('\\', '/')) is { Length: > 0 } name ? name : Info.Cwd;
 
-    /// <summary>드라이브 + 마지막 두 폴더: C:\…\work\Taycan-client</summary>
-    public string ShortPath
+    /// <summary>Windows는 드라이브 + 마지막 두 폴더(C:\…\work\Taycan-client), macOS·Linux는 ~/…/work/app</summary>
+    public string ShortPath => Info.Cwd == "" ? Folder : ShortenPath(Info.Cwd);
+
+    public static string ShortenPath(string path)
     {
-        get
+        bool isWindowsPath = path.Length >= 2 && path[1] == ':' || path.StartsWith(@"\\");
+        string full = path.TrimEnd('\\', '/');
+        string root;
+        char sep;
+        if (isWindowsPath)
         {
-            if (Info.Cwd == "") return Folder;
-            string full = Info.Cwd.TrimEnd('\\', '/');
-            string root = Path.GetPathRoot(full) ?? "";
-            var dirs = full[root.Length..].Split(['\\', '/'], StringSplitOptions.RemoveEmptyEntries);
-            if (dirs.Length <= 2) return root.TrimEnd('\\', '/') + "\\" + string.Join('\\', dirs);
-            return $@"{root.TrimEnd('\\', '/')}\…\{dirs[^2]}\{dirs[^1]}";
+            sep = '\\';
+            root = full.Length >= 2 && full[1] == ':' ? full[..2] : "\\";
+            full = full[root.Length..];
         }
+        else
+        {
+            sep = '/';
+            string home = PlatformPaths.Home.TrimEnd('/');
+            if (home.Length > 1 && (full == home || full.StartsWith(home + "/")))
+            {
+                root = "~";
+                full = full[home.Length..];
+            }
+            else root = "";
+        }
+        var dirs = full.Split(['\\', '/'], StringSplitOptions.RemoveEmptyEntries);
+        if (dirs.Length <= 2) return root + sep + string.Join(sep, dirs);
+        return $"{root}{sep}…{sep}{dirs[^2]}{sep}{dirs[^1]}";
     }
 
     public string StatusText => State switch
@@ -77,7 +92,7 @@ public sealed class SessionRow : INotifyPropertyChanged
     // 토큰·컨텍스트: ☆ 바로 옆. %는 자동 압축 기준(100%가 되면 압축된다)
     public double? ContextPercent => Info.ContextPercent;
     public bool HasContext => ContextPercent is not null;
-    public Brush ContextBrush => UsagePalette.Fill(ContextPercent);
+    public Tone ContextTone => Palette.Usage(ContextPercent);
     public string ContextLabel => ContextPercent is double p ? $"{p:0}%" : "";
     public string TokenLabel => Info.Measure?.ContextTokens is double used ? Kilo(used) : "";
     public string ContextTip
@@ -100,23 +115,23 @@ public sealed class SessionRow : INotifyPropertyChanged
     public bool ShowCompact => HasContext && Info.CanCompact;
     public bool CanRequestCompact => Info.CanCompact && !Info.IsCompactRequested;
     public string CompactLabel => Info.IsCompactRequested ? "⋯" : "⇣";
-    public Brush CompactBrush => IsContextCritical ? UsagePalette.Critical : Brushes2.Idle;
+    public Tone CompactTone => IsContextCritical ? Tone.UsageCritical : Tone.Idle;
     public string CompactTip => Info.IsCompactRequested
         ? Loc.T("압축 요청함: 그 세션의 턴이 끝나면 압축합니다", "Compact requested: runs when that session's turn ends")
         : Loc.T($"눌러서 이 세션을 압축(/compact) · {ContextTip}", $"Click to compact this session (/compact) · {ContextTip}");
 
-    public Brush DotBrush => State switch
+    public Tone DotTone => State switch
     {
-        RowState.Waiting => Brushes2.Waiting,
-        RowState.Working => Brushes2.Working,
-        RowState.Done => Brushes2.Done,
-        RowState.Idle => Brushes2.Idle,
-        _ => Brushes2.Offline,
+        RowState.Waiting => Tone.Waiting,
+        RowState.Working => Tone.Working,
+        RowState.Done => Tone.Done,
+        RowState.Idle => Tone.Idle,
+        _ => Tone.Offline,
     };
 
     public bool IsPulsing => State is RowState.Working;
     public string Star => IsFavorite ? "★" : "☆";
-    public Brush StarBrush => IsFavorite ? Brushes2.Waiting : Brushes2.Idle;
+    public Tone StarTone => IsFavorite ? Tone.Waiting : Tone.Idle;
     public double Opacity => IsAlive ? 1.0 : 0.55;
 
     public int SortKey => State switch
@@ -128,7 +143,7 @@ public sealed class SessionRow : INotifyPropertyChanged
         _ => 4,
     };
 
-    internal static string Elapsed(double sinceMs)
+    public static string Elapsed(double sinceMs)
     {
         var span = TimeSpan.FromMilliseconds(Math.Max(0, SessionStore.NowMs - sinceMs));
         return span.TotalHours >= 1 ? $"{(int)span.TotalHours}h {span.Minutes}m"
@@ -136,7 +151,7 @@ public sealed class SessionRow : INotifyPropertyChanged
             : $"{span.Seconds}s";
     }
 
-    internal static string Ago(double atMs)
+    public static string Ago(double atMs)
     {
         var span = TimeSpan.FromMilliseconds(Math.Max(0, SessionStore.NowMs - atMs));
         return span.TotalMinutes < 1 ? Loc.T("방금", "just now")
@@ -172,24 +187,12 @@ public sealed class TaskRow
         var other => other,
     };
 
-    public Brush DotBrush => Doc.Status switch
+    public Tone DotTone => Doc.Status switch
     {
-        "running" or "pending" => Brushes2.Working,
-        "waiting" => Brushes2.Waiting,
-        "completed" => Brushes2.Done,
-        "failed" or "killed" => Brushes2.Failed,
-        _ => Brushes2.Idle,
+        "running" or "pending" => Tone.Working,
+        "waiting" => Tone.Waiting,
+        "completed" => Tone.Done,
+        "failed" or "killed" => Tone.Failed,
+        _ => Tone.Idle,
     };
-}
-
-internal static class Brushes2
-{
-    public static readonly Brush Working = Freeze(new SolidColorBrush(Color.FromRgb(0xD9, 0x77, 0x57)));
-    public static readonly Brush Waiting = Freeze(new SolidColorBrush(Color.FromRgb(0xE8, 0xB9, 0x31)));
-    public static readonly Brush Done = Freeze(new SolidColorBrush(Color.FromRgb(0x5B, 0xB9, 0x74)));
-    public static readonly Brush Failed = Freeze(new SolidColorBrush(Color.FromRgb(0xE0, 0x5A, 0x4E)));
-    public static readonly Brush Idle = Freeze(new SolidColorBrush(Color.FromRgb(0x8A, 0x86, 0x80)));
-    public static readonly Brush Offline = Freeze(new SolidColorBrush(Color.FromRgb(0x55, 0x52, 0x4E)));
-
-    private static Brush Freeze(Brush b) { b.Freeze(); return b; }
 }

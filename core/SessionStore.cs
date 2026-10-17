@@ -18,8 +18,7 @@ public sealed partial class SessionStore
     // 백그라운드 서브에이전트 기록이 이만큼 조용하면 끝난 것으로 본다
     private const double SubagentQuietMs = 60_000;
 
-    private static readonly string Home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-    private static readonly string ClaudeDir = Path.Combine(Home, ".claude");
+    private static readonly string ClaudeDir = PlatformPaths.ClaudeDir;
     public static readonly string Root = Path.Combine(ClaudeDir, "session-hud");
 
     private static string RegistryDir => Path.Combine(ClaudeDir, "sessions");
@@ -206,14 +205,17 @@ public sealed partial class SessionStore
         }
     }
 
-    /// <summary>pid가 재사용됐을 수 있으니 프로세스 시작 시각(FILETIME)까지 맞춰 본다</summary>
+    /// <summary>
+    /// pid가 재사용됐을 수 있으니 프로세스 시작 시각까지 맞춰 본다.
+    /// Windows는 FILETIME으로 남긴다. 다른 OS는 형식이 달라 pid만 믿는다
+    /// </summary>
     private static bool IsSameProcess(RegistryDoc doc)
     {
         try
         {
             using var process = Process.GetProcessById(doc.Pid);
             if (process.HasExited) return false;
-            if (doc.ProcStart is null || !long.TryParse(doc.ProcStart, out long fileTime)) return true;
+            if (!OperatingSystem.IsWindows() || doc.ProcStart is null || !long.TryParse(doc.ProcStart, out long fileTime)) return true;
             long actual = process.StartTime.ToFileTimeUtc();
             return Math.Abs(actual - fileTime) < 10_000_000; // 1초
         }
@@ -244,22 +246,7 @@ public sealed partial class SessionStore
 
     // ── 데스크톱 앱 세션 파일 ──────────────────────────────────────────────
 
-    /// <summary>MSIX 앱은 %APPDATA%를 패키지 폴더로 돌려 쓰므로 두 곳을 모두 본다</summary>
-    private static IEnumerable<string> DesktopRoots()
-    {
-        string local = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        string packages = Path.Combine(local, "Packages");
-        if (Directory.Exists(packages))
-        {
-            foreach (var pkg in Directory.EnumerateDirectories(packages, "Claude_*"))
-            {
-                var dir = Path.Combine(pkg, "LocalCache", "Roaming", "Claude", "claude-code-sessions");
-                if (Directory.Exists(dir)) yield return dir;
-            }
-        }
-        var roaming = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Claude", "claude-code-sessions");
-        if (Directory.Exists(roaming)) yield return roaming;
-    }
+    private static IEnumerable<string> DesktopRoots() => PlatformPaths.DesktopSessionRoots();
 
     private DesktopDoc? LoadDesktopDoc(string hostSessionId)
     {
@@ -317,7 +304,7 @@ public sealed partial class SessionStore
         }
 
         // 주간·세션 한도는 계정 단위: 데스크톱 앱이 남긴 마지막 표본(Mod가 있는 세션이 더 새 값이면 그쪽이 이긴다)
-        var usage = AccountUsage.Latest(DesktopRoots().Select(r => Path.GetDirectoryName(r)!).Distinct());
+        var usage = AccountUsage.Latest(PlatformPaths.DesktopDataDirs());
         if (usage.At > 0)
         {
             measure.WeeklyPercent ??= usage.Weekly;
