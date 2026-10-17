@@ -2,8 +2,11 @@
 {
   "name": "claude-overlay",
   "compatibility_date": "2026-10-01",
+  "main": "worker.js",
   "assets": {
     "directory": "./docs",
+    "binding": "ASSETS",
+    "run_worker_first": ["/naver*"],
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "none"
   },
