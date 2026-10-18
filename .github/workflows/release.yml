@@ -1,6 +1,7 @@
 # v* 태그를 올리면 Windows(zip, exe)와 macOS DMG(Apple Silicon, Intel)를 만들어 그 릴리스에 붙인다.
 # 웹 페이지와 install.sh는 releases/latest/download/ClaudeSessionOverlay-macos-<arm64|x64>.dmg를 가리키므로 DMG 이름에는 버전을 넣지 않는다.
 # 손으로 돌리면(workflow_dispatch) 릴리스에는 붙이지 않고 Actions 아티팩트로만 남긴다.
+# macOS는 macOS 26 실행기(Xcode 26)에서 빌드해야 제어 센터 컨트롤이 들어간다(앱은 macOS 11부터, 위젯은 14부터 돈다).
 name: Release
 
 on:
@@ -16,7 +17,7 @@ jobs:
     strategy:
       matrix:
         rid: [osx-arm64, osx-x64]
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4

@@ -1,8 +1,10 @@
 import SwiftUI
 import WidgetKit
 
-// 알림 센터·데스크톱 위젯(macOS 14+). 오버레이가 쓰는 ~/.claude/session-hud/status.json을 읽어 그린다.
+// 알림 센터·바탕화면 위젯(macOS 14+). 오버레이가 쓰는 ~/.claude/session-hud/status.json을 읽어 그린다.
 //   작게: 확인할 개수와 5시간 한도   중간: 세션 3개 + 사용량   크게: 세션 7개 + 사용량
+//   아주 크게(바탕화면용): 왼쪽에 개수·사용량, 오른쪽에 세션 7개와 폴더
+// 제어 센터 컨트롤(macOS 26+)은 SessionsControl.swift.
 // 세션을 누르면 데스크톱 앱 세션은 claude://로 바로, 터미널 세션은 오버레이(claude-overlay://)가 연다.
 
 struct BoardEntry: TimelineEntry {
@@ -30,7 +32,13 @@ struct BoardProvider: TimelineProvider {
 
 @main
 struct ClaudeSessionWidgets: WidgetBundle {
-    var body: some Widget { SessionsWidget() }
+    var body: some Widget {
+        SessionsWidget()
+        // 제어 센터 컨트롤은 macOS 26 SDK(Xcode 26, Swift 6.2)로 빌드할 때만 들어가고, macOS 26 이상에서만 보인다
+        #if compiler(>=6.2)
+        if #available(macOS 26.0, *) { SessionsControl() }
+        #endif
+    }
 }
 
 struct SessionsWidget: Widget {
@@ -41,7 +49,7 @@ struct SessionsWidget: Widget {
         }
         .configurationDisplayName("Claude Sessions")
         .description("Claude Code 세션 상태와 사용량 · Claude Code sessions and usage")
-        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge])
     }
 }
 
@@ -55,6 +63,7 @@ struct SessionsView: View {
         if let board = entry.board {
             switch family {
             case .systemSmall: SmallView(board: board, isStale: board.isStale(at: entry.date))
+            case .systemExtraLarge: ExtraLargeView(board: board, isStale: board.isStale(at: entry.date))
             default: ListView(board: board, isStale: board.isStale(at: entry.date), isLarge: family == .systemLarge)
             }
         } else {
@@ -203,8 +212,59 @@ struct UsageText: View {
     }
 }
 
+/// 아주 크게(바탕화면): 왼쪽은 작은 위젯처럼 개수와 사용량, 오른쪽은 세션 목록(폴더까지)
+struct ExtraLargeView: View {
+    let board: Board
+    let isStale: Bool
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 18) {
+            VStack(alignment: .leading, spacing: 9) {
+                Header(title: board.label("title", "Claude"), summary: "")
+                if !isStale && !board.isQuiet {
+                    Text(board.summary).font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(1)
+                }
+                Spacer(minLength: 0)
+                Count(value: board.waiting, label: board.label("waiting", "Needs input"), color: board.colors["waiting"])
+                Count(value: board.working, label: board.label("working", "Working"), color: board.colors["working"])
+                Count(value: board.done, label: board.label("done", "Done"), color: board.colors["done"])
+                Spacer(minLength: 0)
+                if let week = board.weekly { UsageBar(label: board.label("week", "Week"), usage: week) }
+                if let five = board.fiveHour { UsageBar(label: board.label("session", "Session"), usage: five) }
+            }
+            .frame(width: 190)
+            .widgetURL(URL(string: "claude-overlay://show"))
+
+            Divider()
+
+            VStack(alignment: .leading, spacing: 9) {
+                if isStale {
+                    Spacer()
+                    Text(board.label("stale", "The overlay isn't running")).font(.callout).foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity)
+                    Spacer()
+                } else if board.sessions.isEmpty {
+                    Spacer()
+                    Text(board.label("empty", "Nothing to check")).font(.callout).foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity)
+                    Spacer()
+                } else {
+                    ForEach(board.sessions.prefix(7)) { session in
+                        Link(destination: URL(string: session.openUrl) ?? URL(string: "claude-overlay://show")!) {
+                            SessionLine(session: session, showsFolder: true)
+                        }
+                    }
+                    if board.sessions.count > 7 { MoreText(board: board, count: board.sessions.count - 7) }
+                    Spacer(minLength: 0)
+                }
+            }
+        }
+    }
+}
+
 struct SessionLine: View {
     let session: BoardSession
+    var showsFolder = false
 
     var body: some View {
         HStack(alignment: .center, spacing: 7) {
@@ -216,6 +276,9 @@ struct SessionLine: View {
                     StatusLabel(session: session)
                     if !session.model.isEmpty {
                         Text("· " + session.model).foregroundStyle(.secondary)
+                    }
+                    if showsFolder && !session.folder.isEmpty {
+                        Text("· " + session.folder).foregroundStyle(.tertiary).truncationMode(.head)
                     }
                 }
                 .font(.system(size: 10))

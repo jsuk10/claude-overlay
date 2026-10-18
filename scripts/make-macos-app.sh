@@ -41,7 +41,7 @@ if command -v swiftc >/dev/null 2>&1 && xcrun --show-sdk-path >/dev/null 2>&1; t
         swiftc -swift-version 5 -O -sdk "$SDK" -target "$arch-apple-macos14.0" \
             -parse-as-library -application-extension -module-name ClaudeSessionWidget \
             -o "$NATIVE/ClaudeSessionWidget-$arch" \
-            "$ROOT/macos/Shared/Board.swift" "$ROOT/macos/Widget/SessionsWidget.swift"
+            "$ROOT/macos/Shared/Board.swift" "$ROOT/macos/Widget/SessionsWidget.swift" "$ROOT/macos/Widget/SessionsControl.swift"
     done
     lipo -create -output "$NATIVE/libClaudeOverlayMac.dylib" "$NATIVE"/libClaudeOverlayMac-{arm64,x86_64}.dylib
     lipo -create -output "$NATIVE/ClaudeSessionWidget" "$NATIVE"/ClaudeSessionWidget-{arm64,x86_64}

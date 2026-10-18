@@ -245,8 +245,11 @@ public func cso_status_stop() {
     }
 }
 
-/// 위젯 타임라인을 다시 불러 달라고 한다(시스템이 횟수를 조절한다)
+/// 위젯 타임라인과 제어 센터 컨트롤(macOS 26+)을 다시 불러 달라고 한다(시스템이 횟수를 조절한다)
 @_cdecl("cso_widgets_reload")
 public func cso_widgets_reload() {
     WidgetCenter.shared.reloadAllTimelines()
+    #if compiler(>=6.2)
+    if #available(macOS 26.0, *) { ControlCenter.shared.reloadAllControls() }
+    #endif
 }
