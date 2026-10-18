@@ -79,6 +79,7 @@ macOS판은 Avalonia 오버레이(`avalonia/`) 하나의 프로세스에 작은 
 
 - 세션·사용량 읽기(`--dump`), `.app` 실행, 오버레이 창이 맨 위 층에 뜸, 메뉴 막대 상태 항목 표시
 - `status.json` 쓰기, 위젯 확장이 시스템에 등록됨(`pluginkit -m -p com.apple.widgetkit-extension`)
+- 위젯 갤러리에서 작게·중간·크게·아주 크게 모두 그려짐, 샌드박스 거부 없음(임시 서명 그대로). 위젯 확장은 Xcode처럼 `-e _NSExtensionMain`으로 링크해야 한다: 아니면 `@main`만 돌고 바로 끝나 위젯 시스템(chronod)이 위젯 목록을 못 받아(`getAllDescriptors` Code=4099) 갤러리에 나오지 않는다
 - 위젯 화면(작게·중간·크게, 다크·라이트)을 SwiftUI `ImageRenderer`로 그려 확인
 - 음성: 한국어 Yuna, 영어 Daniel을 고름. 세션 프로세스의 tty와 터미널 앱 찾기, Terminal용 AppleScript 컴파일
 - DMG 만들기, `install.sh`로 DMG 마운트·복사 후 서명 유지

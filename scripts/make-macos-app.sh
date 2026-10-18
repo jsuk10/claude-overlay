@@ -27,6 +27,8 @@ BUNDLE_ID="local.claude-session-overlay"
 VERSION="$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' "$ROOT/avalonia/ClaudeSessionOverlay.Avalonia.csproj")"
 
 # ── 1. 네이티브(Swift): 메뉴 막대 라이브러리와 위젯. 두 아키텍처를 묶은 universal로 만든다 ──
+# 위젯 확장은 Xcode처럼 NSExtensionMain에서 시작해야 한다. 아니면 @main만 돌고 바로 끝나
+# 위젯 시스템(chronod)이 위젯 목록을 못 받아(Code=4099) 위젯 갤러리에 나오지 않는다.
 HAS_NATIVE=0
 if command -v swiftc >/dev/null 2>&1 && xcrun --show-sdk-path >/dev/null 2>&1; then
     HAS_NATIVE=1
@@ -40,6 +42,7 @@ if command -v swiftc >/dev/null 2>&1 && xcrun --show-sdk-path >/dev/null 2>&1; t
             "$ROOT/macos/Shared/Board.swift" "$ROOT/macos/Bridge/StatusBar.swift"
         swiftc -swift-version 5 -O -sdk "$SDK" -target "$arch-apple-macos14.0" \
             -parse-as-library -application-extension -module-name ClaudeSessionWidget \
+            -Xlinker -e -Xlinker _NSExtensionMain \
             -o "$NATIVE/ClaudeSessionWidget-$arch" \
             "$ROOT/macos/Shared/Board.swift" "$ROOT/macos/Widget/SessionsWidget.swift" "$ROOT/macos/Widget/SessionsControl.swift"
     done
