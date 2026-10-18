@@ -41,7 +41,7 @@ jobs:
         shell: pwsh
         run: |
           $version = (Select-Xml -Path app/ClaudeSessionOverlay.csproj -XPath '//Version').Node.InnerText
-          dotnet publish app -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish
+          dotnet publish app -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:DebugType=none -o publish
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           New-Item -ItemType Directory -Force stage, dist | Out-Null
           Copy-Item publish/ClaudeSessionOverlay.exe stage/
