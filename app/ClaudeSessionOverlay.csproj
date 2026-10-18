@@ -10,7 +10,6 @@
     <AssemblyName>ClaudeSessionOverlay</AssemblyName>
     <RootNamespace>ClaudeSessionOverlay</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <ApplicationIcon>..\assets\icon\app.ico</ApplicationIcon>
     <Version>0.2.2</Version>
     <Product>Claude Session Overlay</Product>
     <Description>Always-on-top Windows overlay for Claude Code sessions</Description>
@@ -28,10 +27,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\core\ClaudeSessionOverlay.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="..\assets\icon\app.ico" LogicalName="app.ico" />
   </ItemGroup>
 
 </Project>

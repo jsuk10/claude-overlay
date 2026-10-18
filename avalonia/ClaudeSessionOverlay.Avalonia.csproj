@@ -26,10 +26,6 @@
     <ProjectReference Include="..\core\ClaudeSessionOverlay.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <AvaloniaResource Include="..\assets\icon\icon-64.png" Link="Assets\icon-64.png" />
-  </ItemGroup>
-
   <!-- macOS 메뉴 막대·위젯 다리(Swift). scripts/make-macos-app.sh가 macos/build에 만든다. 있으면 dotnet run에서도 쓴다 -->
   <ItemGroup Condition="Exists('..\macos\build\libClaudeOverlayMac.dylib')">
     <None Include="..\macos\build\libClaudeOverlayMac.dylib" Link="libClaudeOverlayMac.dylib" CopyToOutputDirectory="PreserveNewest" />
