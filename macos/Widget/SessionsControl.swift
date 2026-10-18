@@ -23,7 +23,7 @@ struct ControlStatus: Sendable {
     /// 사람이 볼 차례인 것부터: 입력 대기 → 작업 중 → 완료 → 조용함
     init(board: Board?) {
         guard let board, !board.isStale(at: .now) else {
-            self.init(title: "Claude", symbol: "asterisk", url: Self.overlay)
+            self.init(title: "Claude", symbol: "ellipsis.bubble", url: Self.overlay)
             return
         }
         let firstWaiting = board.sessions.first { $0.state == "waiting" }
@@ -36,7 +36,7 @@ struct ControlStatus: Sendable {
         } else if board.done > 0 {
             self.init(title: "\(board.label("done", "Done")) \(board.done)", symbol: "checkmark.bubble", url: Self.overlay)
         } else {
-            self.init(title: board.label("title", "Claude"), symbol: "asterisk", url: Self.overlay)
+            self.init(title: board.label("title", "Claude"), symbol: "ellipsis.bubble", url: Self.overlay)
         }
     }
 }

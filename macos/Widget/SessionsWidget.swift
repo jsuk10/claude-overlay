@@ -85,15 +85,37 @@ struct Header: View {
 
     var body: some View {
         HStack(spacing: 6) {
-            Image(systemName: "asterisk")
-                .font(.system(size: 11, weight: .bold))
-                .foregroundStyle(Color(hex: "#D97757"))
+            BrandMark()
             Text(title).font(.system(size: 13, weight: .semibold)).lineLimit(1).minimumScaleFactor(0.8).layoutPriority(1)
             Spacer(minLength: summary.isEmpty ? 0 : 4)
             if !summary.isEmpty {
                 Text(summary).font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(1)
             }
         }
+    }
+}
+
+/// 머리 줄 마크: 앱 아이콘처럼 왼쪽 아래 주황 별표 원에서 세 점 말풍선이 나온다
+struct BrandMark: View {
+    var body: some View {
+        ZStack(alignment: .bottomLeading) {
+            RoundedRectangle(cornerRadius: 4.5, style: .continuous)
+                .fill(Color.primary.opacity(0.85))
+                .frame(width: 19, height: 12)
+                .overlay(
+                    HStack(spacing: 1.8) {
+                        Circle().fill(Color(hex: "#E8B931"))
+                        Circle().fill(Color(hex: "#D97757"))
+                        Circle().fill(Color(hex: "#5BB974"))
+                    }
+                    .frame(width: 13, height: 3.6)
+                )
+                .offset(x: 6, y: -5)
+            Circle().fill(Color(hex: "#D97757"))
+                .frame(width: 10, height: 10)
+                .overlay(Image(systemName: "asterisk").font(.system(size: 6.5, weight: .black)).foregroundStyle(.white))
+        }
+        .frame(width: 25, height: 17, alignment: .bottomLeading)
     }
 }
 

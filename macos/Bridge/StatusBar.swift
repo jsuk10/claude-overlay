@@ -180,20 +180,33 @@ final class StatusBar: NSObject, NSMenuDelegate {
 
     // ── 그림 ─────────────────────────────────────────────────────────────
 
-    /// 오버레이 트레이 아이콘과 같은 별표. 템플릿이라 메뉴 막대 밝기에 맞춰 칠해진다
+    /// 앱 아이콘(assets/icon)을 단색으로 줄인 것: 왼쪽 아래 별표에서 세 점 말풍선이 나온다.
+    /// 템플릿이라 메뉴 막대 밝기에 맞춰 칠해진다
     static let icon: NSImage = {
-        let image = NSImage(size: NSSize(width: 16, height: 16), flipped: false) { _ in
-            let path = NSBezierPath()
-            path.lineWidth = 1.9
-            path.lineCapStyle = .round
+        let image = NSImage(size: NSSize(width: 18, height: 16), flipped: false) { _ in
+            guard let ctx = NSGraphicsContext.current else { return false }
+            NSColor.black.set()
+            // 말풍선(오른쪽 위)
+            NSBezierPath(roundedRect: NSRect(x: 5.5, y: 5.5, width: 12, height: 9.5), xRadius: 4, yRadius: 4).fill()
+            // 세 점은 뚫는다
+            ctx.compositingOperation = .clear
+            for x in [8.5, 11.5, 14.5] as [CGFloat] {
+                NSBezierPath(ovalIn: NSRect(x: x - 1.15, y: 10.25 - 1.15, width: 2.3, height: 2.3)).fill()
+            }
+            // 별표 둘레를 비워 말풍선 모서리와 떨어뜨린다
+            NSBezierPath(ovalIn: NSRect(x: 4.3 - 4.6, y: 4.3 - 4.6, width: 9.2, height: 9.2)).fill()
+            ctx.compositingOperation = .sourceOver
+            // 왼쪽 아래 별표
+            let star = NSBezierPath()
+            star.lineWidth = 1.5
+            star.lineCapStyle = .round
             for i in 0..<4 {
                 let a = Double(i) * .pi / 4
-                let dx = cos(a) * 6.3, dy = sin(a) * 6.3
-                path.move(to: NSPoint(x: 8 - dx, y: 8 - dy))
-                path.line(to: NSPoint(x: 8 + dx, y: 8 + dy))
+                let dx = cos(a) * 3.3, dy = sin(a) * 3.3
+                star.move(to: NSPoint(x: 4.3 - dx, y: 4.3 - dy))
+                star.line(to: NSPoint(x: 4.3 + dx, y: 4.3 + dy))
             }
-            NSColor.black.setStroke()
-            path.stroke()
+            star.stroke()
             return true
         }
         image.isTemplate = true

@@ -45,11 +45,18 @@ if command -v swiftc >/dev/null 2>&1 && xcrun --show-sdk-path >/dev/null 2>&1; t
     done
     lipo -create -output "$NATIVE/libClaudeOverlayMac.dylib" "$NATIVE"/libClaudeOverlayMac-{arm64,x86_64}.dylib
     lipo -create -output "$NATIVE/ClaudeSessionWidget" "$NATIVE"/ClaudeSessionWidget-{arm64,x86_64}
-    swift "$ROOT/macos/make-icon.swift" "$NATIVE/AppIcon.iconset"
-    iconutil -c icns -o "$NATIVE/AppIcon.icns" "$NATIVE/AppIcon.iconset"
 else
     echo "swiftc가 없어 위젯·네이티브 메뉴 막대 없이 묶습니다 (xcode-select --install)" >&2
 fi
+
+# 앱 아이콘: assets/icon의 PNG(scripts/make-icon.swift가 그린 것)를 .icns로 묶는다
+ICONSET="$ROOT/out/AppIcon.iconset"
+rm -rf "$ICONSET" && mkdir -p "$ICONSET"
+for s in 16 32 128 256 512; do
+    cp "$ROOT/assets/icon/icon-$s.png" "$ICONSET/icon_${s}x${s}.png"
+    cp "$ROOT/assets/icon/icon-$((s * 2)).png" "$ICONSET/icon_${s}x${s}@2x.png"
+done
+iconutil -c icns -o "$ROOT/out/AppIcon.icns" "$ICONSET"
 
 # ── 2. .NET 앱 ─────────────────────────────────────────────────────────
 dotnet publish "$ROOT/avalonia" -c Release -r "$RID" --self-contained -o "$PUBLISH"
@@ -58,10 +65,10 @@ rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp -R "$PUBLISH/" "$APP/Contents/MacOS/"
 rm -f "$APP/Contents/MacOS/"*.pdb
+cp "$ROOT/out/AppIcon.icns" "$APP/Contents/Resources/"
 
 if [ "$HAS_NATIVE" = 1 ]; then
     cp "$NATIVE/libClaudeOverlayMac.dylib" "$APP/Contents/MacOS/"
-    cp "$NATIVE/AppIcon.icns" "$APP/Contents/Resources/"
     WIDGET="$APP/Contents/PlugIns/ClaudeSessionWidget.appex"
     mkdir -p "$WIDGET/Contents/MacOS"
     cp "$NATIVE/ClaudeSessionWidget" "$WIDGET/Contents/MacOS/"

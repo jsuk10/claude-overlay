@@ -37,7 +37,7 @@ macOS판은 Avalonia 오버레이(`avalonia/`) 하나의 프로세스에 작은 
 | `macos/Shared/Board.swift` | `BoardDoc`과 같은 모양의 Swift 모델. 메뉴 막대와 위젯이 같이 쓴다 |
 | `macos/Bridge/StatusBar.swift` | `libClaudeOverlayMac.dylib`: 상태 항목, 메뉴, 위젯 새로 고침 |
 | `macos/Widget/` | 위젯 확장(`.appex`): SwiftUI 화면, Info.plist, 샌드박스 권한 |
-| `macos/make-icon.swift` | 앱 아이콘(.icns) 그리기 |
+| `scripts/make-icon.swift` | 앱 아이콘 그리기(assets/icon의 PNG·ico, Windows와 같이 씀). make-macos-app.sh가 이 PNG로 .icns를 묶는다 |
 | `scripts/make-macos-app.sh` | Swift 빌드(universal) → .NET 게시 → `.app` 조립 → 서명 → `.dmg` |
 | `docs/install.sh` | 웹에서 한 줄 설치(curl로 DMG를 받아 Applications에) |
 | `.github/workflows/release.yml` | `v*` 태그에서 Windows zip·exe와 두 DMG를 만들어 릴리스에 붙인다 |
