@@ -99,7 +99,11 @@ public sealed partial class SessionStore
             if (info.Title == "") info.Title = hud.Title;
             if (info.Cwd == "") info.Cwd = hud.Cwd;
             info.Measure = hud.Measure;
-            info.MeasuredAt = hud.UpdatedAt;
+            // Mod는 쉬는 세션의 HUD도 계속 다시 쓰지만, 사용량은 Claude 응답을 받을 때만 바뀐다.
+            // 그래서 쉬는 세션은 마지막 턴 시각을 잰 시각으로 본다. 아니면 오래된 값이 '가장 최근'으로 뽑힌다.
+            info.MeasuredAt = hud.Status == "working"
+                ? hud.UpdatedAt
+                : Math.Min(hud.UpdatedAt, Math.Max(hud.LastCompletedAt ?? 0, hud.TurnStartedAt ?? 0));
             info.HasHud = true;
             info.CanCompact = hud.Schema >= 2;
             info.IsCompactRequested = IsCompactPending(hud.SessionId);
