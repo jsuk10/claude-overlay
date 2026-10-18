@@ -11,7 +11,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,6 +24,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\core\ClaudeSessionOverlay.Core.csproj" />
+  </ItemGroup>
+
+  <!-- macOS 메뉴 막대·위젯 다리(Swift). scripts/make-macos-app.sh가 macos/build에 만든다. 있으면 dotnet run에서도 쓴다 -->
+  <ItemGroup Condition="Exists('..\macos\build\libClaudeOverlayMac.dylib')">
+    <None Include="..\macos\build\libClaudeOverlayMac.dylib" Link="libClaudeOverlayMac.dylib" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

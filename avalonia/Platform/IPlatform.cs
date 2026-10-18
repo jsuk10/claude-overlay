@@ -66,14 +66,14 @@ internal static class Shell
         catch { return null; }
     }
 
-    public static string DeepLink(string hostSessionId) => $"claude://code/continue?session={Uri.EscapeDataString(hostSessionId)}";
+    public static string DeepLink(string hostSessionId) => Links.DeepLink(hostSessionId);
 }
 
-/// <summary>음성 프로그램(say, spd-say)을 한 번에 하나씩 돌리는 줄</summary>
+/// <summary>음성 프로그램(say, spd-say)과 알림음을 한 번에 하나씩 돌리는 줄(알림음이 끝난 뒤 읽는다)</summary>
 internal sealed class ProcessSpeechQueue
 {
     private readonly Func<string, Process?> _start;
-    private readonly System.Threading.Channels.Channel<string> _queue = System.Threading.Channels.Channel.CreateUnbounded<string>();
+    private readonly System.Threading.Channels.Channel<Func<Process?>> _queue = System.Threading.Channels.Channel.CreateUnbounded<Func<Process?>>();
     private Process? _current;
 
     public ProcessSpeechQueue(Func<string, Process?> start)
@@ -81,9 +81,9 @@ internal sealed class ProcessSpeechQueue
         _start = start;
         Task.Run(async () =>
         {
-            await foreach (var text in _queue.Reader.ReadAllAsync())
+            await foreach (var run in _queue.Reader.ReadAllAsync())
             {
-                var p = _start(text);
+                var p = run();
                 if (p is null) continue;
                 _current = p;
                 try { await p.WaitForExitAsync(); } catch { }
@@ -93,7 +93,10 @@ internal sealed class ProcessSpeechQueue
         });
     }
 
-    public void Enqueue(string text) => _queue.Writer.TryWrite(text);
+    public void Enqueue(string text) => _queue.Writer.TryWrite(() => _start(text));
+
+    /// <summary>음성이 아닌 소리(알림음 등): 같은 줄에 세워 겹치지 않게 한다</summary>
+    public void EnqueueSound(Func<Process?> start) => _queue.Writer.TryWrite(start);
 
     public void Stop()
     {

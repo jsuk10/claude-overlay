@@ -1,8 +1,8 @@
 [English](README.md) | **한국어** | [소개 페이지](https://claude-overlay.jsuk.cloud/ko/)
 
-# Claude Code 세션 오버레이 (Windows)
+# Claude Code 세션 오버레이 (Windows·macOS)
 
-지금 돌고 있는 **Claude Code** 세션을 한눈에 보여 주는, 항상 위에 떠 있는 Windows 오버레이입니다. CLI 세션과 Claude 데스크톱 앱의 Code 탭 세션을 모두 보여 줍니다. 어떤 세션이 작업 중이고 어떤 세션이 내 입력을 기다리는지, 컨텍스트가 얼마나 찼는지, 주간·5시간 세션 한도가 얼마나 남았는지 보이고, 누르면 그 세션으로 바로 갑니다.
+지금 돌고 있는 **Claude Code** 세션을 한눈에 보여 주는, 항상 위에 떠 있는 Windows·macOS 오버레이입니다(맥에서는 메뉴 막대와 위젯도). CLI 세션과 Claude 데스크톱 앱의 Code 탭 세션을 모두 보여 줍니다. 어떤 세션이 작업 중이고 어떤 세션이 내 입력을 기다리는지, 컨텍스트가 얼마나 찼는지, 주간·5시간 세션 한도가 얼마나 남았는지 보이고, 누르면 그 세션으로 바로 갑니다.
 
 <p align="center">
   <img src="docs/screenshot-ko-dark.png" alt="Claude Code 세션 오버레이, 다크 테마" width="340">
@@ -45,11 +45,33 @@ dotnet publish app -c Release -o bin
 .\bin\ClaudeSessionOverlay.exe
 ```
 
-## macOS (미리보기)
+## macOS
 
-`avalonia/`에 여러 OS에서 도는 오버레이(Avalonia UI, .NET 9)가 있고, Windows WPF 앱과 `core/`를 함께 씁니다. 같은 목록을 보여 주고 메뉴 막대 앱으로 돕니다. `osx-arm64`·`osx-x64`로 빌드까지는 확인했지만 **실제 Mac에서는 아직 시험하지 않았습니다**.
+macOS 11 이상에서 메뉴 막대 앱으로 돕니다(위젯은 macOS 14 이상). `avalonia/`의 Avalonia 오버레이가 Windows 앱과 `core/`를 함께 쓰고, 메뉴 막대 상태 항목과 위젯은 `macos/`의 작은 Swift 코드가 맡습니다. Apple Silicon Mac(macOS 15)에서 시험했습니다. 구조는 [macos/README.md](macos/README.md)에 있습니다.
 
-필요한 것: macOS 11 이상, [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0).
+### 설치
+
+1. [최신 릴리스](https://github.com/jsuk10/claude-overlay/releases/latest)에서 `ClaudeSessionOverlay-macos-arm64.dmg`(Apple Silicon) 또는 `ClaudeSessionOverlay-macos-x64.dmg`(Intel)를 받습니다.
+2. DMG를 열고 **Claude Session Overlay**를 **Applications**로 끌어다 놓은 뒤 실행합니다. 메뉴 막대에 ✻ 아이콘이 생깁니다.
+3. 아직 Apple 공증 전이라 처음 열 때 경고가 뜹니다. **시스템 설정 → 개인정보 보호 및 보안 → 그래도 열기**를 누르세요.
+
+터미널 한 줄로 설치하면 경고 없이 설치되고 바로 실행됩니다.
+
+```bash
+curl -fsSL https://claude-overlay.jsuk.cloud/install.sh | bash
+```
+
+### 메뉴 막대와 위젯
+
+- **메뉴 막대**: ✻ 옆에 입력 대기(노랑)·작업 중(주황)·완료(초록) 세션 수가 색 점으로 보이고, 5시간 한도가 75%를 넘으면 그 %도 보입니다. 누르면 세션 목록(고르면 그 세션으로 이동), 주간·5시간 사용량, 오버레이 명령(보이기/숨기기, 알림, 로그인 시 열기, 종료)이 나옵니다.
+- **위젯**: 바탕화면 오른쪽 클릭 → **위젯 편집** → "Claude Session Overlay". 작게(상태별 개수·5시간 한도), 중간(세션 3개), 크게(세션 7개·사용량 바). 세션을 누르면 그 세션으로 갑니다.
+- 위젯은 오버레이가 쓰는 `~/.claude/session-hud/status.json`을 읽습니다. 오버레이가 꺼져 있으면 몇 분 뒤 "오버레이가 꺼져 있어요"로 바뀝니다.
+
+<p align="center"><img src="docs/widget-ko.png" alt="macOS 위젯(작게·중간)" width="550"></p>
+
+### 소스에서 빌드
+
+필요한 것: [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0), Xcode 또는 Command Line Tools(`xcode-select --install`).
 
 ```bash
 git clone https://github.com/jsuk10/claude-overlay.git
@@ -58,9 +80,9 @@ cd claude-overlay
 open "out/Claude Session Overlay.app"
 ```
 
-스크립트가 자체 포함 빌드를 만들어 `.app`(Dock 아이콘 없는 메뉴 막대 앱)으로 묶고 임시 서명합니다. 매번 켜려면 메뉴 막대 아이콘에서 **로그인 시 열기**를 켭니다.
+스크립트가 Swift 코드(메뉴 막대 라이브러리, 위젯)를 universal로 빌드하고, .NET 자체 포함 빌드와 함께 `.app`(Dock 아이콘 없는 메뉴 막대 앱)으로 묶어 서명한 뒤 `out/ClaudeSessionOverlay-macos-<arm64|x64>.dmg`를 만듭니다. 기본은 임시 서명이고, `SIGN_IDENTITY`에 Developer ID 인증서 이름을 주면 그 인증서와 강화 런타임으로 서명합니다. `v*` 태그를 올리면 GitHub Actions([release.yml](.github/workflows/release.yml))가 Windows zip·exe와 두 DMG를 만들어 그 릴리스에 붙입니다.
 
-Windows와 다른 점: 데스크톱 앱 세션은 늘 `claude://` 딥 링크로 엽니다(분할 화면 포커스 없음). 터미널 세션은 그 앱(Terminal, iTerm, VS Code …)을 앞으로 가져오지만 정확한 탭까지는 못 갑니다. 음성 알림은 `say`를 씁니다. 오버레이는 모든 Space에 보이지만 전체 화면 앱 위에는 뜨지 않습니다. 데스크톱 앱 데이터는 `~/Library/Application Support/Claude/`에서 읽습니다.
+Windows와 다른 점: 데스크톱 앱 세션은 늘 `claude://` 딥 링크로 엽니다(분할 화면 포커스 없음). 터미널 세션은 Terminal·iTerm2면 그 탭까지 골라 앞으로 가져오고(처음 한 번 자동화 허용을 묻습니다), 다른 앱(VS Code 등)은 앱만 앞으로 가져옵니다. 음성 알림은 `say`로 하고, 장난감·저품질 목소리를 빼고 Yuna(한국어)처럼 자연스러운 목소리를 고릅니다. 오버레이는 모든 Space에 보이지만 전체 화면 앱 위에는 뜨지 않습니다. 데스크톱 앱 데이터는 `~/Library/Application Support/Claude/`에서 읽습니다.
 
 ## 동작 방식
 
@@ -111,7 +133,8 @@ opus-5-5  ctx ████▎      42%  67k/160k  ⇣압축  $1.23        주간
 | `app/` | Windows 오버레이(C#, WPF, .NET 9) |
 | `core/` | 세션 파일 읽기·목록 계산 공용 부분(화면 없음) |
 | `avalonia/` | macOS용 여러 OS 오버레이(Avalonia, .NET 9) |
-| `scripts/` | `make-macos-app.sh`: macOS `.app` 만들기 |
+| `macos/` | macOS 메뉴 막대 상태 항목과 위젯(Swift) |
+| `scripts/` | `make-macos-app.sh`: macOS `.app`과 `.dmg` 만들기 |
 | `mod/session-hud/` | 선택 사항인 Claude Code Mod(TypeScript) |
 | `docs/` | 스크린샷과 [소개 페이지](https://claude-overlay.jsuk.cloud/ko/) |
 

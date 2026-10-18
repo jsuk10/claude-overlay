@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
@@ -40,7 +41,7 @@ public partial class App : Application
             var demo = new MainWindow(demoStore, isDemo: true);
             demo.Start();
             if (options.Has("--snapshot")) SnapshotAndQuit(demo, options.Value("--snapshot") ?? Path.Combine(Environment.CurrentDirectory, "demo.png"));
-            else _tray = new Tray(demo);
+            else _tray = new Tray(demo, isDemo: true);
             return;
         }
 
@@ -56,6 +57,25 @@ public partial class App : Application
         }
         _tray = new Tray(window);
         desktop.Exit += (_, _) => _tray?.Dispose();
+        ListenForLinks(window);
+    }
+
+    /// <summary>
+    /// 위젯에서 누른 claude-overlay:// 주소(macOS: Info.plist의 CFBundleURLTypes).
+    ///   open?session=… 그 세션을 앞으로 가져오고 확인 처리   show  오버레이를 보인다
+    /// </summary>
+    private void ListenForLinks(MainWindow window)
+    {
+        if (TryGetFeature(typeof(IActivatableLifetime)) is not IActivatableLifetime activatable) return;
+        activatable.Activated += (_, e) =>
+        {
+            if (e is not ProtocolActivatedEventArgs { Kind: ActivationKind.OpenUri, Uri: { } uri } || uri.Scheme != Links.OverlayScheme) return;
+            Dispatcher.UIThread.Post(() =>
+            {
+                if (Links.SessionOf(uri) is string sessionId) window.OpenSessionById(sessionId);
+                else window.ShowOverlay();
+            });
+        };
     }
 
     private static void SnapshotAndQuit(MainWindow window, string path)
