@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using ClaudeSessionOverlay.Platform;
 
 namespace ClaudeSessionOverlay;
@@ -120,26 +121,9 @@ internal sealed class Tray : IDisposable
 
     private static string Truncate(string text, int max) => text.Length <= max ? text : text[..(max - 1)] + "…";
 
-    /// <summary>주황 원 안에 흰 별표 — Claude 느낌의 단순한 아이콘을 그려 쓴다</summary>
-    private static WindowIcon BuildIcon()
-    {
-        using var bitmap = new RenderTargetBitmap(new PixelSize(64, 64));
-        using (var g = bitmap.CreateDrawingContext())
-        {
-            g.DrawEllipse(new SolidColorBrush(ThemePaint.ToColor(Palette.Accent)), null, new Point(32, 32), 30, 30);
-            var pen = new Pen(Brushes.White, 6, lineCap: PenLineCap.Round);
-            for (int i = 0; i < 4; i++)
-            {
-                double a = Math.PI / 4 * i;
-                var d = new Vector(Math.Cos(a) * 18, Math.Sin(a) * 18);
-                g.DrawLine(pen, new Point(32, 32) - d, new Point(32, 32) + d);
-            }
-        }
-        var stream = new MemoryStream();
-        bitmap.Save(stream);
-        stream.Position = 0;
-        return new WindowIcon(stream);
-    }
+    /// <summary>앱 아이콘(assets/icon/icon-64.png)</summary>
+    private static WindowIcon BuildIcon() =>
+        new(AssetLoader.Open(new Uri("avares://ClaudeSessionOverlay/Assets/icon-64.png")));
 
     public void Dispose()
     {

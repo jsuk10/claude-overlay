@@ -1,5 +1,4 @@
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using Microsoft.Win32;
 using Forms = System.Windows.Forms;
 
@@ -97,24 +96,11 @@ internal sealed class TrayIcon : IDisposable
         _autostartItem.Checked = IsAutostart();
     }
 
-    /// <summary>주황 원 안에 흰 별표 — Claude 느낌의 단순한 아이콘을 그려 쓴다</summary>
+    /// <summary>앱 아이콘(assets/icon/app.ico)을 알림 영역 크기로 꺼낸다</summary>
     private static Icon BuildIcon()
     {
-        using var bmp = new Bitmap(32, 32);
-        using (var g = Graphics.FromImage(bmp))
-        {
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-            using var fill = new SolidBrush(Color.FromArgb(0xD9, 0x77, 0x57));
-            g.FillEllipse(fill, 1, 1, 30, 30);
-            using var pen = new Pen(Color.White, 3f) { StartCap = LineCap.Round, EndCap = LineCap.Round };
-            for (int i = 0; i < 4; i++)
-            {
-                double a = Math.PI / 4 * i;
-                float dx = (float)(Math.Cos(a) * 9), dy = (float)(Math.Sin(a) * 9);
-                g.DrawLine(pen, 16 - dx, 16 - dy, 16 + dx, 16 + dy);
-            }
-        }
-        return Icon.FromHandle(bmp.GetHicon());
+        using var stream = typeof(TrayIcon).Assembly.GetManifestResourceStream("app.ico")!;
+        return new Icon(stream, Forms.SystemInformation.SmallIconSize);
     }
 
     public void Dispose()
