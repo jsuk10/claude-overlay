@@ -38,8 +38,10 @@ if command -v swiftc >/dev/null 2>&1 && xcrun --show-sdk-path >/dev/null 2>&1; t
             -Xlinker -install_name -Xlinker @rpath/libClaudeOverlayMac.dylib \
             -o "$NATIVE/libClaudeOverlayMac-$arch.dylib" \
             "$ROOT/macos/Shared/Board.swift" "$ROOT/macos/Bridge/StatusBar.swift"
+        # 확장은 Xcode처럼 NSExtensionMain에서 시작해야 한다. 빠지면 Swift main이 바로 끝나(exit 0) 위젯 목록에 안 나온다
         swiftc -swift-version 5 -O -sdk "$SDK" -target "$arch-apple-macos14.0" \
             -parse-as-library -application-extension -module-name ClaudeSessionWidget \
+            -Xlinker -e -Xlinker _NSExtensionMain \
             -o "$NATIVE/ClaudeSessionWidget-$arch" \
             "$ROOT/macos/Shared/Board.swift" "$ROOT/macos/Widget/SessionsWidget.swift" "$ROOT/macos/Widget/SessionsControl.swift"
     done
