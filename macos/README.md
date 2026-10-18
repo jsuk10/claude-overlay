@@ -57,7 +57,14 @@ macOS판은 Avalonia 오버레이(`avalonia/`) 하나의 프로세스에 작은 
 - **새로 고침**: `StatusFeed`가 지문(상태·제목·컨텍스트 % 등, 경과 시간은 뺀다)이 바뀔 때만 파일을 쓰고 `WidgetCenter.reloadAllTimelines()`를 부른다(최소 5초 간격). 시스템이 하루 새로 고침 횟수를 제한하므로 매초 부르지 않는다.
   - 경과 시간("작업 중 12:03")은 `Text(date, style: .timer)`라 위젯이 스스로 센다.
   - 오버레이가 1분마다 파일을 다시 써서 `updatedAt`을 갱신한다. 타임라인에 6분 뒤 항목을 하나 더 넣어, 그때까지 새 내용이 없으면 "오버레이가 꺼져 있어요"로 바뀐다.
-- **크기**: 작게(상태별 개수·5시간 한도) / 중간(세션 3개 + 한 줄 사용량) / 크게(세션 7개 + 사용량 바).
+- **크기**: 작게(상태별 개수·5시간 한도) / 중간(세션 3개 + 한 줄 사용량) / 크게(세션 7개 + 사용량 바) / 아주 크게(바탕화면용: 왼쪽 개수·요약·사용량, 오른쪽 세션 7개와 폴더). 같은 위젯을 알림 센터와 바탕화면 어디에나 둘 수 있다.
+
+## 제어 센터 컨트롤 (macOS 26+)
+
+- `macos/Widget/SessionsControl.swift`: `ControlWidgetButton` 하나. 값은 위젯과 같은 status.json에서 읽어 "입력 대기 N" / "작업 중 N" / "완료 N"을 보이고, 누르면 `OpenURLIntent`로 첫 입력 대기 세션(없으면 `claude-overlay://show`)을 연다.
+- 컨트롤 API는 macOS 26 SDK에만 있어 파일 전체와 위젯 묶음의 `if #available(macOS 26.0, *)`를 `#if compiler(>=6.2)`로 감쌌다. Xcode 16(macOS 15 SDK)으로 빌드하면 컨트롤만 빠지고 나머지는 그대로다.
+- 릴리스는 macOS 26 실행기(Xcode 26)에서 빌드하므로 컨트롤이 들어가고, 위젯 확장의 최소 버전은 그대로 14라 macOS 14·15에서도 위젯은 돈다.
+- 오버레이가 위젯을 다시 불러 달라고 할 때 `ControlCenter.shared.reloadAllControls()`도 함께 부른다.
 - **누르기**: 세션 줄은 `Link`. 데스크톱 앱 세션은 `claude://` 딥 링크로 앱이 바로 열고, 터미널 세션은 `claude-overlay://open?session=…`을 오버레이가 받아(Info.plist `CFBundleURLTypes`) 그 터미널을 앞으로 가져온다. Terminal·iTerm2면 세션 프로세스의 tty로 AppleScript가 그 탭까지 고른다(처음 한 번 자동화 허용, `NSAppleEventsUsageDescription`). 작은 위젯과 빈 화면은 `claude-overlay://show`(오버레이 보이기).
 
 ## 서명과 배포

@@ -64,7 +64,8 @@ curl -fsSL https://claude-overlay.jsuk.cloud/install.sh | bash
 ### Menu bar and widgets
 
 - **Menu bar**: next to ✻, colored counts of sessions that need input (yellow), are working (orange) or are done (green), plus the 5-hour limit once it passes 75%. Click it for the session list (pick one to jump to it), weekly and 5-hour usage, and the overlay's commands (show/hide, alerts, open at login, quit).
-- **Widgets**: right-click the desktop → **Edit Widgets** → "Claude Session Overlay". Small (counts and the 5-hour limit), medium (three sessions) or large (seven sessions and usage bars). Click a session to jump to it.
+- **Widgets**: put them in Notification Center (click the date and time in the menu bar) or on the desktop: right-click the desktop → **Edit Widgets** → "Claude Session Overlay". Small (counts and the 5-hour limit), medium (three sessions), large (seven sessions and usage bars) or extra large for the desktop (counts, usage, and seven sessions with folders). Click a session to jump to it.
+- **Control Center** (macOS 26 and later): add the "Claude 세션" control to Control Center or the menu bar to see how many sessions need input; clicking it opens that session (or the overlay). Add it from Control Center → **Edit Controls**.
 - Widgets read `~/.claude/session-hud/status.json`, which the overlay writes. If the overlay isn't running, they switch to "The overlay isn't running" after a few minutes.
 
 <p align="center"><img src="docs/widget-en.png" alt="macOS widgets, small and medium" width="550"></p>
