@@ -23,7 +23,7 @@ NATIVE="$ROOT/macos/build"
 APP="$ROOT/out/Claude Session Overlay.app"
 DMG="$ROOT/out/ClaudeSessionOverlay-macos-$ARCH.dmg"
 SIGN="${SIGN_IDENTITY:--}"
-BUNDLE_ID="io.github.jsuk10.claude-session-overlay"
+BUNDLE_ID="local.claude-session-overlay"
 VERSION="$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' "$ROOT/avalonia/ClaudeSessionOverlay.Avalonia.csproj")"
 
 # ── 1. 네이티브(Swift): 메뉴 막대 라이브러리와 위젯. 두 아키텍처를 묶은 universal로 만든다 ──

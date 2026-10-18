@@ -9,7 +9,7 @@
     <key>CFBundleName</key>
     <string>ClaudeSessionWidget</string>
     <key>CFBundleIdentifier</key>
-    <string>io.github.jsuk10.claude-session-overlay.widget</string>
+    <string>local.claude-session-overlay.widget</string>
     <key>CFBundleExecutable</key>
     <string>ClaudeSessionWidget</string>
     <key>CFBundlePackageType</key>

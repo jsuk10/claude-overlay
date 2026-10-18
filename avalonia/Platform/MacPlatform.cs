@@ -15,7 +15,7 @@ namespace ClaudeSessionOverlay.Platform;
 [SupportedOSPlatform("macos")]
 internal sealed class MacPlatform : IPlatform
 {
-    private const string AgentLabel = "io.github.jsuk10.claude-session-overlay";
+    private const string AgentLabel = "local.claude-session-overlay";
     private static readonly string AgentFile = Path.Combine(PlatformPaths.Home, "Library", "LaunchAgents", AgentLabel + ".plist");
 
     private readonly ProcessSpeechQueue _speech;
