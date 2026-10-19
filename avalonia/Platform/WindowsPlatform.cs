@@ -112,6 +112,15 @@ internal sealed class WindowsPlatform : IPlatform
         else key.DeleteValue(RunName, false);
     }
 
+    public bool CanOfferAutostart => true;
+
+    public bool Confirm(string message)
+    {
+        const uint MB_YESNO = 0x4, MB_ICONQUESTION = 0x20, MB_TOPMOST = 0x40000;
+        const int IDYES = 6;
+        return MessageBoxW(IntPtr.Zero, message, Loc.T("Claude 세션 오버레이", "Claude Session Overlay"), MB_YESNO | MB_ICONQUESTION | MB_TOPMOST) == IDYES;
+    }
+
     public void PrepareOverlay(Window window)
     {
         // Alt+Tab에 안 나온다
@@ -152,6 +161,7 @@ internal sealed class WindowsPlatform : IPlatform
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode, EntryPoint = "Process32NextW")] private static extern bool Process32Next(IntPtr snapshot, ref PROCESSENTRY32 entry);
     [DllImport("kernel32.dll")] private static extern bool CloseHandle(IntPtr handle);
     [DllImport("user32.dll")] private static extern bool SetForegroundWindow(IntPtr hwnd);
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)] private static extern int MessageBoxW(IntPtr hwnd, string text, string caption, uint type);
     [DllImport("user32.dll")] private static extern bool ShowWindow(IntPtr hwnd, int cmd);
     [DllImport("user32.dll")] private static extern bool IsIconic(IntPtr hwnd);
     [DllImport("user32.dll")] private static extern void keybd_event(byte vk, byte scan, uint flags, UIntPtr extra);

@@ -28,7 +28,7 @@ An always-on-top overlay for Windows and macOS that shows every running **Claude
 Requires Windows 10 or 11 and Claude Code (CLI) and/or the Claude desktop app.
 
 1. Download [`ClaudeSessionOverlay.exe`](https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay.exe) and run it. It is a single file with no .NET install needed; put it anywhere you like.
-2. Optional: turn on **Start with Windows** from the tray icon's menu.
+2. On first launch it asks whether to start with Windows. You can change this later with **Start with Windows** in the tray icon's menu.
 
 Windows SmartScreen may warn about an unsigned app the first time; choose **More info → Run anyway**.
 
@@ -52,7 +52,7 @@ Runs as a menu bar app on macOS 11 or later (widgets need macOS 14 or later). Th
 ### Install
 
 1. Download `ClaudeSessionOverlay-macos-arm64.dmg` (Apple Silicon) or `ClaudeSessionOverlay-macos-x64.dmg` (Intel) from the [latest release](https://github.com/jsuk10/claude-overlay/releases/latest).
-2. Open it, drag **Claude Session Overlay** into **Applications** and launch it. A ✻ icon appears in the menu bar.
+2. Open it, drag **Claude Session Overlay** into **Applications** and launch it. A ✻ icon appears in the menu bar, and on first launch it asks whether to open at login (change it later with **Open at login** in its menu).
 3. The app is not notarized yet, so macOS warns on first launch. Go to **System Settings → Privacy & Security → Open Anyway**.
 
 Or install from Terminal in one line, which skips the warning and launches the app:

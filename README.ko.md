@@ -28,7 +28,7 @@
 Windows 10 또는 11과 Claude Code(CLI) 또는 Claude 데스크톱 앱이 필요합니다.
 
 1. [`ClaudeSessionOverlay.exe`](https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay.exe)를 받아 실행합니다. 파일 하나라 원하는 폴더에 두면 되고, .NET을 따로 설치할 필요가 없습니다.
-2. 선택: 트레이 아이콘 메뉴에서 **Windows 시작 시 실행**을 켭니다.
+2. 처음 실행하면 Windows 시작 시 같이 실행할지 묻습니다. 나중에 트레이 아이콘 메뉴의 **Windows 시작 시 실행**에서 바꿀 수 있습니다.
 
 서명되지 않은 앱이라 처음 실행할 때 Windows SmartScreen 경고가 뜰 수 있습니다. **추가 정보 → 실행**을 누르면 됩니다.
 
@@ -52,7 +52,7 @@ macOS 11 이상에서 메뉴 막대 앱으로 돕니다(위젯은 macOS 14 이�
 ### 설치
 
 1. [최신 릴리스](https://github.com/jsuk10/claude-overlay/releases/latest)에서 `ClaudeSessionOverlay-macos-arm64.dmg`(Apple Silicon) 또는 `ClaudeSessionOverlay-macos-x64.dmg`(Intel)를 받습니다.
-2. DMG를 열고 **Claude Session Overlay**를 **Applications**로 끌어다 놓은 뒤 실행합니다. 메뉴 막대에 ✻ 아이콘이 생깁니다.
+2. DMG를 열고 **Claude Session Overlay**를 **Applications**로 끌어다 놓은 뒤 실행합니다. 메뉴 막대에 ✻ 아이콘이 생기고, 처음 실행하면 로그인할 때 같이 열지 묻습니다(나중에 메뉴의 **로그인 시 열기**에서 바꿉니다).
 3. 아직 Apple 공증 전이라 처음 열 때 경고가 뜹니다. **시스템 설정 → 개인정보 보호 및 보안 → 그래도 열기**를 누르세요.
 
 터미널 한 줄로 설치하면 경고 없이 설치되고 바로 실행됩니다.

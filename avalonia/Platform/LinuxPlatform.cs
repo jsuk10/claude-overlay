@@ -28,6 +28,9 @@ internal sealed class LinuxPlatform : IPlatform
     public bool IsAway => false;
     public string AutostartLabel => Loc.T("로그인 시 열기", "Open at login");
     public bool IsAutostart => File.Exists(AutostartFile);
+    // 묻는 창이 없다: 메뉴에서 켠다
+    public bool CanOfferAutostart => false;
+    public bool Confirm(string message) => false;
 
     public void SetAutostart(bool isOn)
     {

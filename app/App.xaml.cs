@@ -106,6 +106,25 @@ public partial class App : Application
 
         _tray = new TrayIcon(window);
         window.Start();
+        OfferAutostart(store);
+    }
+
+    /// <summary>처음 실행할 때 한 번: Windows 시작 시 같이 실행할지 묻는다(나중엔 트레이 메뉴에서 바꾼다)</summary>
+    private static void OfferAutostart(SessionStore store)
+    {
+        // 옮기거나 새로 받은 exe로 실행했으면 시작 프로그램도 이 exe를 가리키게
+        if (TrayIcon.IsAutostart()) TrayIcon.SetAutostart(true);
+        if (store.State.IsAutostartAsked) return;
+        store.State.IsAutostartAsked = true;
+        store.SaveState();
+        if (TrayIcon.IsAutostart()) return;
+
+        var answer = MessageBox.Show(
+            Loc.T("Windows를 켤 때 Claude 세션 오버레이도 같이 실행할까요?\n\n나중에 트레이 아이콘 메뉴의 'Windows 시작 시 실행'에서 바꿀 수 있습니다.",
+                "Start Claude Session Overlay with Windows?\n\nYou can change this later with 'Start with Windows' in the tray icon menu."),
+            Loc.T("Claude 세션 오버레이", "Claude Session Overlay"),
+            MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+        if (answer == MessageBoxResult.Yes) TrayIcon.SetAutostart(true);
     }
 
     protected override void OnExit(ExitEventArgs e)

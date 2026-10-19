@@ -208,6 +208,22 @@ internal sealed class MacPlatform : IPlatform
 
     public bool IsAutostart => File.Exists(AgentFile);
 
+    public bool CanOfferAutostart =>
+        Environment.ProcessPath is string exe && !exe.StartsWith("/Volumes/") && !exe.Contains("/AppTranslocation/");
+
+    public bool Confirm(string message)
+    {
+        string yes = Loc.T("예", "Yes"), no = Loc.T("아니요", "No");
+        string icon = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(Environment.ProcessPath) ?? "", "..", "Resources", "AppIcon.icns"));
+        string dialog = $"display dialog {Quote(message)} with title {Quote(Loc.T("Claude 세션 오버레이", "Claude Session Overlay"))}"
+            + $" buttons {{{Quote(no)}, {Quote(yes)}}} default button {Quote(yes)}"
+            + (File.Exists(icon) ? $" with icon POSIX file {Quote(icon)}" : " with icon note");
+        // activate: 메뉴 막대 앱이 띄운 창도 맨 앞에 오게
+        return Shell.Run("/usr/bin/osascript", "-e", "activate", "-e", dialog).Trim() == $"button returned:{yes}";
+    }
+
+    private static string Quote(string text) => "\"" + text.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
+
     public void SetAutostart(bool isOn)
     {
         try

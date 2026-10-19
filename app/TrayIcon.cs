@@ -60,6 +60,7 @@ internal sealed class TrayIcon : IDisposable
             _voiceItem.Text = Loc.T("음성으로 알려주기 (완료·확인 필요·컨텍스트)", "Voice alerts (done · needs input · context)");
             testItem.Text = Loc.T("알림 들어보기", "Test notification");
             _autostartItem.Text = Loc.T("Windows 시작 시 실행", "Start with Windows");
+            _autostartItem.Checked = IsAutostart();
             quitItem.Text = Loc.T("종료", "Quit");
             _soundItem.Checked = _window.IsSoundOn;
             _voiceItem.Checked = _window.IsVoiceOn;
@@ -82,17 +83,22 @@ internal sealed class TrayIcon : IDisposable
 
     private static string Truncate(string text, int max) => text.Length <= max ? text : text[..(max - 1)] + "…";
 
-    private static bool IsAutostart()
+    internal static bool IsAutostart()
     {
         using var key = Registry.CurrentUser.OpenSubKey(RunKey);
         return key?.GetValue(RunName) is string;
     }
 
-    private void ToggleAutostart()
+    internal static void SetAutostart(bool isOn)
     {
         using var key = Registry.CurrentUser.CreateSubKey(RunKey);
-        if (IsAutostart()) key.DeleteValue(RunName, false);
-        else key.SetValue(RunName, $"\"{Environment.ProcessPath}\"");
+        if (isOn) key.SetValue(RunName, $"\"{Environment.ProcessPath}\"");
+        else key.DeleteValue(RunName, false);
+    }
+
+    private void ToggleAutostart()
+    {
+        SetAutostart(!IsAutostart());
         _autostartItem.Checked = IsAutostart();
     }
 

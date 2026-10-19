@@ -23,6 +23,12 @@ internal interface IPlatform
     void SetAutostart(bool isOn);
     string AutostartLabel { get; }
 
+    /// <summary>처음 실행할 때 로그인 시 실행을 물어도 되는지(DMG에서 바로 연 앱은 그 경로가 곧 사라진다)</summary>
+    bool CanOfferAutostart { get; }
+
+    /// <summary>예/아니요 창을 띄우고 답할 때까지 기다린다</summary>
+    bool Confirm(string message);
+
     /// <summary>창이 처음 뜬 뒤: 포커스를 뺏지 않고, Alt+Tab·Mission Control에 안 나오고, 모든 데스크톱(Space)에 보이게</summary>
     void PrepareOverlay(Window window);
 

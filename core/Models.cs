@@ -117,6 +117,8 @@ public sealed class OverlayState
     public bool IsVoiceOn { get; set; } = true;
     public OverlayTheme Theme { get; set; } = OverlayTheme.Dark;
     public UiLanguage Language { get; set; } = UiLanguage.System;
+    /// <summary>처음 실행할 때 로그인 시 실행할지 이미 물었다</summary>
+    public bool IsAutostartAsked { get; set; }
 }
 
 /// <summary>session-hud Mod에 남기는 요청(requests\&lt;id&gt;.json)</summary>

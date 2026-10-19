@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
+using ClaudeSessionOverlay.Platform;
 
 namespace ClaudeSessionOverlay;
 
@@ -58,6 +59,29 @@ public partial class App : Application
         _tray = new Tray(window);
         desktop.Exit += (_, _) => _tray?.Dispose();
         ListenForLinks(window);
+        OfferAutostart(store);
+    }
+
+    /// <summary>처음 실행할 때 한 번: 로그인할 때 같이 열지 묻는다(나중엔 메뉴에서 바꾼다)</summary>
+    private static void OfferAutostart(SessionStore store)
+    {
+        var platform = IPlatform.Current;
+        if (!platform.CanOfferAutostart) return;
+        // 옮기거나 새로 받은 앱으로 실행했으면 로그인 항목도 이 앱을 가리키게
+        if (platform.IsAutostart) platform.SetAutostart(true);
+        if (store.State.IsAutostartAsked) return;
+        store.State.IsAutostartAsked = true;
+        store.SaveState();
+        if (platform.IsAutostart) return;
+
+        string question = Loc.T(
+            $"로그인할 때 Claude 세션 오버레이를 같이 열까요?\n\n나중에 메뉴의 '{platform.AutostartLabel}'에서 바꿀 수 있습니다.",
+            $"Open Claude Session Overlay at login?\n\nYou can change this later with '{platform.AutostartLabel}' in the menu.");
+        // 답을 기다리는 동안 오버레이가 멈추지 않게
+        Task.Run(() =>
+        {
+            if (platform.Confirm(question)) platform.SetAutostart(true);
+        });
     }
 
     /// <summary>
