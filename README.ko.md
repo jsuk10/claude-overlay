@@ -32,7 +32,7 @@ Windows 10 또는 11과 Claude Code(CLI) 또는 Claude 데스크톱 앱이 필�
 
 서명되지 않은 앱이라 처음 실행할 때 Windows SmartScreen 경고가 뜰 수 있습니다. **추가 정보 → 실행**을 누르면 됩니다.
 
-설치해서 쓰려면 [`ClaudeSessionOverlay-Setup.exe`](https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay-Setup.exe)를 받으세요. 관리자 권한 없이 `%LOCALAPPDATA%\Programs`에 설치하고 시작 메뉴에 바로 가기를 만듭니다. 설치하면서 **Windows 시작 시 실행**을 고를 수 있고, 제거하면 그 시작 프로그램 항목도 지웁니다. [릴리스 페이지](https://github.com/jsuk10/claude-overlay/releases/latest)에는 exe와 README, 선택 사항인 Mod를 묶은 zip도 있습니다.
+설치해서 쓰려면 [`ClaudeSessionOverlay-Setup.exe`](https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay-Setup.exe)를 받으세요. 관리자 권한 없이 `%LOCALAPPDATA%\Programs`에 설치하고 시작 메뉴에 바로 가기를 만듭니다. 설치하면서 **Windows 시작 시 실행**과 아래의 [`session-hud` Mod](#선택-session-hud-mod)를 고를 수 있고, 제거하면 둘 다 지웁니다. [릴리스 페이지](https://github.com/jsuk10/claude-overlay/releases/latest)에는 exe와 README, 선택 사항인 Mod를 묶은 zip도 있습니다.
 
 ### 소스에서 빌드
 
@@ -111,7 +111,9 @@ Windows와 다른 점: 데스크톱 앱 세션은 늘 `claude://` 딥 링크로 
 opus-5-5  ctx ████▎      42%  67k/160k  ⇣압축  $1.23        주간 ██▌      31%  ☆
 ```
 
-새로 시작하는 모든 세션에 로드하려면 `~/.claude/settings.json`에서 `CLAUDE_CODE_PLUGIN_DIRS`가 Mod 폴더를 가리키게 합니다.
+Windows 설치 파일에서 **Claude Code에 session-hud Mod 넣기**를 체크하면 아래 설정을 대신 해 줍니다. 이미 다른 `session-hud` 폴더가 들어 있으면 설치한 폴더로 바꿉니다. 새로 시작하는 Claude Code 세션부터 로드됩니다.
+
+손으로 하려면, 새로 시작하는 모든 세션에 로드하도록 `~/.claude/settings.json`에서 `CLAUDE_CODE_PLUGIN_DIRS`가 Mod 폴더를 가리키게 합니다.
 
 ```json
 {

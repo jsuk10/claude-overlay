@@ -41,9 +41,12 @@ en.Autostart=Start with Windows
 ko.Autostart=Windows 시작 시 실행
 en.Options=Options:
 ko.Options=옵션:
+en.Mod=Add the session-hud mod to Claude Code (cost, reset times, compact button, prompt HUD)
+ko.Mod=Claude Code에 session-hud Mod 넣기 (비용, 초기화 시각, 압축 버튼, 프롬프트 HUD)
 
 [Tasks]
 Name: "autostart"; Description: "{cm:Autostart}"; GroupDescription: "{cm:Options}"
+Name: "mod"; Description: "{cm:Mod}"; GroupDescription: "{cm:Options}"; Flags: unchecked
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
@@ -64,6 +67,34 @@ Filename: "{app}\ClaudeSessionOverlay.exe"; Description: "{cm:LaunchProgram,Clau
 var
   IsTaskDefaultSet: Boolean;
 
+function ModDir(): String;
+begin
+  Result := ExpandConstant('{app}\mod\session-hud');
+end;
+
+// settings.json은 앱이 고친다(ClaudeSessionOverlay.exe --install-mod|--uninstall-mod)
+procedure SetMod(IsOn: Boolean);
+var
+  ResultCode: Integer;
+  Verb: String;
+begin
+  if IsOn then Verb := '--install-mod' else Verb := '--uninstall-mod';
+  Exec(ExpandConstant('{app}\ClaudeSessionOverlay.exe'), Verb + ' "' + ModDir() + '"', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+end;
+
+// 지난 설치에서 Mod를 넣었는지: settings.json에 그 Mod 폴더가 있다
+function IsModInSettings(AppDir: String): Boolean;
+var
+  Settings: AnsiString;
+  Needle: String;
+begin
+  Result := False;
+  if not LoadStringFromFile(ExpandConstant('{%USERPROFILE}\.claude\settings.json'), Settings) then exit;
+  Needle := AppDir + '\mod\session-hud';
+  StringChangeEx(Needle, '\', '\\', True);
+  Result := Pos(Lowercase(Needle), Lowercase(String(Settings))) > 0;
+end;
+
 procedure StopOverlay;
 var
   ResultCode: Integer;
@@ -71,7 +102,7 @@ begin
   Exec(ExpandConstant('{sys}\taskkill.exe'), '/F /IM ClaudeSessionOverlay.exe', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
 end;
 
-// 다시 설치할 때 시작 프로그램을 꺼 둔 사람이면 체크를 풀어 둔다
+// 다시 설치할 때는 지난번대로: 시작 프로그램을 꺼 뒀으면 체크를 풀고, Mod를 넣어 뒀으면 체크한다
 procedure CurPageChanged(CurPageID: Integer);
 begin
   if (CurPageID = wpSelectTasks) and not IsTaskDefaultSet and not WizardSilent then
@@ -79,6 +110,8 @@ begin
     IsTaskDefaultSet := True;
     if (WizardForm.PrevAppDir <> '') and not RegValueExists(HKCU, '{#RunKey}', '{#RunName}') then
       WizardSelectTasks('!autostart');
+    if (WizardForm.PrevAppDir <> '') and IsModInSettings(WizardForm.PrevAppDir) then
+      WizardSelectTasks('mod');
   end;
 end;
 
@@ -95,6 +128,7 @@ begin
     RegWriteStringValue(HKCU, '{#RunKey}', '{#RunName}', '"' + ExpandConstant('{app}\ClaudeSessionOverlay.exe') + '"')
   else
     RegDeleteValue(HKCU, '{#RunKey}', '{#RunName}');
+  SetMod(WizardIsTaskSelected('mod'));
 end;
 
 function InitializeUninstall(): Boolean;
@@ -105,6 +139,7 @@ end;
 
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 begin
-  if CurUninstallStep = usUninstall then
-    RegDeleteValue(HKCU, '{#RunKey}', '{#RunName}');
+  if CurUninstallStep <> usUninstall then exit;
+  RegDeleteValue(HKCU, '{#RunKey}', '{#RunName}');
+  SetMod(False);
 end;

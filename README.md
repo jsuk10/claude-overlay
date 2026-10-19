@@ -32,7 +32,7 @@ Requires Windows 10 or 11 and Claude Code (CLI) and/or the Claude desktop app.
 
 Windows SmartScreen may warn about an unsigned app the first time; choose **More info → Run anyway**.
 
-To install it instead, get [`ClaudeSessionOverlay-Setup.exe`](https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay-Setup.exe). It installs to `%LOCALAPPDATA%\Programs` without admin rights, adds a Start menu shortcut and lets you pick **Start with Windows** during setup; uninstalling also removes that startup entry. The [release page](https://github.com/jsuk10/claude-overlay/releases/latest) also has a zip with the exe, this README and the optional mod.
+To install it instead, get [`ClaudeSessionOverlay-Setup.exe`](https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay-Setup.exe). It installs to `%LOCALAPPDATA%\Programs` without admin rights, adds a Start menu shortcut and lets you pick **Start with Windows** and the [`session-hud` mod](#optional-the-session-hud-mod) during setup; uninstalling removes both. The [release page](https://github.com/jsuk10/claude-overlay/releases/latest) also has a zip with the exe, this README and the optional mod.
 
 ### Build from source
 
@@ -111,7 +111,9 @@ The overlay works on its own. Installing the bundled Claude Code mod adds:
 opus-5-5  ctx ████▎      42%  67k/160k  ⇣압축  $1.23        주간 ██▌      31%  ☆
 ```
 
-To load it in every new session, point `CLAUDE_CODE_PLUGIN_DIRS` at the mod folder in `~/.claude/settings.json`:
+The Windows installer does this for you when you tick **Add the session-hud mod to Claude Code**; if another `session-hud` folder is already listed, it is replaced with the installed one. It loads in Claude Code sessions started after that.
+
+To do it by hand, load it in every new session by pointing `CLAUDE_CODE_PLUGIN_DIRS` at the mod folder in `~/.claude/settings.json`:
 
 ```json
 {

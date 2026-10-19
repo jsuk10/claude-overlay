@@ -1,3 +1,5 @@
+using System.IO;
+using System.Text.Json;
 using System.Threading;
 using System.Windows;
 
@@ -17,6 +19,23 @@ public partial class App : Application
         {
             foreach (var key in Loc.Xaml.Keys) Resources[key] = Loc.Get(key);
         };
+
+        // 설치 파일용: session-hud Mod를 Claude Code 설정에 넣거나 빼고 끝낸다 (--install-mod|--uninstall-mod <폴더>)
+        if (e.Args.Length == 2 && e.Args[0] is "--install-mod" or "--uninstall-mod")
+        {
+            try
+            {
+                if (e.Args[0] == "--install-mod") ModSetup.Install(e.Args[1]);
+                else ModSetup.Uninstall(e.Args[1]);
+            }
+            catch (Exception ex) when (ex is IOException or JsonException or UnauthorizedAccessException or InvalidOperationException)
+            {
+                Shutdown(1);
+                return;
+            }
+            Shutdown();
+            return;
+        }
 
         // 진단용: 오버레이가 지금 보여줄 목록을 글로 남기고 끝낸다
         if (e.Args.Contains("--dump"))
