@@ -27,8 +27,8 @@ public partial class MainWindow : Window
 
     public event Action<string>? SummaryChanged;
 
-    /// <summary>새로고침(1초)마다 그린 줄과 세션 전체: 메뉴 막대·위젯이 받는다</summary>
-    public event Action<List<SessionRow>, List<SessionInfo>>? Refreshed;
+    /// <summary>새로고침(1초)마다 그린 줄과 계정 사용량: 메뉴 막대·위젯이 받는다</summary>
+    public event Action<List<SessionRow>, AccountUsage>? Refreshed;
 
     public bool IsUserHidden => _store.State.IsHidden;
 
@@ -83,14 +83,16 @@ public partial class MainWindow : Window
 
         HashSet<string> favorites, expanded;
         List<SessionInfo> sessions;
+        AccountUsage usage;
         if (_isDemo)
         {
-            (sessions, favorites, expanded) = DemoData.Load();
+            (sessions, favorites, expanded, usage) = DemoData.Load();
         }
         else
         {
             favorites = _store.LoadFavorites();
             sessions = _store.LoadSessions(favorites);
+            usage = _store.Usage;
             expanded = _store.State.ExpandedTasks;
             _notifier.Tick();
             _notifier.Announce(_store.Notices);
@@ -110,23 +112,23 @@ public partial class MainWindow : Window
         }
 
         EmptyText.IsVisible = _rows.Count == 0;
-        ShowWeekly(sessions);
-        ShowFiveHour(sessions);
+        ShowWeekly(usage);
+        ShowFiveHour(usage);
         ShowFooterButtons();
 
         var (summary, isQuiet) = Overview.Summary(rows);
         SummaryText.Text = isQuiet ? "" : summary;
         SummaryChanged?.Invoke(summary);
-        Refreshed?.Invoke(rows, sessions);
+        Refreshed?.Invoke(rows, usage);
     }
 
     /// <summary>메뉴 막대·위젯에서 상태를 바꾼 뒤 바로 다시 그린다</summary>
     public void RefreshNow() => ForceRefresh();
 
     /// <summary>5시간 세션 한도(계정 단위): 맨 아래 바와 초기화까지 남은 시간</summary>
-    private void ShowFiveHour(List<SessionInfo> sessions)
+    private void ShowFiveHour(AccountUsage account)
     {
-        var usage = Overview.FiveHour(sessions);
+        var usage = Overview.FiveHour(account);
         if (usage is null)
         {
             if (_lastFiveHour == "none") return;
@@ -153,9 +155,9 @@ public partial class MainWindow : Window
     }
 
     /// <summary>주간 사용량은 계정 단위: 가장 최근에 잰 값</summary>
-    private void ShowWeekly(List<SessionInfo> sessions)
+    private void ShowWeekly(AccountUsage usage)
     {
-        if (Overview.Weekly(sessions) is not double p)
+        if (Overview.Weekly(usage) is not double p)
         {
             WeeklyPanel.IsVisible = false;
             return;

@@ -51,11 +51,11 @@ internal static class Program
         var favorites = store.LoadFavorites();
         var sessions = store.LoadSessions(favorites);
         var shown = Overview.BuildRows(sessions, favorites).Select(r =>
-            $"[{r.State}] {r.Title} | {r.StatusText} · {r.Detail} | ctx={r.ContextLabel} ({r.Info.Measure?.ContextTokens:0}/{r.Info.Measure?.CompactLimit:0}) week={r.Info.Measure?.WeeklyPercent} 5h={r.Info.Measure?.FiveHourPercent} compact={r.ShowCompact}"
+            $"[{r.State}] {r.Title} | {r.StatusText} · {r.Detail} | ctx={r.ContextLabel} ({r.Info.Measure?.ContextTokens:0}/{r.Info.Measure?.CompactLimit:0}) compact={r.ShowCompact}"
             + string.Concat(r.Tasks.Select(t => $"\n    {t.Label} ({t.StatusText})")));
         var all = sessions.Select(s =>
             $"{s.Status,-8} alive={s.IsAlive} seen={s.SeenAt:0} done={s.LastCompletedAt:0} parent={s.ParentHostSessionId} | {s.Title}");
-        string text = "보이는 줄:\n" + string.Join("\n", shown) + "\n\n전체 세션:\n" + string.Join("\n", all)
+        string text = "사용량: " + store.Usage + "\n\n보이는 줄:\n" + string.Join("\n", shown) + "\n\n전체 세션:\n" + string.Join("\n", all)
             + "\n\n데스크톱 앱 데이터 폴더: " + string.Join(", ", PlatformPaths.DesktopDataDirs())
             + (SessionStore.LastError is string error ? "\n마지막 읽기 오류: " + error : "");
         File.WriteAllText(Path.Combine(SessionStore.Root, "dump.txt"), text);

@@ -236,39 +236,3 @@ public static class ContextLimits
         if (models.Count > 0) _models = models;
     }
 }
-
-/// <summary>데스크톱 앱이 5분쯤마다 남기는 계정 사용량(plan-usage-history.json의 마지막 표본)</summary>
-public static class AccountUsage
-{
-    private static (double? FiveHour, double? Weekly, double At) _last;
-    private static DateTime _loadedAt;
-
-    public static (double? FiveHour, double? Weekly, double At) Latest(IEnumerable<string> desktopDataDirs)
-    {
-        if (DateTime.UtcNow - _loadedAt < TimeSpan.FromSeconds(20)) return _last;
-        _loadedAt = DateTime.UtcNow;
-        foreach (var dir in desktopDataDirs)
-        {
-            var file = Path.Combine(dir, "plan-usage-history.json");
-            if (!File.Exists(file)) continue;
-            try
-            {
-                using var stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
-                using var doc = JsonDocument.Parse(stream);
-                if (!doc.RootElement.TryGetProperty("samples", out var samples) || samples.GetArrayLength() == 0) continue;
-                var sample = samples[samples.GetArrayLength() - 1];
-                double at = sample.TryGetProperty("t", out var t) && t.TryGetDouble(out var tv) ? tv : 0;
-                if (at <= _last.At) continue;
-                double? fh = null, sd = null;
-                if (sample.TryGetProperty("u", out var u))
-                {
-                    if (u.TryGetProperty("fh", out var f) && f.TryGetDouble(out var fv)) fh = fv;
-                    if (u.TryGetProperty("sd", out var s) && s.TryGetDouble(out var sv)) sd = sv;
-                }
-                _last = (fh, sd, at);
-            }
-            catch (Exception e) when (e is IOException or JsonException or UnauthorizedAccessException or InvalidOperationException) { }
-        }
-        return _last;
-    }
-}

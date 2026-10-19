@@ -152,7 +152,6 @@ public sealed class SessionInfo
     public double? LastCompletedAt { get; set; }
     public double SeenAt { get; set; }
     public MeasureDoc? Measure { get; set; }
-    public double MeasuredAt { get; set; }
     public bool HasHud { get; set; }
     public bool IsCompactRequested { get; set; }
     /// <summary>이 세션의 Mod가 압축 요청을 처리할 수 있다(Mod schema 2 이상)</summary>

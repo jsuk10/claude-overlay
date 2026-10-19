@@ -7,7 +7,7 @@ public static class DemoData
 {
     public const string FavoriteId = "demo-1";
 
-    public static (List<SessionInfo> Sessions, HashSet<string> Favorites, HashSet<string> Expanded) Load()
+    public static (List<SessionInfo> Sessions, HashSet<string> Favorites, HashSet<string> Expanded, AccountUsage Usage) Load()
     {
         double now = SessionStore.NowMs;
         double minutes(double m) => now - m * 60_000;
@@ -21,7 +21,7 @@ public static class DemoData
             {
                 SessionId = FavoriteId, Pid = 1, IsAlive = true, Status = LiveStatus.Working,
                 Title = "Build checkout flow", Cwd = Cwd(@"D:\work\shop\web", "work/shop/web"), TurnStartedAt = minutes(12.4),
-                Measure = Measure(3.42, 46), MeasuredAt = now, HasHud = true, CanCompact = true,
+                Measure = Measure(3.42, 46), HasHud = true, CanCompact = true,
                 Tasks =
                 [
                     new() { Id = "a1", Kind = "agent", Description = "Write unit tests for cart", Status = "running" },
@@ -33,23 +33,26 @@ public static class DemoData
             {
                 SessionId = "demo-2", Pid = 2, IsAlive = true, Status = LiveStatus.Waiting,
                 Title = "Migrate database schema", Cwd = Cwd(@"C:\projects\api-server", "projects/api-server"),StatusSince = minutes(1),
-                Measure = Measure(5.87, 92), MeasuredAt = now - 1000, HasHud = true, CanCompact = true,
+                Measure = Measure(5.87, 92), HasHud = true, CanCompact = true,
             },
             new()
             {
                 SessionId = "demo-3", Pid = 3, IsAlive = true, Status = LiveStatus.Working,
                 Title = "Update API docs", Cwd = Cwd(@"C:\projects\api-server\docs", "projects/api-server/docs"), TurnStartedAt = minutes(3.1),
-                Measure = Measure(0.94, 78), MeasuredAt = now - 2000, HasHud = true, CanCompact = true,
+                Measure = Measure(0.94, 78), HasHud = true, CanCompact = true,
             },
             new()
             {
                 SessionId = "demo-4", Pid = 4, IsAlive = true, Status = LiveStatus.Idle,
                 Title = "Fix login redirect", Cwd = Cwd(@"D:\work\shop\web", "work/shop/web"), LastCompletedAt = minutes(4), SeenAt = 0,
-                Measure = Measure(1.18, 23), MeasuredAt = now - 3000, HasHud = true, CanCompact = true,
+                Measure = Measure(1.18, 23), HasHud = true, CanCompact = true,
                 Tasks = [new() { Id = "a3", Kind = "agent", Description = "Check e2e results", Status = "completed" }],
             },
         };
-        return (sessions, [FavoriteId], [FavoriteId]);
+        var usage = new AccountUsage();
+        usage.Offer("demo", now, 42, DateTimeOffset.Now.AddDays(3).ToString("o"),
+            65, DateTimeOffset.Now.AddHours(1).AddMinutes(31).AddSeconds(30).ToString("o"));
+        return (sessions, [FavoriteId], [FavoriteId], usage);
     }
 
     private static MeasureDoc Measure(double cost, double compactPercent) => new()
@@ -61,9 +64,5 @@ public static class DemoData
         ContextTokens = 167_000 * compactPercent / 100,
         ContextPercent = compactPercent * 167 / 200,
         CostUsd = cost,
-        WeeklyPercent = 42,
-        WeeklyResetsAt = DateTimeOffset.Now.AddDays(3).ToString("o"),
-        FiveHourPercent = 65,
-        FiveHourResetsAt = DateTimeOffset.Now.AddHours(1).AddMinutes(31).AddSeconds(30).ToString("o"),
     };
 }

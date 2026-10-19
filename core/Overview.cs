@@ -96,36 +96,28 @@ public static partial class Overview
         return parts.Count == 0 ? (Loc.T("조용함", "All quiet"), true) : (string.Join(" · ", parts), false);
     }
 
-    /// <summary>주간 사용량은 계정 단위: 가장 최근에 잰 값</summary>
-    public static double? Weekly(List<SessionInfo> sessions) => sessions
-        .Where(x => x.Measure?.WeeklyPercent is not null)
-        .OrderByDescending(x => x.MeasuredAt)
-        .Select(x => x.Measure!.WeeklyPercent)
-        .FirstOrDefault();
+    /// <summary>주간 사용량(계정 단위). 모르면 null</summary>
+    public static double? Weekly(AccountUsage usage) => usage.Weekly?.Percent;
 
     public static string WeeklyTip(double percent) => Loc.T($"주간 사용량 {percent:0.#}%", $"Weekly usage {percent:0.#}%");
 
-    public sealed record FiveHourUsage(double Percent, string Reset, string Tip);
+    public sealed record FiveHourUsage(double Percent, string Reset, string Tip, string? ResetsAt);
 
     /// <summary>5시간 세션 한도(계정 단위)와 초기화까지 남은 시간. 모르면 null</summary>
-    public static FiveHourUsage? FiveHour(List<SessionInfo> sessions)
+    public static FiveHourUsage? FiveHour(AccountUsage usage)
     {
-        var latest = sessions
-            .Where(x => x.Measure?.FiveHourPercent is not null)
-            .OrderByDescending(x => x.MeasuredAt)
-            .Select(x => x.Measure!)
-            .FirstOrDefault();
-        if (latest?.FiveHourPercent is not double p) return null;
+        if (usage.FiveHour is not { } latest) return null;
+        double p = latest.Percent;
 
         string reset = "";
-        if (DateTimeOffset.TryParse(latest.FiveHourResetsAt, out var resetsAt))
+        if (DateTimeOffset.TryParse(latest.ResetsAt, out var resetsAt))
         {
             var left = resetsAt - DateTimeOffset.Now;
             reset = left <= TimeSpan.Zero ? Loc.T(" · reset 곧", " · reset soon")
                 : left.TotalHours >= 1 ? Loc.T($" · reset {(int)left.TotalHours}시간 {left.Minutes}분", $" · reset {(int)left.TotalHours}h {left.Minutes}m")
                 : Loc.T($" · reset {Math.Max(1, left.Minutes)}분", $" · reset {Math.Max(1, left.Minutes)}m");
         }
-        return new FiveHourUsage(p, reset, Loc.T($"5시간 세션 한도 {p:0.#}% 사용{reset}", $"5-hour session limit {p:0.#}% used{reset}"));
+        return new FiveHourUsage(p, reset, Loc.T($"5시간 세션 한도 {p:0.#}% 사용{reset}", $"5-hour session limit {p:0.#}% used{reset}"), latest.ResetsAt);
     }
 
     public static string FiveHourUnknownTip => Loc.T("5시간 세션 한도: Claude 데스크톱 앱이 사용량을 기록하면 표시됩니다",

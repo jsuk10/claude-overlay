@@ -65,14 +65,16 @@ public partial class MainWindow : Window
 
         HashSet<string> favorites, expanded;
         List<SessionInfo> sessions;
+        AccountUsage usage;
         if (IsDemo)
         {
-            (sessions, favorites, expanded) = DemoData.Load();
+            (sessions, favorites, expanded, usage) = DemoData.Load();
         }
         else
         {
             favorites = _store.LoadFavorites();
             sessions = _store.LoadSessions(favorites);
+            usage = _store.Usage;
             expanded = _store.State.ExpandedTasks;
             bool isFirstLoad = _lastSessions.Count == 0;
             _lastSessions = sessions;
@@ -97,8 +99,8 @@ public partial class MainWindow : Window
         }
 
         EmptyText.Visibility = _rows.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
-        ShowWeekly(sessions);
-        ShowFiveHour(sessions);
+        ShowWeekly(usage);
+        ShowFiveHour(usage);
         ShowFooterButtons();
 
         int working = rows.Count(r => r.State == RowState.Working);
@@ -116,14 +118,10 @@ public partial class MainWindow : Window
     }
 
     /// <summary>5시간 세션 한도(계정 단위): 맨 아래 바와 초기화까지 남은 시간</summary>
-    private void ShowFiveHour(List<SessionInfo> sessions)
+    private void ShowFiveHour(AccountUsage account)
     {
-        var latest = sessions
-            .Where(x => x.Measure?.FiveHourPercent is not null)
-            .OrderByDescending(x => x.MeasuredAt)
-            .Select(x => x.Measure!)
-            .FirstOrDefault();
-        if (latest?.FiveHourPercent is not double p)
+        var usage = Overview.FiveHour(account);
+        if (usage is null)
         {
             if (_lastFiveHour == "none") return;
             _lastFiveHour = "none";
@@ -131,42 +129,27 @@ public partial class MainWindow : Window
             FiveHourPercentText.Text = "—";
             FiveHourPercentText.Foreground = (System.Windows.Media.Brush)FindResource("SubtleBrush");
             FiveHourResetText.Text = "";
-            FooterPanel.ToolTip = Loc.T("5시간 세션 한도: Claude 데스크톱 앱이 사용량을 기록하면 표시됩니다",
-                "5-hour session limit: shown once the Claude desktop app records usage");
+            FooterPanel.ToolTip = Overview.FiveHourUnknownTip;
             return;
         }
 
-        string reset = "";
-        if (DateTimeOffset.TryParse(latest.FiveHourResetsAt, out var resetsAt))
-        {
-            var left = resetsAt - DateTimeOffset.Now;
-            reset = left <= TimeSpan.Zero ? Loc.T(" · reset 곧", " · reset soon")
-                : left.TotalHours >= 1 ? Loc.T($" · reset {(int)left.TotalHours}시간 {left.Minutes}분", $" · reset {(int)left.TotalHours}h {left.Minutes}m")
-                : Loc.T($" · reset {Math.Max(1, left.Minutes)}분", $" · reset {Math.Max(1, left.Minutes)}m");
-        }
-
-        string key = $"{p}|{reset}";
+        string key = $"{usage.Percent}|{usage.Reset}";
         if (key == _lastFiveHour) return;
         _lastFiveHour = key;
 
-        var brush = ToneBrushes.Of(Palette.Usage(p));
-        FiveHourFill.Width = Palette.FillWidth(p, Math.Max(0, FiveHourTrack.ActualWidth));
+        var brush = ToneBrushes.Of(Palette.Usage(usage.Percent));
+        FiveHourFill.Width = Palette.FillWidth(usage.Percent, Math.Max(0, FiveHourTrack.ActualWidth));
         FiveHourFill.Background = brush;
-        FiveHourPercentText.Text = $"{p:0}%";
+        FiveHourPercentText.Text = $"{usage.Percent:0}%";
         FiveHourPercentText.Foreground = brush;
-        FiveHourResetText.Text = reset;
-        FooterPanel.ToolTip = Loc.T($"5시간 세션 한도 {p:0.#}% 사용{reset}", $"5-hour session limit {p:0.#}% used{reset}");
+        FiveHourResetText.Text = usage.Reset;
+        FooterPanel.ToolTip = usage.Tip;
     }
 
-    /// <summary>주간 사용량은 계정 단위: Mod가 가장 최근에 알려 준 값을 쓴다</summary>
-    private void ShowWeekly(List<SessionInfo> sessions)
+    /// <summary>주간 사용량은 계정 단위: 가장 최근에 잰 값</summary>
+    private void ShowWeekly(AccountUsage usage)
     {
-        double? weekly = sessions
-            .Where(x => x.Measure?.WeeklyPercent is not null)
-            .OrderByDescending(x => x.MeasuredAt)
-            .Select(x => x.Measure!.WeeklyPercent)
-            .FirstOrDefault();
-        if (weekly is not double p)
+        if (Overview.Weekly(usage) is not double p)
         {
             WeeklyPanel.Visibility = Visibility.Collapsed;
             return;
@@ -176,7 +159,7 @@ public partial class MainWindow : Window
         WeeklyFill.Background = brush;
         WeeklyText.Text = $"{p:0}%";
         WeeklyText.Foreground = brush;
-        WeeklyPanel.ToolTip = Loc.T($"주간 사용량 {p:0.#}%", $"Weekly usage {p:0.#}%");
+        WeeklyPanel.ToolTip = Overview.WeeklyTip(p);
         WeeklyPanel.Visibility = Visibility.Visible;
     }
 

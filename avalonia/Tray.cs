@@ -90,10 +90,10 @@ internal sealed class Tray : IDisposable
     // ── macOS 메뉴 막대(네이티브) ─────────────────────────────────────────
 
     /// <summary>새로고침(1초)마다: 메뉴 막대 글자·메뉴 내용을 넘기고, 바뀌었으면 위젯 파일을 쓴다</summary>
-    private void PushToMenuBar(List<SessionRow> rows, List<SessionInfo> sessions)
+    private void PushToMenuBar(List<SessionRow> rows, AccountUsage usage)
     {
         if (!OperatingSystem.IsMacOS()) return;
-        var board = StatusBoard.Build(rows, sessions);
+        var board = StatusBoard.Build(rows, usage);
         var commands = _commands.Select(c => c is null
             ? new { id = (string?)null, title = (string?)null, @checked = (bool?)null, separator = (bool?)true }
             : new { id = (string?)c.Id, title = (string?)c.Text(), @checked = c.IsChecked?.Invoke(), separator = (bool?)null });

@@ -26,12 +26,12 @@ public partial class App : Application
             var favorites = dumpStore.LoadFavorites();
             var sessions = dumpStore.LoadSessions(favorites);
             var shown = ClaudeSessionOverlay.MainWindow.BuildRows(sessions, favorites).Select(r =>
-                $"[{r.State}] {r.Title} | {r.StatusText} · {r.Detail} | ctx={r.ContextLabel} ({r.Info.Measure?.ContextTokens:0}/{r.Info.Measure?.CompactLimit:0}) week={r.Info.Measure?.WeeklyPercent} 5h={r.Info.Measure?.FiveHourPercent} compact={r.ShowCompact}"
+                $"[{r.State}] {r.Title} | {r.StatusText} · {r.Detail} | ctx={r.ContextLabel} ({r.Info.Measure?.ContextTokens:0}/{r.Info.Measure?.CompactLimit:0}) compact={r.ShowCompact}"
                 + string.Concat(r.Tasks.Select(t => $"\n    {t.Label} ({t.StatusText})")));
             var all = sessions.Select(s =>
                 $"{s.Status,-8} alive={s.IsAlive} seen={s.SeenAt:0} done={s.LastCompletedAt:0} parent={s.ParentHostSessionId} | {s.Title}");
             System.IO.File.WriteAllText(System.IO.Path.Combine(SessionStore.Root, "dump.txt"),
-                "보이는 줄:\n" + string.Join("\n", shown) + "\n\n전체 세션:\n" + string.Join("\n", all)
+                "사용량: " + dumpStore.Usage + "\n\n보이는 줄:\n" + string.Join("\n", shown) + "\n\n전체 세션:\n" + string.Join("\n", all)
                 + "\n\n분할 화면에 떠 있는 데스크톱 세션: " + string.Join(", ", DesktopPanes.ShownSessionIds()));
             Shutdown();
             return;

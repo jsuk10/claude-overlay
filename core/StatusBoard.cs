@@ -87,7 +87,7 @@ public static class StatusBoard
 {
     private static string Hex(Tone tone) => $"#{Palette.Argb(tone) & 0xFFFFFF:X6}";
 
-    public static BoardDoc Build(List<SessionRow> rows, List<SessionInfo> sessions)
+    public static BoardDoc Build(List<SessionRow> rows, AccountUsage usage)
     {
         var (summary, isQuiet) = Overview.Summary(rows);
         var doc = new BoardDoc
@@ -120,14 +120,10 @@ public static class StatusBoard
             },
         };
 
-        if (Overview.Weekly(sessions) is double week)
+        if (Overview.Weekly(usage) is double week)
             doc.Weekly = new BoardUsage { Percent = Math.Round(week), Color = Hex(Palette.Usage(week)), Text = $"{week:0}%" };
-        if (Overview.FiveHour(sessions) is { } five)
-        {
-            string? resetsAt = sessions.Where(x => x.Measure?.FiveHourPercent is not null)
-                .OrderByDescending(x => x.MeasuredAt).Select(x => x.Measure!.FiveHourResetsAt).FirstOrDefault();
-            doc.FiveHour = new BoardUsage { Percent = Math.Round(five.Percent), Color = Hex(Palette.Usage(five.Percent)), Text = $"{five.Percent:0}%{five.Reset}", ResetsAt = resetsAt };
-        }
+        if (Overview.FiveHour(usage) is { } five)
+            doc.FiveHour = new BoardUsage { Percent = Math.Round(five.Percent), Color = Hex(Palette.Usage(five.Percent)), Text = $"{five.Percent:0}%{five.Reset}", ResetsAt = five.ResetsAt };
 
         foreach (var row in rows)
         {

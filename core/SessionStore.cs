@@ -42,6 +42,10 @@ public sealed partial class SessionStore
 
     /// <summary>마지막 LoadSessions에서 생긴 알림거리</summary>
     public List<Notice> Notices { get; } = [];
+
+    /// <summary>마지막 LoadSessions에서 모은 계정 사용량(주간·5시간). 세션이 없어도 채워진다</summary>
+    public AccountUsage Usage { get; private set; } = new();
+
     private readonly Dictionary<string, DateTime> _desktopMisses = [];
 
     /// <summary>진단용: 마지막으로 읽지 못한 파일과 이유</summary>
@@ -63,6 +67,7 @@ public sealed partial class SessionStore
         Notices.Clear();
         var hudDocs = LoadHudDocs();
         var sessions = new Dictionary<string, SessionInfo>();
+        Usage = LoadUsage(hudDocs.Values);
 
         foreach (var reg in LoadRegistry())
         {
@@ -99,11 +104,6 @@ public sealed partial class SessionStore
             if (info.Title == "") info.Title = hud.Title;
             if (info.Cwd == "") info.Cwd = hud.Cwd;
             info.Measure = hud.Measure;
-            // Mod는 쉬는 세션의 HUD도 계속 다시 쓰지만, 사용량은 Claude 응답을 받을 때만 바뀐다.
-            // 그래서 쉬는 세션은 마지막 턴 시각을 잰 시각으로 본다. 아니면 오래된 값이 '가장 최근'으로 뽑힌다.
-            info.MeasuredAt = hud.Status == "working"
-                ? hud.UpdatedAt
-                : Math.Min(hud.UpdatedAt, Math.Max(hud.LastCompletedAt ?? 0, hud.TurnStartedAt ?? 0));
             info.HasHud = true;
             info.CanCompact = hud.Schema >= 2;
             info.IsCompactRequested = IsCompactPending(hud.SessionId);
@@ -227,6 +227,25 @@ public sealed partial class SessionStore
         catch { return true; } // 권한 문제로 시작 시각을 못 읽으면 pid만 믿는다
     }
 
+    /// <summary>데스크톱 앱 표본과 Mod 문서(꺼진 세션 것도) 중 한도마다 가장 최근 값</summary>
+    private static AccountUsage LoadUsage(IEnumerable<HudDoc> hudDocs)
+    {
+        var usage = new AccountUsage();
+        var desktop = AccountUsage.Desktop(PlatformPaths.DesktopDataDirs());
+        usage.Offer("desktop", desktop.At, desktop.Weekly, null, desktop.FiveHour, null);
+        foreach (var hud in hudDocs)
+        {
+            if (hud.Measure is not { } m) continue;
+            // Mod는 쉬는 세션의 HUD도 계속 다시 쓰지만, 사용량은 Claude 응답을 받을 때만 바뀐다.
+            // 그래서 쉬는 세션은 마지막 턴 시각을 잰 시각으로 본다. 아니면 오래된 값이 '가장 최근'으로 뽑힌다.
+            double at = hud.Status == "working"
+                ? hud.UpdatedAt
+                : Math.Min(hud.UpdatedAt, Math.Max(hud.LastCompletedAt ?? 0, hud.TurnStartedAt ?? 0));
+            usage.Offer("mod", at, m.WeeklyPercent, m.WeeklyResetsAt, m.FiveHourPercent, m.FiveHourResetsAt);
+        }
+        return usage;
+    }
+
     /// <summary>진단용(--no-mod): Mod 파일을 없는 것처럼 무시한다</summary>
     public static bool IgnoreMod { get; set; }
 
@@ -279,11 +298,11 @@ public sealed partial class SessionStore
         return ReadJson<DesktopDoc>(path);
     }
 
-    // ── Mod 없이: 대화 기록·모델 목록·데스크톱 사용량 파일 ─────────────────────
+    // ── Mod 없이: 대화 기록·모델 목록 ─────────────────────────────────────
 
     private readonly TranscriptReader _transcripts = new();
 
-    /// <summary>Mod가 없는 세션은 Claude Code가 원래 남기는 파일로 모델·컨텍스트·작업·사용량을 채운다(비용·초기화 시각·압축 버튼은 Mod 전용)</summary>
+    /// <summary>Mod가 없는 세션은 Claude Code가 원래 남기는 파일로 모델·컨텍스트·작업을 채운다(비용·압축 버튼은 Mod 전용)</summary>
     private void FillWithoutMod(SessionInfo info, string? desktopModel, double now)
     {
         if (!info.IsAlive) return;
@@ -305,15 +324,6 @@ public sealed partial class SessionStore
             }
             var tasks = TranscriptReader.VisibleTasks(transcript, now);
             if (tasks.Count > 0) info.Tasks = tasks;
-        }
-
-        // 주간·세션 한도는 계정 단위: 데스크톱 앱이 남긴 마지막 표본(Mod가 있는 세션이 더 새 값이면 그쪽이 이긴다)
-        var usage = AccountUsage.Latest(PlatformPaths.DesktopDataDirs());
-        if (usage.At > 0)
-        {
-            measure.WeeklyPercent ??= usage.Weekly;
-            measure.FiveHourPercent ??= usage.FiveHour;
-            info.MeasuredAt = Math.Max(info.MeasuredAt, usage.At);
         }
     }
 
