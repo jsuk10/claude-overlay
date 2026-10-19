@@ -20,3 +20,6 @@ avalonia/obj/
 
 # macOS 네이티브(Swift) 빌드 결과
 macos/build/
+
+# Windows 설치 파일 빌드용 publish 결과
+publish/

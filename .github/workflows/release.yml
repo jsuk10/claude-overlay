@@ -1,4 +1,4 @@
-# v* 태그를 올리면 Windows(zip, exe)와 macOS DMG(Apple Silicon, Intel)를 만들어 그 릴리스에 붙인다.
+# v* 태그를 올리면 Windows(설치 파일, zip, exe)와 macOS DMG(Apple Silicon, Intel)를 만들어 그 릴리스에 붙인다.
 # 웹 페이지와 install.sh는 releases/latest/download/ClaudeSessionOverlay-macos-<arm64|x64>.dmg를 가리키므로 DMG 이름에는 버전을 넣지 않는다.
 # 손으로 돌리면(workflow_dispatch) 릴리스에는 붙이지 않고 Actions 아티팩트로만 남긴다.
 # macOS는 macOS 26 실행기(Xcode 26)에서 빌드해야 제어 센터 컨트롤이 들어간다(앱은 macOS 11부터, 위젯은 14부터 돈다).
@@ -50,6 +50,10 @@ jobs:
           Copy-Item LICENSE, README.md, README.ko.md stage/
           Copy-Item -Recurse mod stage/mod
           Compress-Archive -Path stage/* -DestinationPath "dist/ClaudeSessionOverlay-v$version-win-x64.zip"
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { choco install innosetup -y --no-progress; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } }
+          & $iscc /Qp "/DAppVersion=$version" "/DSourceExe=$PWD\publish\ClaudeSessionOverlay.exe" "/O$PWD\dist" installer/ClaudeSessionOverlay.iss
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - uses: actions/upload-artifact@v4
         with:
           name: windows

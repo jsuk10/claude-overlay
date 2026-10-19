@@ -32,7 +32,7 @@ Requires Windows 10 or 11 and Claude Code (CLI) and/or the Claude desktop app.
 
 Windows SmartScreen may warn about an unsigned app the first time; choose **More info → Run anyway**.
 
-The [release page](https://github.com/jsuk10/claude-overlay/releases/latest) also has a zip with the exe, this README and the optional mod.
+To install it instead, get [`ClaudeSessionOverlay-Setup.exe`](https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay-Setup.exe). It installs to `%LOCALAPPDATA%\Programs` without admin rights, adds a Start menu shortcut and lets you pick **Start with Windows** during setup; uninstalling also removes that startup entry. The [release page](https://github.com/jsuk10/claude-overlay/releases/latest) also has a zip with the exe, this README and the optional mod.
 
 ### Build from source
 
@@ -81,7 +81,7 @@ cd claude-overlay
 open "out/Claude Session Overlay.app"
 ```
 
-The script builds the Swift parts (menu bar library and widget) as universal binaries, wraps them with a self-contained .NET build in a `.app` (menu bar only, no Dock icon), signs it and writes `out/ClaudeSessionOverlay-macos-<arm64|x64>.dmg`. It ad-hoc signs by default; set `SIGN_IDENTITY` to a Developer ID certificate name to sign with it and the hardened runtime. Pushing a `v*` tag makes GitHub Actions ([release.yml](.github/workflows/release.yml)) build the Windows zip and exe and both DMGs and attach them to that release.
+The script builds the Swift parts (menu bar library and widget) as universal binaries, wraps them with a self-contained .NET build in a `.app` (menu bar only, no Dock icon), signs it and writes `out/ClaudeSessionOverlay-macos-<arm64|x64>.dmg`. It ad-hoc signs by default; set `SIGN_IDENTITY` to a Developer ID certificate name to sign with it and the hardened runtime. Pushing a `v*` tag makes GitHub Actions ([release.yml](.github/workflows/release.yml)) build the Windows installer, zip and exe and both DMGs and attach them to that release.
 
 Differences from Windows: clicking a desktop-app session always opens it with the `claude://` deep link (no split-view pane focus); clicking a terminal session selects its exact tab in Terminal or iTerm2 (macOS asks once for automation permission) and otherwise brings its app (VS Code …) to the front; voice alerts use `say` with a natural voice for the UI language (novelty and low-quality voices are skipped); the overlay appears on every Space but not over fullscreen apps. Desktop-app data is read from `~/Library/Application Support/Claude/`.
 

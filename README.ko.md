@@ -32,7 +32,7 @@ Windows 10 또는 11과 Claude Code(CLI) 또는 Claude 데스크톱 앱이 필�
 
 서명되지 않은 앱이라 처음 실행할 때 Windows SmartScreen 경고가 뜰 수 있습니다. **추가 정보 → 실행**을 누르면 됩니다.
 
-[릴리스 페이지](https://github.com/jsuk10/claude-overlay/releases/latest)에는 exe와 README, 선택 사항인 Mod를 묶은 zip도 있습니다.
+설치해서 쓰려면 [`ClaudeSessionOverlay-Setup.exe`](https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay-Setup.exe)를 받으세요. 관리자 권한 없이 `%LOCALAPPDATA%\Programs`에 설치하고 시작 메뉴에 바로 가기를 만듭니다. 설치하면서 **Windows 시작 시 실행**을 고를 수 있고, 제거하면 그 시작 프로그램 항목도 지웁니다. [릴리스 페이지](https://github.com/jsuk10/claude-overlay/releases/latest)에는 exe와 README, 선택 사항인 Mod를 묶은 zip도 있습니다.
 
 ### 소스에서 빌드
 
@@ -81,7 +81,7 @@ cd claude-overlay
 open "out/Claude Session Overlay.app"
 ```
 
-스크립트가 Swift 코드(메뉴 막대 라이브러리, 위젯)를 universal로 빌드하고, .NET 자체 포함 빌드와 함께 `.app`(Dock 아이콘 없는 메뉴 막대 앱)으로 묶어 서명한 뒤 `out/ClaudeSessionOverlay-macos-<arm64|x64>.dmg`를 만듭니다. 기본은 임시 서명이고, `SIGN_IDENTITY`에 Developer ID 인증서 이름을 주면 그 인증서와 강화 런타임으로 서명합니다. `v*` 태그를 올리면 GitHub Actions([release.yml](.github/workflows/release.yml))가 Windows zip·exe와 두 DMG를 만들어 그 릴리스에 붙입니다.
+스크립트가 Swift 코드(메뉴 막대 라이브러리, 위젯)를 universal로 빌드하고, .NET 자체 포함 빌드와 함께 `.app`(Dock 아이콘 없는 메뉴 막대 앱)으로 묶어 서명한 뒤 `out/ClaudeSessionOverlay-macos-<arm64|x64>.dmg`를 만듭니다. 기본은 임시 서명이고, `SIGN_IDENTITY`에 Developer ID 인증서 이름을 주면 그 인증서와 강화 런타임으로 서명합니다. `v*` 태그를 올리면 GitHub Actions([release.yml](.github/workflows/release.yml))가 Windows 설치 파일·zip·exe와 두 DMG를 만들어 그 릴리스에 붙입니다.
 
 Windows와 다른 점: 데스크톱 앱 세션은 늘 `claude://` 딥 링크로 엽니다(분할 화면 포커스 없음). 터미널 세션은 Terminal·iTerm2면 그 탭까지 골라 앞으로 가져오고(처음 한 번 자동화 허용을 묻습니다), 다른 앱(VS Code 등)은 앱만 앞으로 가져옵니다. 음성 알림은 `say`로 하고, 장난감·저품질 목소리를 빼고 Yuna(한국어)처럼 자연스러운 목소리를 고릅니다. 오버레이는 모든 Space에 보이지만 전체 화면 앱 위에는 뜨지 않습니다. 데스크톱 앱 데이터는 `~/Library/Application Support/Claude/`에서 읽습니다.
 

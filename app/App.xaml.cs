@@ -117,7 +117,9 @@ public partial class App : Application
         if (store.State.IsAutostartAsked) return;
         store.State.IsAutostartAsked = true;
         store.SaveState();
-        if (TrayIcon.IsAutostart()) return;
+        // 설치 파일(installer/ClaudeSessionOverlay.iss)로 깔았으면 거기서 이미 물었다
+        bool isInstalled = System.IO.File.Exists(System.IO.Path.Combine(AppContext.BaseDirectory, "unins000.exe"));
+        if (TrayIcon.IsAutostart() || isInstalled) return;
 
         var answer = MessageBox.Show(
             Loc.T("Windows를 켤 때 Claude 세션 오버레이도 같이 실행할까요?\n\n나중에 트레이 아이콘 메뉴의 'Windows 시작 시 실행'에서 바꿀 수 있습니다.",
