@@ -1,0 +1,38 @@
+<!--meta
+{
+  "title": "What Claude Session Overlay reads on your computer (and what it never touches)",
+  "description": "The overlay works only from files Claude Code and the Claude desktop app already write. A file-by-file list of what it reads, what it writes, and why it makes no network requests and never reads your credentials.",
+  "date": "2026-10-20",
+  "order": 6
+}
+-->
+<p>An app that watches your coding sessions should be clear about what it looks at. The short version: the overlay <strong>only reads local files</strong> that Claude Code and the Claude desktop app already write on your machine. It sends no network requests, has no account or telemetry, and never reads your login tokens or API keys. The source is MIT-licensed on GitHub, so every line below can be checked.</p>
+
+<h2>What it reads</h2>
+<div class="table-scroll">
+<table>
+  <tr><th>Information</th><th>File</th></tr>
+  <tr><td>Running sessions and their state (working, idle, waiting for input)</td><td><code>~/.claude/sessions/&lt;pid&gt;.json</code></td></tr>
+  <tr><td>Model, context tokens, background tasks</td><td><code>~/.claude/projects/&lt;project&gt;/&lt;session&gt;.jsonl</code></td></tr>
+  <tr><td>Context window size and auto-compact point</td><td><code>~/.claude/cache/model-catalog/*.json</code> and <code>autoCompactWindow</code> in <code>~/.claude/settings.json</code></td></tr>
+  <tr><td>Weekly and 5-hour usage</td><td><code>plan-usage-history.json</code> from the Claude desktop app</td></tr>
+  <tr><td>Session titles and split-view layout</td><td>The desktop app's session files and <code>claude_desktop_config.json</code></td></tr>
+</table>
+</div>
+<p>The desktop app's files live in <code>%APPDATA%\Claude</code> on Windows (or the matching folder under <code>%LOCALAPPDATA%\Packages</code> for the Microsoft Store version) and in <code>~/Library/Application Support/Claude/</code> on macOS.</p>
+
+<h2>How much of the transcript it looks at</h2>
+<p>Session transcripts contain your whole conversation, so this is the file people ask about most. The overlay reads them only to find usage numbers (how many tokens the last reply used) and the start and end of background tasks. It does not display, store or send your prompts or the model's replies anywhere. Everything it pulls out stays in memory while it runs.</p>
+
+<h2>What it writes</h2>
+<p>The overlay keeps its own small settings in <code>~/.claude/session-hud/</code>: which sessions you have marked as seen, your favorites, window position, theme and language. On macOS it also writes <code>status.json</code> there for the widgets to read. Running <code>--dump</code> writes a diagnostic snapshot to <code>dump.txt</code> in the same folder, only when you ask for it.</p>
+<p>It never modifies Claude Code's own files. The one exception is opt-in: if you tick the session-hud mod option in the Windows installer, it adds the mod folder to <code>CLAUDE_CODE_PLUGIN_DIRS</code> in your Claude Code settings, and removes it again when you uninstall.</p>
+
+<h2>Why no network</h2>
+<p>Everything the overlay shows already exists on disk, so there is nothing to fetch. Usage limits come from the sample the desktop app saves locally rather than from calling Anthropic's servers with your credentials. That design has a cost: if the desktop app is not installed, the overlay cannot show usage limits, and it tells you so instead of guessing. The benefit is that the overlay cannot leak your conversations or tokens, because it never opens a connection.</p>
+
+<h2>The optional mod</h2>
+<p>The <code>session-hud</code> mod runs inside Claude Code, so it sees what Claude Code passes to mods: the session's usage figures, cost and limit reset times. It writes those to a small file per session in <code>~/.claude/session-hud/</code> for the overlay to pick up. It does not send anything over the network either.</p>
+
+<h2>This website</h2>
+<p>The website you are reading is separate from the app. It uses Google Analytics and shows Google ads, which use cookies. The <a href="/privacy/">privacy policy</a> covers what that means and how to opt out. None of that applies to the app itself.</p>

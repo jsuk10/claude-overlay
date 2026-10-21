@@ -1,0 +1,38 @@
+<!--meta
+{
+  "title": "클로드 세션 오버레이가 내 컴퓨터에서 읽는 것, 절대 건드리지 않는 것",
+  "description": "오버레이는 Claude Code와 Claude 데스크톱 앱이 원래 남기는 파일만 읽습니다. 무엇을 읽고 무엇을 쓰는지 파일 단위로 정리하고, 네트워크 요청을 보내지 않고 로그인 정보를 읽지 않는 이유를 적었습니다.",
+  "date": "2026-10-20",
+  "order": 6
+}
+-->
+<p>코딩 세션을 지켜보는 앱이라면 무엇을 들여다보는지 분명해야 합니다. 짧게 말하면 오버레이는 Claude Code와 Claude 데스크톱 앱이 내 컴퓨터에 원래 남기는 <strong>로컬 파일만 읽습니다</strong>. 네트워크 요청을 보내지 않고, 계정이나 사용 통계 수집도 없고, 로그인 토큰이나 API 키를 읽지 않습니다. 소스가 MIT 라이선스로 GitHub에 있으니 아래 내용은 한 줄씩 확인할 수 있습니다.</p>
+
+<h2>읽는 파일</h2>
+<div class="table-scroll">
+<table>
+  <tr><th>정보</th><th>파일</th></tr>
+  <tr><td>돌고 있는 세션과 상태(작업 중·대기·입력 대기)</td><td><code>~/.claude/sessions/&lt;pid&gt;.json</code></td></tr>
+  <tr><td>모델, 컨텍스트 토큰, 백그라운드 작업</td><td><code>~/.claude/projects/&lt;프로젝트&gt;/&lt;세션&gt;.jsonl</code></td></tr>
+  <tr><td>컨텍스트 창 크기와 자동 압축 기준</td><td><code>~/.claude/cache/model-catalog/*.json</code>, <code>~/.claude/settings.json</code>의 <code>autoCompactWindow</code></td></tr>
+  <tr><td>주간·5시간 사용량</td><td>Claude 데스크톱 앱의 <code>plan-usage-history.json</code></td></tr>
+  <tr><td>세션 제목, 분할 화면 배치</td><td>데스크톱 앱의 세션 파일과 <code>claude_desktop_config.json</code></td></tr>
+</table>
+</div>
+<p>데스크톱 앱 파일은 Windows에서는 <code>%APPDATA%\Claude</code>(Microsoft Store 판은 <code>%LOCALAPPDATA%\Packages</code> 아래의 해당 폴더), macOS에서는 <code>~/Library/Application Support/Claude/</code>에 있습니다.</p>
+
+<h2>대화 기록은 어디까지 보나</h2>
+<p>세션 대화 기록에는 대화 전체가 들어 있어서 가장 많이 받는 질문이 이 파일입니다. 오버레이는 사용량 숫자(마지막 답에 토큰을 얼마나 썼는지)와 백그라운드 작업의 시작·끝을 찾을 때만 이 파일을 읽습니다. 내 프롬프트나 모델의 답을 화면에 띄우거나, 저장하거나, 어디로 보내지 않습니다. 뽑아낸 내용은 실행 중인 동안 메모리에만 있습니다.</p>
+
+<h2>쓰는 파일</h2>
+<p>오버레이 자신의 작은 설정은 <code>~/.claude/session-hud/</code>에 둡니다. 확인한 세션, 즐겨찾기, 창 위치, 테마, 언어입니다. macOS에서는 위젯이 읽을 <code>status.json</code>도 여기 씁니다. <code>--dump</code>로 실행하면 같은 폴더에 진단용 <code>dump.txt</code>를 남기는데, 내가 요청할 때만입니다.</p>
+<p>Claude Code 자체의 파일은 고치지 않습니다. 예외가 하나 있는데 직접 고르는 경우입니다. Windows 설치 파일에서 session-hud Mod 옵션을 체크하면 Claude Code 설정의 <code>CLAUDE_CODE_PLUGIN_DIRS</code>에 Mod 폴더를 넣고, 제거할 때 다시 뺍니다.</p>
+
+<h2>왜 네트워크를 안 쓰나</h2>
+<p>오버레이가 보여 주는 건 전부 이미 디스크에 있으니 가져올 게 없습니다. 사용량 한도도 내 로그인 정보로 Anthropic 서버를 부르는 대신 데스크톱 앱이 로컬에 저장해 둔 값을 씁니다. 대가도 있습니다. 데스크톱 앱이 없으면 사용량 한도를 보여 줄 수 없고, 그럴 땐 짐작하지 않고 그렇다고 알려 줍니다. 대신 연결을 아예 열지 않으니 대화나 토큰이 새어 나갈 길이 없습니다.</p>
+
+<h2>선택 사항인 Mod</h2>
+<p><code>session-hud</code> Mod는 Claude Code 안에서 돌기 때문에 Claude Code가 Mod에 넘겨주는 것, 즉 세션의 사용량, 비용, 한도 초기화 시각을 봅니다. 그 값을 세션마다 작은 파일로 <code>~/.claude/session-hud/</code>에 써 두면 오버레이가 가져갑니다. Mod도 네트워크로는 아무것도 보내지 않습니다.</p>
+
+<h2>이 웹사이트는 별개</h2>
+<p>지금 보고 있는 웹사이트는 앱과 별개입니다. 사이트에는 Google 애널리틱스와 Google 광고가 있고, 둘 다 쿠키를 씁니다. 무엇을 뜻하고 어떻게 거부하는지는 <a href="/ko/privacy/">개인정보 처리방침</a>에 적었습니다. 앱에는 해당하지 않는 이야기입니다.</p>

@@ -1,0 +1,41 @@
+<!--meta
+{
+  "title": "macOS 설치: 처음 실행 경고 넘기기, 메뉴 막대와 위젯 설정",
+  "description": "Apple Silicon·Intel 맥에 설치하는 법, '열 수 없습니다' 경고를 넘기는 법, 메뉴 막대 항목과 알림 센터 위젯, macOS 26 제어 센터 컨트롤까지 정리했습니다.",
+  "date": "2026-10-20",
+  "order": 5
+}
+-->
+<p>맥에서는 오버레이가 메뉴 막대 앱으로 돕니다. 떠 있는 세션 목록 말고도 메뉴 막대에 ✻ 항목이 생기고, 알림 센터와 바탕화면에 둘 위젯, macOS 26에서는 제어 센터 컨트롤까지 붙습니다. macOS 11 이상이 필요하고, 위젯은 macOS 14 이상에서 쓸 수 있습니다.</p>
+
+<h2>맞는 DMG 고르기</h2>
+<p>빌드가 두 가지입니다. M1 이후 칩을 쓰는 맥은 <a href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay-macos-arm64.dmg" data-track="download_mac_arm64">Apple Silicon용 DMG</a>를, 예전 Intel 맥은 <a href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay-macos-x64.dmg" data-track="download_mac_x64">Intel용 DMG</a>를 받으세요. 잘 모르겠으면 Apple 메뉴 → <strong>이 Mac에 관하여</strong>를 열어 보세요. "칩"(Apple M…)이 나오면 Apple Silicon, "프로세서"(Intel)가 나오면 Intel입니다.</p>
+<ol>
+  <li>DMG를 열고 <strong>Claude Session Overlay</strong>를 <strong>응용 프로그램</strong>으로 끌어다 놓습니다.</li>
+  <li>응용 프로그램에서 실행하면 메뉴 막대에 ✻ 아이콘이 생깁니다.</li>
+  <li>처음 실행하면 로그인할 때 같이 열지 묻습니다. 나중에 메뉴의 <strong>로그인 시 열기</strong>에서 바꿀 수 있습니다.</li>
+</ol>
+
+<h2>처음 실행 경고 넘기기</h2>
+<p>아직 Apple 공증을 받지 않은 앱이라, 처음 열면 macOS가 개발자를 확인할 수 없다고 막습니다. App Store 밖에서 받은 앱에 붙는 표준 Gatekeeper 검사입니다. 그래도 열려면 <strong>시스템 설정 → 개인정보 보호 및 보안</strong>으로 가서 아래쪽의 Claude Session Overlay 안내 옆 <strong>그래도 열기</strong>를 누르세요. 한 번 고르면 macOS가 기억합니다.</p>
+<p>터미널에서 한 줄로 설치하는 방법도 있습니다. 스크립트가 내 맥의 칩에 맞는 DMG를 받아 격리 표시 없이 응용 프로그램 폴더에 복사하고 바로 실행하므로 경고가 아예 뜨지 않습니다.</p>
+<pre><code>curl -fsSL https://claude-overlay.jsuk.cloud/install.sh | bash</code></pre>
+
+<h2>메뉴 막대 항목</h2>
+<p>메뉴 막대의 ✻ 옆에 상태별 세션 수가 색 점으로 보입니다. 노랑은 입력 대기, 주황은 작업 중, 초록은 완료입니다. 5시간 사용량 한도가 75%를 넘으면 그 %도 같이 뜹니다. 누르면 세션 목록(고르면 그 세션으로 이동), 주간·5시간 사용량, 오버레이 명령(보이기·숨기기, 알림, 로그인 시 열기, 종료)이 나옵니다.</p>
+
+<h2>위젯</h2>
+<p>바탕화면 오른쪽 클릭 → <strong>위젯 편집</strong>에서 "Claude Session Overlay"를 찾거나, 알림 센터(메뉴 막대 오른쪽의 날짜·시간을 누르면 열리는 옆 창)에 넣으면 됩니다. 크기는 넷입니다.</p>
+<ul>
+  <li><strong>작게</strong>: 상태별 개수와 5시간 한도</li>
+  <li><strong>중간</strong>: 세션 3개</li>
+  <li><strong>크게</strong>: 세션 7개와 사용량 막대</li>
+  <li><strong>아주 크게</strong>(바탕화면 전용): 개수, 사용량, 세션 7개와 폴더</li>
+</ul>
+<p>위젯에서 세션을 누르면 그 세션으로 갑니다. 작업 중인 세션의 경과 시간은 저절로 늘어납니다. 위젯은 오버레이가 써 두는 상태 파일(<code>~/.claude/session-hud/status.json</code>)을 읽기 때문에, 오버레이가 꺼져 있으면 몇 분 뒤 오래된 내용 대신 "오버레이가 꺼져 있어요"로 바뀝니다.</p>
+
+<h2>제어 센터(macOS 26 이상)</h2>
+<p>제어 센터 → <strong>컨트롤 편집</strong>에서 "Claude 세션" 컨트롤을 제어 센터나 메뉴 막대에 넣으면, 입력을 기다리는 세션 수가 보이고 누르면 그 세션(없으면 오버레이)이 열립니다.</p>
+
+<h2>맥에서 세션으로 이동하는 방식</h2>
+<p>Claude 데스크톱 앱 세션은 <code>claude://</code> 링크로 엽니다. Terminal이나 iTerm2의 터미널 세션은 정확히 그 탭으로 가는데, 처음 한 번 그 앱을 제어해도 되는지 macOS가 묻습니다. VS Code 같은 다른 앱의 세션은 앱만 앞으로 가져옵니다. 떠 있는 오버레이는 모든 Space에 보이지만 전체 화면 앱 위에는 뜨지 않습니다.</p>

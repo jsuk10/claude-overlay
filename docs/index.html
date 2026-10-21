@@ -27,6 +27,12 @@
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="stylesheet" href="site.css">
+<meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1b1a18" media="(prefers-color-scheme: dark)">
+<!--ads-head-->
+<meta name="google-adsense-account" content="ca-pub-9204832944396914">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9204832944396914" crossorigin="anonymous"></script>
+<!--/ads-head-->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-0XK79SYGFF"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -55,15 +61,99 @@
   "screenshot": "https://claude-overlay.jsuk.cloud/screenshot-en-dark.png",
   "inLanguage": ["en", "ko"],
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-  "author": { "@type": "Person", "name": "jsuk10", "url": "https://github.com/jsuk10" }
+  "author": { "@type": "Person", "name": "jsuk10", "url": "https://github.com/jsuk10" },
+  "featureList": [
+    "List of running Claude Code sessions: working, waiting for input, done",
+    "Context window usage per session, measured against the auto-compact threshold",
+    "Weekly and 5-hour usage limits",
+    "Click a session to jump to its terminal or desktop app window",
+    "Sound and voice alerts",
+    "macOS menu bar item and widgets"
+  ]
 }
 </script>
+<!--faq-ld-->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "inLanguage": "en",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I see how much context a Claude Code session has used?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The overlay shows a percentage next to each session, measured against the point where Claude Code auto-compacts the conversation. Blue is under 75%, yellow under 90%, red at 90% and above."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I see my Claude weekly and 5-hour usage limits on Windows?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. The header shows weekly usage and the footer shows the 5-hour session limit, read from the Claude desktop app's local usage history."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does it work with both the Claude Code CLI and the desktop app?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. CLI sessions in any terminal and Code-tab sessions in the Claude desktop app appear in the same list."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is there a macOS version?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. On macOS 11 and later it runs as a menu bar app, with DMGs for Apple Silicon and Intel. The menu bar shows session counts by state and the widgets show your sessions and usage. Desktop-app sessions open directly; sessions in Terminal or iTerm2 jump to their exact tab."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does the overlay say 84% when my session has only used 70% of the context window?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Claude Code compacts before the window is full, keeping room for the summary and a safety margin. On a 200k-token model the auto-compact point is about 167k tokens, so the overlay measures against that. 100% means the session is about to compact."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need the Claude desktop app?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Not for the session list or context usage, which come from Claude Code's own files. The weekly and 5-hour usage limits come from the usage history the desktop app saves, so those need the desktop app installed and signed in. The optional session-hud mod can also supply them."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is it safe? Does it send my code or conversations anywhere?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. The overlay reads local files only, makes no network requests, and never reads your login tokens or API keys. It is open source under the MIT license."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is it free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. It is free and open source with no account, subscription or telemetry."
+      }
+    }
+  ]
+}
+</script>
+<!--/faq-ld-->
 </head>
 <body>
 <div class="wrap">
   <header class="top">
     <a class="brand" href="./">Claude Session Overlay</a>
     <nav>
+      <a href="guide/">Guides</a>
       <a href="ko/" hreflang="ko" lang="ko">한국어</a>
       <a href="https://github.com/jsuk10/claude-overlay" data-track="github_click">GitHub</a>
     </nav>
@@ -117,6 +207,7 @@
         <li>On first launch it asks whether to start with Windows. You can change this later with <strong>Start with Windows</strong> in the tray icon's menu.</li>
       </ol>
       <p>Windows SmartScreen may warn about an unsigned app the first time; choose <strong>More info → Run anyway</strong>.</p>
+      <p>Prefer an installer? <a href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay-Setup.exe" data-track="download_setup_click"><code>ClaudeSessionOverlay-Setup.exe</code></a> installs into <code>%LOCALAPPDATA%\Programs</code> without admin rights, adds a Start menu shortcut, and can turn on <strong>Start with Windows</strong> and the optional session-hud mod for you. More in the <a href="guide/install-windows/">Windows install guide</a>.</p>
 
       <h3 id="mac">macOS</h3>
       <p>macOS 11 or later (widgets need macOS 14 or later), Apple Silicon and Intel.</p>
@@ -128,6 +219,7 @@
       </ol>
       <p>The app is not notarized by Apple yet, so the first launch shows a warning. Open <strong>System Settings → Privacy &amp; Security</strong> and click <strong>Open Anyway</strong> near the bottom.<br>Or install from Terminal in one line, which skips the warning and launches the app:</p>
       <pre><code>curl -fsSL https://claude-overlay.jsuk.cloud/install.sh | bash</code></pre>
+      <p>Menu bar, widgets and Control Center setup are covered step by step in the <a href="guide/install-macos/">macOS install guide</a>.</p>
     </section>
 
     <section>
@@ -143,6 +235,7 @@
       </table>
       </div>
       <p>An optional bundled Claude Code mod, <code>session-hud</code>, adds per-session cost, usage-limit reset times and a compact button.</p>
+      <p>The full list of files it reads and writes is in <a href="guide/local-files-only/">what the overlay reads on your computer</a>.</p>
     </section>
 
     <section>
@@ -151,11 +244,36 @@
       <details><summary>Can I see my Claude weekly and 5-hour usage limits on Windows?</summary><p>Yes. The header shows weekly usage and the footer shows the 5-hour session limit, read from the Claude desktop app's local usage history.</p></details>
       <details><summary>Does it work with both the Claude Code CLI and the desktop app?</summary><p>Yes. CLI sessions in any terminal and Code-tab sessions in the Claude desktop app appear in the same list.</p></details>
       <details><summary>Is there a macOS version?</summary><p>Yes. On macOS 11 and later it runs as a menu bar app, with DMGs for Apple Silicon and Intel. The menu bar shows session counts by state and the widgets show your sessions and usage. Desktop-app sessions open directly; sessions in Terminal or iTerm2 jump to their exact tab.</p></details>
+      <details><summary>Why does the overlay say 84% when my session has only used 70% of the context window?</summary><p>Claude Code compacts before the window is full, keeping room for the summary and a safety margin. On a 200k-token model the auto-compact point is about 167k tokens, so the overlay measures against that. 100% means the session is about to compact.</p></details>
+      <details><summary>Do I need the Claude desktop app?</summary><p>Not for the session list or context usage, which come from Claude Code's own files. The weekly and 5-hour usage limits come from the usage history the desktop app saves, so those need the desktop app installed and signed in. The optional session-hud mod can also supply them.</p></details>
+      <details><summary>Is it safe? Does it send my code or conversations anywhere?</summary><p>No. The overlay reads local files only, makes no network requests, and never reads your login tokens or API keys. It is open source under the MIT license.</p></details>
+      <details><summary>Is it free?</summary><p>Yes. It is free and open source with no account, subscription or telemetry.</p></details>
+    </section>
+
+    <!--ad-->
+<aside class="ad" aria-label="Advertisement" data-label="Advertisement">
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9204832944396914" data-ad-slot="1976878299" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</aside>
+<!--/ad-->
+
+    <section id="guides">
+      <h2>Guides</h2>
+      <!--guides-->
+<ul class="guide-list">
+  <li><a href="/guide/context-window-usage/"><strong>How to check Claude Code context usage and see when auto-compact will kick in</strong><span>What the context window is, how Claude Code decides when to auto-compact, how to work out the threshold for your model, and how to keep an eye on it across every session.</span></a></li>
+  <li><a href="/guide/usage-limits/"><strong>Claude weekly and 5-hour usage limits: how to see what you have left</strong><span>Claude subscription plans meter usage in a rolling 5-hour window and a weekly window. Here is how the two limits relate to your Claude Code sessions and how to keep both in view while you work.</span></a></li>
+  <li><a href="/guide/multiple-sessions/"><strong>Running several Claude Code sessions at once without losing track</strong><span>Parallel Claude Code sessions are fast until one sits waiting for a permission prompt for twenty minutes. How to see every session's state, get alerted when one needs you, and jump to it in one click.</span></a></li>
+  <li><a href="/guide/install-windows/"><strong>Installing Claude Session Overlay on Windows: portable exe, installer, SmartScreen and the session-hud mod</strong><span>Step-by-step Windows setup: which download to pick, getting past the SmartScreen warning, starting with Windows, adding the optional session-hud mod to Claude Code, and the command-line switches for troubleshooting.</span></a></li>
+  <li><a href="/guide/install-macos/"><strong>Installing Claude Session Overlay on macOS: the first-launch warning, menu bar and widgets</strong><span>How to install the Mac version on Apple Silicon or Intel, get past the 'cannot be opened' warning, and set up the menu bar item, Notification Center widgets and the macOS 26 Control Center control.</span></a></li>
+  <li><a href="/guide/local-files-only/"><strong>What Claude Session Overlay reads on your computer (and what it never touches)</strong><span>The overlay works only from files Claude Code and the Claude desktop app already write. A file-by-file list of what it reads, what it writes, and why it makes no network requests and never reads your credentials.</span></a></li>
+</ul>
+<!--/guides-->
     </section>
   </main>
 
   <footer>
-    MIT License · <a href="https://github.com/jsuk10/claude-overlay">github.com/jsuk10/claude-overlay</a> · More projects at <a href="https://home.jsuk.cloud/">home.jsuk.cloud</a><br>
+    MIT License · <a href="https://github.com/jsuk10/claude-overlay">github.com/jsuk10/claude-overlay</a> · <a href="privacy/">Privacy</a> · More projects at <a href="https://home.jsuk.cloud/">home.jsuk.cloud</a><br>
     Not affiliated with or endorsed by Anthropic. "Claude" and "Claude Code" are trademarks of Anthropic.
   </footer>
 </div>

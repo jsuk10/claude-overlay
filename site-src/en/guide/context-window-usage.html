@@ -1,0 +1,35 @@
+<!--meta
+{
+  "title": "How to check Claude Code context usage and see when auto-compact will kick in",
+  "description": "What the context window is, how Claude Code decides when to auto-compact, how to work out the threshold for your model, and how to keep an eye on it across every session.",
+  "date": "2026-10-20",
+  "order": 1
+}
+-->
+<p>Every Claude Code session carries a conversation: your prompts, the files it read, tool output, and its own replies. All of that has to fit in the model's context window. When it gets close to full, Claude Code summarizes the conversation so far and carries on from the summary. That is auto-compact. It keeps the session alive, but details from earlier in the conversation get squeezed into a few paragraphs, so it pays to know when it is coming.</p>
+
+<h2>Context window vs. auto-compact threshold</h2>
+<p>The number that matters is not the window size itself. Claude Code compacts <em>before</em> the window is full, because it needs room to write the summary and a little slack on top. The overlay works out the threshold the same way:</p>
+<pre><code>threshold = min(window, autoCompactWindow) − min(max output tokens, 20,000) − 13,000</code></pre>
+<p>For a model with a 200,000-token window and 32,000 output tokens, that is 200,000 − 20,000 − 13,000 = <strong>167,000 tokens</strong>. A session sitting at 140k tokens looks like 70% of the window, but it is already 84% of the way to compaction. That gap is why the overlay shows its percentage against the threshold, not against the raw window: <strong>100% means "compacts now"</strong>.</p>
+<p>Models with a 1M-token context (the ones marked <code>[1m]</code>) get the same treatment with a much larger window, which is why they can run for hours before compacting.</p>
+
+<h2>Where the numbers come from</h2>
+<p>The model's window and output limit come from the model catalog that Claude Code caches under <code>~/.claude/cache/model-catalog/</code>. If you have lowered the compaction point yourself, the overlay picks that up too: the <code>CLAUDE_CODE_AUTO_COMPACT_WINDOW</code> environment variable wins, and otherwise it reads <code>autoCompactWindow</code> from <code>~/.claude/settings.json</code>. The token count for each session comes from the last usage entry in its transcript (<code>~/.claude/projects/&lt;project&gt;/&lt;session&gt;.jsonl</code>), so the number updates every time the model replies.</p>
+
+<h2>Reading the colors</h2>
+<p>Each session row shows a percentage such as <code>46%</code>. The color follows the same scale as the Claude desktop app's usage display:</p>
+<ul>
+  <li><strong>Blue</strong> under 75%: plenty of room.</li>
+  <li><strong>Yellow</strong> from 75% to 90%: start thinking about a good place to stop.</li>
+  <li><strong>Red</strong> at 90% and above: compaction is close.</li>
+</ul>
+<p>When a session crosses 90%, the overlay also plays a chime and reads out a short line such as "my-repo context 91 percent", so you hear about it even when the session is in a window you are not looking at. Alerts stay silent while the screen is locked or off.</p>
+
+<h2>Compacting on your own terms</h2>
+<p>Automatic compaction happens whenever the threshold is hit, which may be in the middle of a refactor. You get a better summary if you compact at a natural break instead: after a commit, after tests pass, or before you switch to a different part of the codebase. In Claude Code you can run <code>/compact</code> yourself at any time, and add a hint about what to keep, for example <code>/compact keep the list of files we changed</code>. The <code>/context</code> command shows what is taking up space in the current session.</p>
+<p>If you install the optional <code>session-hud</code> mod that ships with the overlay, each session row gets a <strong>⇣ compact button</strong> that runs <code>/compact</code> in that session, and Claude Code's prompt gets a one-line HUD with the same context bar.</p>
+
+<h2>Habits that keep context usage down</h2>
+<p>Large tool outputs are the usual culprit. Reading whole generated files, dumping long logs, or running a test suite with verbose output can add tens of thousands of tokens in one go. Ask for the relevant part (a function, the failing test, the last 50 lines) instead. Starting a fresh session for an unrelated task is cheaper than compacting an old one, and subagents keep their exploration out of the main conversation, since only their conclusion comes back.</p>
+<p>With several sessions open, the hard part is noticing which one is close to the limit. That is what the overlay is for: every session's percentage is in one always-on-top list, so a red number stands out before it turns into a surprise summary.</p>

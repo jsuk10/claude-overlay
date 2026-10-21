@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Installing Claude Session Overlay on Windows: portable exe, installer, SmartScreen and the session-hud mod</title>
+<meta name="description" content="Step-by-step Windows setup: which download to pick, getting past the SmartScreen warning, starting with Windows, adding the optional session-hud mod to Claude Code, and the command-line switches for troubleshooting.">
+<meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1b1a18" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://claude-overlay.jsuk.cloud/guide/install-windows/">
+<link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/guide/install-windows/">
+<link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/guide/install-windows/">
+<link rel="alternate" hreflang="x-default" href="https://claude-overlay.jsuk.cloud/guide/install-windows/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Claude Session Overlay">
+<meta property="og:title" content="Installing Claude Session Overlay on Windows: portable exe, installer, SmartScreen and the session-hud mod">
+<meta property="og:description" content="Step-by-step Windows setup: which download to pick, getting past the SmartScreen warning, starting with Windows, adding the optional session-hud mod to Claude Code, and the command-line switches for troubleshooting.">
+<meta property="og:url" content="https://claude-overlay.jsuk.cloud/guide/install-windows/">
+<meta property="og:image" content="https://claude-overlay.jsuk.cloud/screenshot-en-dark.png">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<script>
+  if (location.hostname.endsWith('github.io')) location.replace('https://claude-overlay.jsuk.cloud/' + location.pathname.replace(/^\/claude-overlay\//, '') + location.hash);
+</script>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/site.css">
+<meta name="google-adsense-account" content="ca-pub-9204832944396914">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9204832944396914" crossorigin="anonymous"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0XK79SYGFF"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-0XK79SYGFF', { anonymize_ip: true });
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[data-track]');
+    if (a) gtag('event', a.getAttribute('data-track'), { link_url: a.href });
+  });
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Installing Claude Session Overlay on Windows: portable exe, installer, SmartScreen and the session-hud mod",
+  "description": "Step-by-step Windows setup: which download to pick, getting past the SmartScreen warning, starting with Windows, adding the optional session-hud mod to Claude Code, and the command-line switches for troubleshooting.",
+  "inLanguage": "en",
+  "datePublished": "2026-10-20",
+  "dateModified": "2026-10-20",
+  "mainEntityOfPage": "https://claude-overlay.jsuk.cloud/guide/install-windows/",
+  "image": "https://claude-overlay.jsuk.cloud/screenshot-en-dark.png",
+  "author": {
+    "@type": "Person",
+    "name": "jsuk10",
+    "url": "https://github.com/jsuk10"
+  },
+  "about": {
+    "@type": "SoftwareApplication",
+    "name": "Claude Session Overlay",
+    "url": "https://claude-overlay.jsuk.cloud/"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://claude-overlay.jsuk.cloud/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://claude-overlay.jsuk.cloud/guide/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Installing Claude Session Overlay on Windows: portable exe, installer, SmartScreen and the session-hud mod",
+      "item": "https://claude-overlay.jsuk.cloud/guide/install-windows/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="/">Claude Session Overlay</a>
+    <nav>
+      <a href="/guide/">Guides</a>
+      <a href="/ko/guide/install-windows/" hreflang="ko" lang="ko">한국어</a>
+      <a href="https://github.com/jsuk10/claude-overlay" data-track="github_click">GitHub</a>
+    </nav>
+  </header>
+
+  <main class="article">
+    <nav class="crumbs" aria-label="breadcrumb"><a href="/">Home</a> <span aria-hidden="true">›</span> <a href="/guide/">Guides</a> <span aria-hidden="true">›</span> <span aria-current="page">Installing Claude Session Overlay on Windows: portable exe, installer, SmartScreen and the session-hud mod</span></nav>
+    <h1>Installing Claude Session Overlay on Windows: portable exe, installer, SmartScreen and the session-hud mod</h1>
+    <p class="meta">Updated: <time datetime="2026-10-20">October 20, 2026</time></p>
+<p>The Windows version is a single self-contained program. It runs on Windows 10 and 11 (x64) and does not need .NET or anything else installed. You need Claude Code (the CLI) or the Claude desktop app on the same PC, since the overlay shows their sessions.</p>
+
+<h2>Pick a download</h2>
+<p>There are two ways to get it, and both are the same app:</p>
+<ul>
+  <li><a href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay.exe" data-track="download_click"><code>ClaudeSessionOverlay.exe</code></a> is the portable version. It is one file; put it in any folder and double-click it. Nothing is installed, and deleting the file removes it.</li>
+  <li><a href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay-Setup.exe" data-track="download_setup_click"><code>ClaudeSessionOverlay-Setup.exe</code></a> is the installer. It installs into <code>%LOCALAPPDATA%\Programs</code> without asking for administrator rights, adds a Start menu shortcut, and lets you tick two options during setup: <strong>Start with Windows</strong> and <strong>Add the session-hud mod to Claude Code</strong>. Uninstalling removes both.</li>
+</ul>
+<p>The <a href="https://github.com/jsuk10/claude-overlay/releases/latest">release page</a> also has a zip with the exe, the README and the mod folder.</p>
+
+<h2>The SmartScreen warning</h2>
+<p>The app is not code-signed, so the first time you run it Windows SmartScreen may show "Windows protected your PC". Click <strong>More info</strong>, then <strong>Run anyway</strong>. You only have to do this once. The full source is on GitHub if you would rather build it yourself (see below).</p>
+
+<aside class="ad" aria-label="Advertisement" data-label="Advertisement">
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9204832944396914" data-ad-slot="1976878299" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</aside>
+<h2>First launch</h2>
+<p>On first launch the overlay asks whether to start with Windows. You can change your answer later from the tray icon's menu (<strong>Start with Windows</strong>). The overlay appears in the corner of the screen; drag it wherever you like and it will remember the spot.</p>
+<p>Useful controls:</p>
+<ul>
+  <li><strong>Tray icon</strong>: left-click to show or hide the overlay. Its menu turns sound and voice alerts on or off, lets you hear a sample alert, and resets the window position.</li>
+  <li><strong>Right-click the header line</strong>: theme, language (English or Korean), collapse to one line, show sessions you already marked as seen, or hide to the tray.</li>
+  <li><strong>The button at the bottom</strong> switches between dark and light themes.</li>
+</ul>
+
+<h2>Optional: the session-hud mod</h2>
+<p>The overlay works on its own. The bundled Claude Code mod adds per-session cost, usage-limit reset times, a compact button (⇣) on each row, and a one-line HUD above Claude Code's prompt. The installer can set it up for you. To do it by hand, point <code>CLAUDE_CODE_PLUGIN_DIRS</code> at the mod folder in <code>~/.claude/settings.json</code>:</p>
+<pre><code>{
+  "env": { "CLAUDE_CODE_PLUGIN_DIRS": "C:\\path\\to\\claude-overlay\\mod\\session-hud" }
+}</code></pre>
+<p>Claude Code sessions you start after that load the mod. Sessions that were already running keep going without it until you restart them.</p>
+
+<h2>Troubleshooting switches</h2>
+<p>Two command-line options help when something looks wrong:</p>
+<ul>
+  <li><code>ClaudeSessionOverlay.exe --demo</code> shows the overlay with made-up sessions, so you can check the layout and themes without running Claude Code. Add <code>--theme light</code> or <code>--lang ko</code> to try those.</li>
+  <li><code>ClaudeSessionOverlay.exe --dump</code> writes what the overlay currently sees to <code>~/.claude/session-hud/dump.txt</code>. Attach that file if you open an issue.</li>
+</ul>
+<p>If a session does not appear, check that it is a live Claude Code process: the overlay lists sessions from <code>~/.claude/sessions/</code>, which Claude Code writes while a session is running.</p>
+
+<h2>Building from source</h2>
+<p>With the <a href="https://dotnet.microsoft.com/download/dotnet/9.0">.NET 9 SDK</a> installed:</p>
+<pre><code>git clone https://github.com/jsuk10/claude-overlay.git
+cd claude-overlay
+dotnet publish app -c Release -o bin
+.\bin\ClaudeSessionOverlay.exe</code></pre>
+
+    <div class="cta-box">
+      <strong>Try the overlay</strong>
+      <p>Free and open source (MIT). Windows 10/11 and macOS 11+.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay.exe" data-track="download_click">Download for Windows</a>
+        <a class="btn" href="/#mac" data-track="download_mac_click">Download for Mac</a>
+      </div>
+    </div>
+
+    <aside class="ad" aria-label="Advertisement" data-label="Advertisement">
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9204832944396914" data-ad-slot="1976878299" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</aside>
+
+    <section class="related">
+      <h2>More guides</h2>
+      <ul class="guide-list">
+  <li><a href="/guide/context-window-usage/"><strong>How to check Claude Code context usage and see when auto-compact will kick in</strong><span>What the context window is, how Claude Code decides when to auto-compact, how to work out the threshold for your model, and how to keep an eye on it across every session.</span></a></li>
+  <li><a href="/guide/usage-limits/"><strong>Claude weekly and 5-hour usage limits: how to see what you have left</strong><span>Claude subscription plans meter usage in a rolling 5-hour window and a weekly window. Here is how the two limits relate to your Claude Code sessions and how to keep both in view while you work.</span></a></li>
+  <li><a href="/guide/multiple-sessions/"><strong>Running several Claude Code sessions at once without losing track</strong><span>Parallel Claude Code sessions are fast until one sits waiting for a permission prompt for twenty minutes. How to see every session's state, get alerted when one needs you, and jump to it in one click.</span></a></li>
+  <li><a href="/guide/install-macos/"><strong>Installing Claude Session Overlay on macOS: the first-launch warning, menu bar and widgets</strong><span>How to install the Mac version on Apple Silicon or Intel, get past the 'cannot be opened' warning, and set up the menu bar item, Notification Center widgets and the macOS 26 Control Center control.</span></a></li>
+  <li><a href="/guide/local-files-only/"><strong>What Claude Session Overlay reads on your computer (and what it never touches)</strong><span>The overlay works only from files Claude Code and the Claude desktop app already write. A file-by-file list of what it reads, what it writes, and why it makes no network requests and never reads your credentials.</span></a></li>
+</ul>
+    </section>
+  </main>
+
+  <footer>
+    MIT License · <a href="https://github.com/jsuk10/claude-overlay">github.com/jsuk10/claude-overlay</a> · <a href="/privacy/">Privacy</a> · More projects at <a href="https://home.jsuk.cloud/">home.jsuk.cloud</a><br>
+    Not affiliated with or endorsed by Anthropic. "Claude" and "Claude Code" are trademarks of Anthropic.
+  </footer>
+</div>
+</body>
+</html>

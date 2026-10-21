@@ -1,0 +1,32 @@
+<!--meta
+{
+  "title": "Claude weekly and 5-hour usage limits: how to see what you have left",
+  "description": "Claude subscription plans meter usage in a rolling 5-hour window and a weekly window. Here is how the two limits relate to your Claude Code sessions and how to keep both in view while you work.",
+  "date": "2026-10-20",
+  "order": 2
+}
+-->
+<p>If you use Claude Code on a Claude subscription rather than an API key, your usage is metered in two windows at once: a <strong>5-hour session limit</strong> and a <strong>weekly limit</strong>. Hitting either one pauses your work until it resets. Both are easy to lose track of when several sessions are running, because each session only shows its own conversation, while the limits belong to your whole account.</p>
+
+<h2>Two limits, one account</h2>
+<p>The 5-hour limit covers a rolling window that starts with your first message and resets five hours later. It is the one you bump into during an intense afternoon. The weekly limit is a larger budget that resets once a week; it is the one that catches up with you after several heavy days in a row.</p>
+<p>What matters for Claude Code is that <strong>every session draws from the same pool</strong>. Three sessions running side by side spend the 5-hour budget roughly three times as fast as one. Sessions in the terminal and sessions in the Claude desktop app's Code tab count the same way. So "how much do I have left?" is an account-level question, and no single session window can answer it for you.</p>
+
+<h2>Where to see the numbers</h2>
+<p>The Claude desktop app records your plan usage locally about every five minutes, in a file called <code>plan-usage-history.json</code> inside its data folder (<code>%APPDATA%\Claude</code> on Windows, <code>~/Library/Application Support/Claude/</code> on macOS). The overlay reads the latest sample from that file and shows:</p>
+<ul>
+  <li><strong>Weekly usage</strong> on the header line at the top of the overlay.</li>
+  <li><strong>The 5-hour session limit</strong> on the bottom line, as a percentage with a colored bar.</li>
+</ul>
+<p>Hover over either one for the exact figure. If the desktop app has not recorded anything yet, the bottom line says so ("shown once the Claude desktop app records usage") instead of showing a stale or made-up number. You only need the desktop app installed and signed in; it does not need to be in the foreground.</p>
+
+<h2>Reset times with the session-hud mod</h2>
+<p>The optional <code>session-hud</code> mod adds a second source. It reports the usage figures Claude Code receives with each reply, including <strong>when each limit resets</strong>. With the mod installed the bottom line reads like <code>5-hour session limit 62% used · reset 1h 40m</code>, so you can decide whether to push on or take a break.</p>
+<p>When both sources are available, the overlay takes the most recent reading for each limit separately. A reading older than the limit's own window is thrown away: a 5-hour figure from six hours ago says nothing about now, because the window has reset since.</p>
+
+<h2>On macOS: the menu bar and widgets</h2>
+<p>On a Mac the same numbers show up outside the overlay window too. The menu bar item next to the ✻ icon adds the 5-hour percentage once it passes 75%, so it stays quiet until it matters. Its menu lists both weekly and 5-hour usage. The small widget shows the 5-hour limit next to the session counts, and the large and extra-large widgets draw bars for both limits.</p>
+
+<h2>Stretching your limits</h2>
+<p>Usage is driven by how much the model reads and writes, so the habits that keep context small also save your limits: ask for the part of a file or log you need, start fresh sessions for unrelated tasks instead of dragging a huge conversation along, and stop sessions you are no longer watching. A session that keeps running background work while you are away still spends from the same pool.</p>
+<p>Keeping the 5-hour number in the corner of your screen turns the limit from a surprise into a plan. When it is at 80% with two hours to go before the reset, you know to finish the current task rather than start a big new one.</p>

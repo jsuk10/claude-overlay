@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>클로드 코드 세션 오버레이 가이드</title>
+<meta name="description" content="Claude Code를 쓰면서 자주 막히는 것들을 정리했습니다. 컨텍스트, 사용량 한도, 세션 여러 개 다루기, Windows·macOS 설치까지.">
+<meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1b1a18" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://claude-overlay.jsuk.cloud/ko/guide/">
+<link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/guide/">
+<link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/guide/">
+<link rel="alternate" hreflang="x-default" href="https://claude-overlay.jsuk.cloud/guide/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Claude Session Overlay">
+<meta property="og:title" content="클로드 코드 세션 오버레이 가이드">
+<meta property="og:description" content="Claude Code를 쓰면서 자주 막히는 것들을 정리했습니다. 컨텍스트, 사용량 한도, 세션 여러 개 다루기, Windows·macOS 설치까지.">
+<meta property="og:url" content="https://claude-overlay.jsuk.cloud/ko/guide/">
+<meta property="og:image" content="https://claude-overlay.jsuk.cloud/screenshot-ko-dark.png">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
+<script>
+  if (location.hostname.endsWith('github.io')) location.replace('https://claude-overlay.jsuk.cloud/' + location.pathname.replace(/^\/claude-overlay\//, '') + location.hash);
+</script>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/site.css">
+<meta name="google-adsense-account" content="ca-pub-9204832944396914">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9204832944396914" crossorigin="anonymous"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0XK79SYGFF"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-0XK79SYGFF', { anonymize_ip: true });
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[data-track]');
+    if (a) gtag('event', a.getAttribute('data-track'), { link_url: a.href });
+  });
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "url": "https://claude-overlay.jsuk.cloud/ko/guide/context-window-usage/",
+      "name": "클로드 코드 컨텍스트 사용량 확인하고 자동 압축 시점 미리 보기"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "url": "https://claude-overlay.jsuk.cloud/ko/guide/usage-limits/",
+      "name": "클로드 주간·5시간 사용량 한도, 남은 양 확인하는 법"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "url": "https://claude-overlay.jsuk.cloud/ko/guide/multiple-sessions/",
+      "name": "클로드 코드 세션 여러 개를 동시에 돌릴 때 놓치지 않는 법"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "url": "https://claude-overlay.jsuk.cloud/ko/guide/install-windows/",
+      "name": "Windows 설치: 실행 파일과 설치 파일, SmartScreen 경고, session-hud Mod"
+    },
+    {
+      "@type": "ListItem",
+      "position": 5,
+      "url": "https://claude-overlay.jsuk.cloud/ko/guide/install-macos/",
+      "name": "macOS 설치: 처음 실행 경고 넘기기, 메뉴 막대와 위젯 설정"
+    },
+    {
+      "@type": "ListItem",
+      "position": 6,
+      "url": "https://claude-overlay.jsuk.cloud/ko/guide/local-files-only/",
+      "name": "클로드 세션 오버레이가 내 컴퓨터에서 읽는 것, 절대 건드리지 않는 것"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "처음",
+      "item": "https://claude-overlay.jsuk.cloud/ko/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "가이드",
+      "item": "https://claude-overlay.jsuk.cloud/ko/guide/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="/ko/">Claude Session Overlay</a>
+    <nav>
+      <a href="/ko/guide/">가이드</a>
+      <a href="/guide/" hreflang="en" lang="en">English</a>
+      <a href="https://github.com/jsuk10/claude-overlay" data-track="github_click">GitHub</a>
+    </nav>
+  </header>
+
+  <main class="article">
+    <nav class="crumbs" aria-label="breadcrumb"><a href="/ko/">처음</a> <span aria-hidden="true">›</span> <span aria-current="page">가이드</span></nav>
+    <h1>클로드 코드 세션 오버레이 가이드</h1>
+    <p class="lead">Claude Code를 쓰면서 자주 막히는 것들을 정리했습니다. 컨텍스트, 사용량 한도, 세션 여러 개 다루기, Windows·macOS 설치까지.</p>
+    <ul class="guide-list">
+  <li><a href="/ko/guide/context-window-usage/"><strong>클로드 코드 컨텍스트 사용량 확인하고 자동 압축 시점 미리 보기</strong><span>컨텍스트 창이 무엇인지, Claude Code가 언제 대화를 자동 압축하는지, 내 모델의 압축 기준을 계산하는 법, 세션 여러 개의 컨텍스트를 한꺼번에 지켜보는 법을 정리했습니다.</span></a></li>
+  <li><a href="/ko/guide/usage-limits/"><strong>클로드 주간·5시간 사용량 한도, 남은 양 확인하는 법</strong><span>Claude 구독 요금제는 5시간 창과 주간 창 두 가지로 사용량을 잽니다. 두 한도가 Claude Code 세션과 어떻게 맞물리는지, 작업하면서 둘 다 계속 보는 법을 정리했습니다.</span></a></li>
+  <li><a href="/ko/guide/multiple-sessions/"><strong>클로드 코드 세션 여러 개를 동시에 돌릴 때 놓치지 않는 법</strong><span>Claude Code 세션을 여러 개 띄우면 빠르지만, 하나가 권한 확인에서 20분씩 멈춰 있기도 합니다. 세션마다 상태를 한눈에 보고, 내 차례가 오면 알림을 받고, 눌러서 바로 그 세션으로 가는 법.</span></a></li>
+  <li><a href="/ko/guide/install-windows/"><strong>Windows 설치: 실행 파일과 설치 파일, SmartScreen 경고, session-hud Mod</strong><span>Windows에서 어떤 파일을 받을지, SmartScreen 경고를 넘기는 법, Windows 시작 시 실행, Claude Code에 session-hud Mod 넣기, 문제가 있을 때 쓰는 명령줄 옵션까지 차례대로 정리했습니다.</span></a></li>
+  <li><a href="/ko/guide/install-macos/"><strong>macOS 설치: 처음 실행 경고 넘기기, 메뉴 막대와 위젯 설정</strong><span>Apple Silicon·Intel 맥에 설치하는 법, '열 수 없습니다' 경고를 넘기는 법, 메뉴 막대 항목과 알림 센터 위젯, macOS 26 제어 센터 컨트롤까지 정리했습니다.</span></a></li>
+  <li><a href="/ko/guide/local-files-only/"><strong>클로드 세션 오버레이가 내 컴퓨터에서 읽는 것, 절대 건드리지 않는 것</strong><span>오버레이는 Claude Code와 Claude 데스크톱 앱이 원래 남기는 파일만 읽습니다. 무엇을 읽고 무엇을 쓰는지 파일 단위로 정리하고, 네트워크 요청을 보내지 않고 로그인 정보를 읽지 않는 이유를 적었습니다.</span></a></li>
+</ul>
+    <aside class="ad" aria-label="광고" data-label="광고">
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9204832944396914" data-ad-slot="1976878299" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</aside>
+  </main>
+
+  <footer>
+    MIT 라이선스 · <a href="https://github.com/jsuk10/claude-overlay">github.com/jsuk10/claude-overlay</a> · <a href="/ko/privacy/">개인정보 처리방침</a> · 다른 프로젝트는 <a href="https://home.jsuk.cloud/">home.jsuk.cloud</a><br>
+    Anthropic과 관련이 없거나 Anthropic이 보증하지 않는 개인 프로젝트입니다. "Claude"와 "Claude Code"는 Anthropic의 상표입니다.
+  </footer>
+</div>
+</body>
+</html>

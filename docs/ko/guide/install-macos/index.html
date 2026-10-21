@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>macOS 설치: 처음 실행 경고 넘기기, 메뉴 막대와 위젯 설정 · Claude Session Overlay</title>
+<meta name="description" content="Apple Silicon·Intel 맥에 설치하는 법, '열 수 없습니다' 경고를 넘기는 법, 메뉴 막대 항목과 알림 센터 위젯, macOS 26 제어 센터 컨트롤까지 정리했습니다.">
+<meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1b1a18" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://claude-overlay.jsuk.cloud/ko/guide/install-macos/">
+<link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/guide/install-macos/">
+<link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/guide/install-macos/">
+<link rel="alternate" hreflang="x-default" href="https://claude-overlay.jsuk.cloud/guide/install-macos/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Claude Session Overlay">
+<meta property="og:title" content="macOS 설치: 처음 실행 경고 넘기기, 메뉴 막대와 위젯 설정 · Claude Session Overlay">
+<meta property="og:description" content="Apple Silicon·Intel 맥에 설치하는 법, '열 수 없습니다' 경고를 넘기는 법, 메뉴 막대 항목과 알림 센터 위젯, macOS 26 제어 센터 컨트롤까지 정리했습니다.">
+<meta property="og:url" content="https://claude-overlay.jsuk.cloud/ko/guide/install-macos/">
+<meta property="og:image" content="https://claude-overlay.jsuk.cloud/screenshot-ko-dark.png">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
+<script>
+  if (location.hostname.endsWith('github.io')) location.replace('https://claude-overlay.jsuk.cloud/' + location.pathname.replace(/^\/claude-overlay\//, '') + location.hash);
+</script>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/site.css">
+<meta name="google-adsense-account" content="ca-pub-9204832944396914">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9204832944396914" crossorigin="anonymous"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0XK79SYGFF"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-0XK79SYGFF', { anonymize_ip: true });
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[data-track]');
+    if (a) gtag('event', a.getAttribute('data-track'), { link_url: a.href });
+  });
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "macOS 설치: 처음 실행 경고 넘기기, 메뉴 막대와 위젯 설정",
+  "description": "Apple Silicon·Intel 맥에 설치하는 법, '열 수 없습니다' 경고를 넘기는 법, 메뉴 막대 항목과 알림 센터 위젯, macOS 26 제어 센터 컨트롤까지 정리했습니다.",
+  "inLanguage": "ko",
+  "datePublished": "2026-10-20",
+  "dateModified": "2026-10-20",
+  "mainEntityOfPage": "https://claude-overlay.jsuk.cloud/ko/guide/install-macos/",
+  "image": "https://claude-overlay.jsuk.cloud/screenshot-ko-dark.png",
+  "author": {
+    "@type": "Person",
+    "name": "jsuk10",
+    "url": "https://github.com/jsuk10"
+  },
+  "about": {
+    "@type": "SoftwareApplication",
+    "name": "Claude Session Overlay",
+    "url": "https://claude-overlay.jsuk.cloud/ko/"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "처음",
+      "item": "https://claude-overlay.jsuk.cloud/ko/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "가이드",
+      "item": "https://claude-overlay.jsuk.cloud/ko/guide/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "macOS 설치: 처음 실행 경고 넘기기, 메뉴 막대와 위젯 설정",
+      "item": "https://claude-overlay.jsuk.cloud/ko/guide/install-macos/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="/ko/">Claude Session Overlay</a>
+    <nav>
+      <a href="/ko/guide/">가이드</a>
+      <a href="/guide/install-macos/" hreflang="en" lang="en">English</a>
+      <a href="https://github.com/jsuk10/claude-overlay" data-track="github_click">GitHub</a>
+    </nav>
+  </header>
+
+  <main class="article">
+    <nav class="crumbs" aria-label="breadcrumb"><a href="/ko/">처음</a> <span aria-hidden="true">›</span> <a href="/ko/guide/">가이드</a> <span aria-hidden="true">›</span> <span aria-current="page">macOS 설치: 처음 실행 경고 넘기기, 메뉴 막대와 위젯 설정</span></nav>
+    <h1>macOS 설치: 처음 실행 경고 넘기기, 메뉴 막대와 위젯 설정</h1>
+    <p class="meta">고친 날: <time datetime="2026-10-20">2026년 10월 20일</time></p>
+<p>맥에서는 오버레이가 메뉴 막대 앱으로 돕니다. 떠 있는 세션 목록 말고도 메뉴 막대에 ✻ 항목이 생기고, 알림 센터와 바탕화면에 둘 위젯, macOS 26에서는 제어 센터 컨트롤까지 붙습니다. macOS 11 이상이 필요하고, 위젯은 macOS 14 이상에서 쓸 수 있습니다.</p>
+
+<h2>맞는 DMG 고르기</h2>
+<p>빌드가 두 가지입니다. M1 이후 칩을 쓰는 맥은 <a href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay-macos-arm64.dmg" data-track="download_mac_arm64">Apple Silicon용 DMG</a>를, 예전 Intel 맥은 <a href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay-macos-x64.dmg" data-track="download_mac_x64">Intel용 DMG</a>를 받으세요. 잘 모르겠으면 Apple 메뉴 → <strong>이 Mac에 관하여</strong>를 열어 보세요. "칩"(Apple M…)이 나오면 Apple Silicon, "프로세서"(Intel)가 나오면 Intel입니다.</p>
+<ol>
+  <li>DMG를 열고 <strong>Claude Session Overlay</strong>를 <strong>응용 프로그램</strong>으로 끌어다 놓습니다.</li>
+  <li>응용 프로그램에서 실행하면 메뉴 막대에 ✻ 아이콘이 생깁니다.</li>
+  <li>처음 실행하면 로그인할 때 같이 열지 묻습니다. 나중에 메뉴의 <strong>로그인 시 열기</strong>에서 바꿀 수 있습니다.</li>
+</ol>
+
+<h2>처음 실행 경고 넘기기</h2>
+<p>아직 Apple 공증을 받지 않은 앱이라, 처음 열면 macOS가 개발자를 확인할 수 없다고 막습니다. App Store 밖에서 받은 앱에 붙는 표준 Gatekeeper 검사입니다. 그래도 열려면 <strong>시스템 설정 → 개인정보 보호 및 보안</strong>으로 가서 아래쪽의 Claude Session Overlay 안내 옆 <strong>그래도 열기</strong>를 누르세요. 한 번 고르면 macOS가 기억합니다.</p>
+<p>터미널에서 한 줄로 설치하는 방법도 있습니다. 스크립트가 내 맥의 칩에 맞는 DMG를 받아 격리 표시 없이 응용 프로그램 폴더에 복사하고 바로 실행하므로 경고가 아예 뜨지 않습니다.</p>
+<pre><code>curl -fsSL https://claude-overlay.jsuk.cloud/install.sh | bash</code></pre>
+
+<aside class="ad" aria-label="광고" data-label="광고">
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9204832944396914" data-ad-slot="1976878299" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</aside>
+<h2>메뉴 막대 항목</h2>
+<p>메뉴 막대의 ✻ 옆에 상태별 세션 수가 색 점으로 보입니다. 노랑은 입력 대기, 주황은 작업 중, 초록은 완료입니다. 5시간 사용량 한도가 75%를 넘으면 그 %도 같이 뜹니다. 누르면 세션 목록(고르면 그 세션으로 이동), 주간·5시간 사용량, 오버레이 명령(보이기·숨기기, 알림, 로그인 시 열기, 종료)이 나옵니다.</p>
+
+<h2>위젯</h2>
+<p>바탕화면 오른쪽 클릭 → <strong>위젯 편집</strong>에서 "Claude Session Overlay"를 찾거나, 알림 센터(메뉴 막대 오른쪽의 날짜·시간을 누르면 열리는 옆 창)에 넣으면 됩니다. 크기는 넷입니다.</p>
+<ul>
+  <li><strong>작게</strong>: 상태별 개수와 5시간 한도</li>
+  <li><strong>중간</strong>: 세션 3개</li>
+  <li><strong>크게</strong>: 세션 7개와 사용량 막대</li>
+  <li><strong>아주 크게</strong>(바탕화면 전용): 개수, 사용량, 세션 7개와 폴더</li>
+</ul>
+<p>위젯에서 세션을 누르면 그 세션으로 갑니다. 작업 중인 세션의 경과 시간은 저절로 늘어납니다. 위젯은 오버레이가 써 두는 상태 파일(<code>~/.claude/session-hud/status.json</code>)을 읽기 때문에, 오버레이가 꺼져 있으면 몇 분 뒤 오래된 내용 대신 "오버레이가 꺼져 있어요"로 바뀝니다.</p>
+
+<h2>제어 센터(macOS 26 이상)</h2>
+<p>제어 센터 → <strong>컨트롤 편집</strong>에서 "Claude 세션" 컨트롤을 제어 센터나 메뉴 막대에 넣으면, 입력을 기다리는 세션 수가 보이고 누르면 그 세션(없으면 오버레이)이 열립니다.</p>
+
+<h2>맥에서 세션으로 이동하는 방식</h2>
+<p>Claude 데스크톱 앱 세션은 <code>claude://</code> 링크로 엽니다. Terminal이나 iTerm2의 터미널 세션은 정확히 그 탭으로 가는데, 처음 한 번 그 앱을 제어해도 되는지 macOS가 묻습니다. VS Code 같은 다른 앱의 세션은 앱만 앞으로 가져옵니다. 떠 있는 오버레이는 모든 Space에 보이지만 전체 화면 앱 위에는 뜨지 않습니다.</p>
+
+    <div class="cta-box">
+      <strong>오버레이 써 보기</strong>
+      <p>무료 오픈소스(MIT)입니다. Windows 10/11, macOS 11 이상.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay.exe" data-track="download_click">Windows용 내려받기</a>
+        <a class="btn" href="/ko/#mac" data-track="download_mac_click">macOS용 내려받기</a>
+      </div>
+    </div>
+
+    <aside class="ad" aria-label="광고" data-label="광고">
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9204832944396914" data-ad-slot="1976878299" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</aside>
+
+    <section class="related">
+      <h2>다른 가이드</h2>
+      <ul class="guide-list">
+  <li><a href="/ko/guide/context-window-usage/"><strong>클로드 코드 컨텍스트 사용량 확인하고 자동 압축 시점 미리 보기</strong><span>컨텍스트 창이 무엇인지, Claude Code가 언제 대화를 자동 압축하는지, 내 모델의 압축 기준을 계산하는 법, 세션 여러 개의 컨텍스트를 한꺼번에 지켜보는 법을 정리했습니다.</span></a></li>
+  <li><a href="/ko/guide/usage-limits/"><strong>클로드 주간·5시간 사용량 한도, 남은 양 확인하는 법</strong><span>Claude 구독 요금제는 5시간 창과 주간 창 두 가지로 사용량을 잽니다. 두 한도가 Claude Code 세션과 어떻게 맞물리는지, 작업하면서 둘 다 계속 보는 법을 정리했습니다.</span></a></li>
+  <li><a href="/ko/guide/multiple-sessions/"><strong>클로드 코드 세션 여러 개를 동시에 돌릴 때 놓치지 않는 법</strong><span>Claude Code 세션을 여러 개 띄우면 빠르지만, 하나가 권한 확인에서 20분씩 멈춰 있기도 합니다. 세션마다 상태를 한눈에 보고, 내 차례가 오면 알림을 받고, 눌러서 바로 그 세션으로 가는 법.</span></a></li>
+  <li><a href="/ko/guide/install-windows/"><strong>Windows 설치: 실행 파일과 설치 파일, SmartScreen 경고, session-hud Mod</strong><span>Windows에서 어떤 파일을 받을지, SmartScreen 경고를 넘기는 법, Windows 시작 시 실행, Claude Code에 session-hud Mod 넣기, 문제가 있을 때 쓰는 명령줄 옵션까지 차례대로 정리했습니다.</span></a></li>
+  <li><a href="/ko/guide/local-files-only/"><strong>클로드 세션 오버레이가 내 컴퓨터에서 읽는 것, 절대 건드리지 않는 것</strong><span>오버레이는 Claude Code와 Claude 데스크톱 앱이 원래 남기는 파일만 읽습니다. 무엇을 읽고 무엇을 쓰는지 파일 단위로 정리하고, 네트워크 요청을 보내지 않고 로그인 정보를 읽지 않는 이유를 적었습니다.</span></a></li>
+</ul>
+    </section>
+  </main>
+
+  <footer>
+    MIT 라이선스 · <a href="https://github.com/jsuk10/claude-overlay">github.com/jsuk10/claude-overlay</a> · <a href="/ko/privacy/">개인정보 처리방침</a> · 다른 프로젝트는 <a href="https://home.jsuk.cloud/">home.jsuk.cloud</a><br>
+    Anthropic과 관련이 없거나 Anthropic이 보증하지 않는 개인 프로젝트입니다. "Claude"와 "Claude Code"는 Anthropic의 상표입니다.
+  </footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!--meta
+{
+  "title": "Windows 설치: 실행 파일과 설치 파일, SmartScreen 경고, session-hud Mod",
+  "description": "Windows에서 어떤 파일을 받을지, SmartScreen 경고를 넘기는 법, Windows 시작 시 실행, Claude Code에 session-hud Mod 넣기, 문제가 있을 때 쓰는 명령줄 옵션까지 차례대로 정리했습니다.",
+  "date": "2026-10-20",
+  "order": 4
+}
+-->
+<p>Windows 버전은 그 자체로 완결된 프로그램 하나입니다. Windows 10과 11(x64)에서 돌고, .NET 같은 것을 따로 설치할 필요가 없습니다. 오버레이가 보여 주는 게 Claude Code 세션이니, 같은 PC에 Claude Code(CLI)나 Claude 데스크톱 앱이 있어야 합니다.</p>
+
+<h2>무엇을 받을까</h2>
+<p>받는 방법은 두 가지이고, 둘 다 같은 앱입니다.</p>
+<ul>
+  <li><a href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay.exe" data-track="download_click"><code>ClaudeSessionOverlay.exe</code></a>는 설치 없이 쓰는 실행 파일입니다. 파일 하나라 아무 폴더에 두고 더블클릭하면 됩니다. 설치되는 것이 없어서 파일을 지우면 끝입니다.</li>
+  <li><a href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay-Setup.exe" data-track="download_setup_click"><code>ClaudeSessionOverlay-Setup.exe</code></a>는 설치 파일입니다. 관리자 권한 없이 <code>%LOCALAPPDATA%\Programs</code>에 설치하고 시작 메뉴에 바로 가기를 만듭니다. 설치하면서 <strong>Windows 시작 시 실행</strong>과 <strong>Claude Code에 session-hud Mod 넣기</strong>를 체크할 수 있고, 제거하면 둘 다 지웁니다.</li>
+</ul>
+<p><a href="https://github.com/jsuk10/claude-overlay/releases/latest">릴리스 페이지</a>에는 exe, README, Mod 폴더를 묶은 zip도 있습니다.</p>
+
+<h2>SmartScreen 경고</h2>
+<p>코드 서명을 하지 않은 앱이라 처음 실행하면 "Windows의 PC 보호" 창이 뜰 수 있습니다. <strong>추가 정보</strong>를 누른 뒤 <strong>실행</strong>을 누르세요. 한 번만 하면 됩니다. 직접 빌드하고 싶다면 소스 전체가 GitHub에 있습니다(아래 참고).</p>
+
+<h2>처음 실행</h2>
+<p>처음 켜면 Windows 시작 시 같이 실행할지 묻습니다. 나중에 트레이 아이콘 메뉴의 <strong>Windows 시작 시 실행</strong>에서 바꿀 수 있습니다. 오버레이는 화면 구석에 뜨고, 원하는 곳으로 끌어 두면 그 자리를 기억합니다.</p>
+<p>알아 두면 좋은 조작:</p>
+<ul>
+  <li><strong>트레이 아이콘</strong>: 왼쪽 클릭으로 보이기·숨기기. 메뉴에서 소리·음성 알림을 켜고 끄고, 알림을 미리 들어 보고, 창 위치를 초기화합니다.</li>
+  <li><strong>머리 줄 오른쪽 클릭</strong>: 테마, 언어(한국어·영어), 한 줄로 접기, 확인한 세션 다시 보기, 트레이로 숨기기.</li>
+  <li><strong>맨 아래 버튼</strong>: 다크·라이트 테마 바꾸기.</li>
+</ul>
+
+<h2>선택: session-hud Mod</h2>
+<p>오버레이는 혼자서도 동작합니다. 함께 들어 있는 Claude Code Mod를 넣으면 세션별 비용, 사용량 한도의 초기화 시각, 세션 줄의 압축 버튼(⇣), Claude Code 프롬프트 위의 한 줄 HUD가 더해집니다. 설치 파일에서 체크하면 대신 설정해 주고, 손으로 하려면 <code>~/.claude/settings.json</code>에서 <code>CLAUDE_CODE_PLUGIN_DIRS</code>가 Mod 폴더를 가리키게 합니다.</p>
+<pre><code>{
+  "env": { "CLAUDE_CODE_PLUGIN_DIRS": "C:\\path\\to\\claude-overlay\\mod\\session-hud" }
+}</code></pre>
+<p>그 뒤에 새로 시작하는 Claude Code 세션부터 Mod가 로드됩니다. 이미 돌고 있던 세션은 다시 시작할 때까지 Mod 없이 계속 돕니다.</p>
+
+<h2>문제가 있을 때 쓰는 옵션</h2>
+<p>뭔가 이상해 보일 때 쓸 수 있는 명령줄 옵션이 두 개 있습니다.</p>
+<ul>
+  <li><code>ClaudeSessionOverlay.exe --demo</code>는 지어낸 세션으로 오버레이를 띄웁니다. Claude Code를 돌리지 않고도 배치와 테마를 확인할 수 있고, <code>--theme light</code>나 <code>--lang ko</code>를 붙여 볼 수 있습니다.</li>
+  <li><code>ClaudeSessionOverlay.exe --dump</code>는 지금 오버레이가 보는 내용을 <code>~/.claude/session-hud/dump.txt</code>에 남깁니다. 이슈를 올릴 때 이 파일을 붙여 주세요.</li>
+</ul>
+<p>세션이 목록에 안 보이면 그 세션이 실제로 살아 있는 Claude Code 프로세스인지 확인하세요. 오버레이는 Claude Code가 세션이 도는 동안 써 두는 <code>~/.claude/sessions/</code>에서 세션 목록을 읽습니다.</p>
+
+<h2>소스에서 빌드</h2>
+<p><a href="https://dotnet.microsoft.com/download/dotnet/9.0">.NET 9 SDK</a>를 설치한 뒤:</p>
+<pre><code>git clone https://github.com/jsuk10/claude-overlay.git
+cd claude-overlay
+dotnet publish app -c Release -o bin
+.\bin\ClaudeSessionOverlay.exe</code></pre>

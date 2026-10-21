@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>클로드 코드 세션 여러 개를 동시에 돌릴 때 놓치지 않는 법 · Claude Session Overlay</title>
+<meta name="description" content="Claude Code 세션을 여러 개 띄우면 빠르지만, 하나가 권한 확인에서 20분씩 멈춰 있기도 합니다. 세션마다 상태를 한눈에 보고, 내 차례가 오면 알림을 받고, 눌러서 바로 그 세션으로 가는 법.">
+<meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1b1a18" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://claude-overlay.jsuk.cloud/ko/guide/multiple-sessions/">
+<link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/guide/multiple-sessions/">
+<link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/guide/multiple-sessions/">
+<link rel="alternate" hreflang="x-default" href="https://claude-overlay.jsuk.cloud/guide/multiple-sessions/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Claude Session Overlay">
+<meta property="og:title" content="클로드 코드 세션 여러 개를 동시에 돌릴 때 놓치지 않는 법 · Claude Session Overlay">
+<meta property="og:description" content="Claude Code 세션을 여러 개 띄우면 빠르지만, 하나가 권한 확인에서 20분씩 멈춰 있기도 합니다. 세션마다 상태를 한눈에 보고, 내 차례가 오면 알림을 받고, 눌러서 바로 그 세션으로 가는 법.">
+<meta property="og:url" content="https://claude-overlay.jsuk.cloud/ko/guide/multiple-sessions/">
+<meta property="og:image" content="https://claude-overlay.jsuk.cloud/screenshot-ko-dark.png">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
+<script>
+  if (location.hostname.endsWith('github.io')) location.replace('https://claude-overlay.jsuk.cloud/' + location.pathname.replace(/^\/claude-overlay\//, '') + location.hash);
+</script>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/site.css">
+<meta name="google-adsense-account" content="ca-pub-9204832944396914">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9204832944396914" crossorigin="anonymous"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0XK79SYGFF"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-0XK79SYGFF', { anonymize_ip: true });
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[data-track]');
+    if (a) gtag('event', a.getAttribute('data-track'), { link_url: a.href });
+  });
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "클로드 코드 세션 여러 개를 동시에 돌릴 때 놓치지 않는 법",
+  "description": "Claude Code 세션을 여러 개 띄우면 빠르지만, 하나가 권한 확인에서 20분씩 멈춰 있기도 합니다. 세션마다 상태를 한눈에 보고, 내 차례가 오면 알림을 받고, 눌러서 바로 그 세션으로 가는 법.",
+  "inLanguage": "ko",
+  "datePublished": "2026-10-20",
+  "dateModified": "2026-10-20",
+  "mainEntityOfPage": "https://claude-overlay.jsuk.cloud/ko/guide/multiple-sessions/",
+  "image": "https://claude-overlay.jsuk.cloud/screenshot-ko-dark.png",
+  "author": {
+    "@type": "Person",
+    "name": "jsuk10",
+    "url": "https://github.com/jsuk10"
+  },
+  "about": {
+    "@type": "SoftwareApplication",
+    "name": "Claude Session Overlay",
+    "url": "https://claude-overlay.jsuk.cloud/ko/"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "처음",
+      "item": "https://claude-overlay.jsuk.cloud/ko/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "가이드",
+      "item": "https://claude-overlay.jsuk.cloud/ko/guide/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "클로드 코드 세션 여러 개를 동시에 돌릴 때 놓치지 않는 법",
+      "item": "https://claude-overlay.jsuk.cloud/ko/guide/multiple-sessions/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="/ko/">Claude Session Overlay</a>
+    <nav>
+      <a href="/ko/guide/">가이드</a>
+      <a href="/guide/multiple-sessions/" hreflang="en" lang="en">English</a>
+      <a href="https://github.com/jsuk10/claude-overlay" data-track="github_click">GitHub</a>
+    </nav>
+  </header>
+
+  <main class="article">
+    <nav class="crumbs" aria-label="breadcrumb"><a href="/ko/">처음</a> <span aria-hidden="true">›</span> <a href="/ko/guide/">가이드</a> <span aria-hidden="true">›</span> <span aria-current="page">클로드 코드 세션 여러 개를 동시에 돌릴 때 놓치지 않는 법</span></nav>
+    <h1>클로드 코드 세션 여러 개를 동시에 돌릴 때 놓치지 않는 법</h1>
+    <p class="meta">고친 날: <time datetime="2026-10-20">2026년 10월 20일</time></p>
+<p>Claude Code 세션을 두세 개, 많게는 다섯 개씩 나란히 돌리면 일이 확실히 빨라집니다. 하나는 리팩터링하고, 하나는 테스트를 쓰고, 하나는 버그를 뒤집니다. 문제는 주의력입니다. 세션은 권한을 물으며 멈추고, 내가 딴 곳을 보는 사이 끝나고, 조용히 컨텍스트를 채웁니다. 터미널 탭 몇 개와 데스크톱 앱 창을 오가다 보면, 어떤 세션이 "예" 한마디를 30분째 기다리고 있었다는 걸 뒤늦게 알게 됩니다.</p>
+
+<h2>알아야 할 상태는 셋</h2>
+<p>오버레이는 살아 있는 세션을 세 가지 상태로 나눠 항상 위에 뜬 목록 하나에 보여 줍니다.</p>
+<ul>
+  <li><strong>작업 중</strong>: 모델이 일하고 있습니다. 아직 내가 할 일은 없고, 얼마나 오래 돌았는지가 함께 보입니다.</li>
+  <li><strong>입력 대기</strong>: 권한 확인이나 질문 때문에 나를 기다립니다. 놓쳤을 때 시간이 가장 많이 새는 상태입니다.</li>
+  <li><strong>끝났지만 아직 안 본 세션</strong>: 차례를 마쳤는데 그 뒤로 내가 들여다보지 않았습니다.</li>
+</ul>
+<p>이미 확인한 세션은 목록에서 빠져서 목록이 짧게 유지됩니다. 줄을 눌러 열거나, 데스크톱 앱에서 그 세션 창으로 가거나, 오른쪽 클릭 메뉴에서 확인 처리하면 본 것으로 칩니다. 무슨 일이 있어도 보이게 두고 싶은 세션에는 별을 달면 됩니다. <strong>★ 즐겨찾기</strong>는 항상 목록에 남습니다.</p>
+
+<h2>귀로 듣는 알림</h2>
+<p>목록은 쳐다볼 때만 쓸모가 있습니다. 그래서 상태가 바뀌면 짧은 소리와 함께 한마디를 읽어 줍니다. 세션이 끝나면 "my-repo 작업 종료", 기다리기 시작하면 "my-repo 확인 필요", 컨텍스트가 90%를 넘으면 컨텍스트 경고입니다. Windows에서는 기본 음성 합성을, macOS에서는 <code>say</code>로 자연스러운 목소리(한국어는 Yuna 같은)를 고릅니다. 소리와 음성은 트레이 메뉴에서 따로 끌 수 있고, 화면이 잠겼거나 절전 중이거나 모니터가 꺼져 있으면 울리지 않아서 돌아왔을 때 알림이 쌓여 있지 않습니다.</p>
+
+<aside class="ad" aria-label="광고" data-label="광고">
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9204832944396914" data-ad-slot="1976878299" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</aside>
+<h2>누르면 그 창으로</h2>
+<p>세션 줄을 누르면 오버레이가 그 세션을 앞으로 가져옵니다. CLI 세션이면 그 세션이 돌고 있는 터미널 창을 찾습니다. 데스크톱 앱 Code 탭 세션이면 앱에서 그 세션을 열고, 이미 분할 화면에 떠 있으면 배치를 바꾸지 않은 채 그 화면의 입력창으로 커서를 옮깁니다. macOS에서는 Terminal이나 iTerm2의 세션이면 정확히 그 탭으로 갑니다.</p>
+<p>나머지는 오른쪽 클릭 메뉴에 있습니다. 열기, 확인 처리, 즐겨찾기, 폴더 열기.</p>
+
+<h2>비슷한 세션 구분하기</h2>
+<p>병렬 세션은 같은 저장소의 복제본이나 워크트리에서 도는 경우가 많고, 그러면 폴더 이름이 다 같습니다. 오버레이는 경로를 드라이브와 마지막 두 폴더로 줄여 <code>C:\…\work\app</code>, <code>D:\…\work\app</code>처럼 보여 주므로, 드라이브가 다른 두 체크아웃이 똑같아 보이지 않습니다. 데스크톱 앱에서 시작한 세션은 맨 폴더 이름 대신 세션 제목이 나옵니다.</p>
+
+<h2>백그라운드 작업은 부모 밑으로</h2>
+<p>Claude Code는 백그라운드 서브에이전트, 백그라운드 셸, 파생 세션을 따로 띄울 수 있습니다. 이걸 전부 한 줄씩 늘어놓으면 정작 봐야 할 세션이 묻히니, 오버레이는 이들을 시작한 세션 밑에 <code>▸ 3</code> 같은 작은 칩으로 접어 둡니다. 아직 뭐가 돌고 있는지 보고 싶을 때 칩을 누르면 펼쳐집니다.</p>
+
+<h2>방해되지 않게</h2>
+<p>항상 위에 뜨는 창은 그 자리를 차지할 값을 해야 합니다. 오버레이는 게임이나 영상 같은 전체 화면 앱이 앞에 있으면 숨고, 오른쪽 클릭 메뉴로 머리 줄만 남기고 접을 수 있고, 트레이로 내릴 수 있고, 놓아 둔 자리를 기억합니다. Windows 시작이나 맥 로그인 때 같이 켜지게 해 두면, 첫 세션을 열 때 이미 목록이 떠 있습니다.</p>
+<p>결국 흐름은 단순해집니다. 세션을 띄워 두고 다른 일을 하다가, 화면 구석을 힐끗 보거나 알림 소리를 듣고 다음에 손볼 세션으로 가면 됩니다.</p>
+
+    <div class="cta-box">
+      <strong>오버레이 써 보기</strong>
+      <p>무료 오픈소스(MIT)입니다. Windows 10/11, macOS 11 이상.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay.exe" data-track="download_click">Windows용 내려받기</a>
+        <a class="btn" href="/ko/#mac" data-track="download_mac_click">macOS용 내려받기</a>
+      </div>
+    </div>
+
+    <aside class="ad" aria-label="광고" data-label="광고">
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9204832944396914" data-ad-slot="1976878299" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</aside>
+
+    <section class="related">
+      <h2>다른 가이드</h2>
+      <ul class="guide-list">
+  <li><a href="/ko/guide/context-window-usage/"><strong>클로드 코드 컨텍스트 사용량 확인하고 자동 압축 시점 미리 보기</strong><span>컨텍스트 창이 무엇인지, Claude Code가 언제 대화를 자동 압축하는지, 내 모델의 압축 기준을 계산하는 법, 세션 여러 개의 컨텍스트를 한꺼번에 지켜보는 법을 정리했습니다.</span></a></li>
+  <li><a href="/ko/guide/usage-limits/"><strong>클로드 주간·5시간 사용량 한도, 남은 양 확인하는 법</strong><span>Claude 구독 요금제는 5시간 창과 주간 창 두 가지로 사용량을 잽니다. 두 한도가 Claude Code 세션과 어떻게 맞물리는지, 작업하면서 둘 다 계속 보는 법을 정리했습니다.</span></a></li>
+  <li><a href="/ko/guide/install-windows/"><strong>Windows 설치: 실행 파일과 설치 파일, SmartScreen 경고, session-hud Mod</strong><span>Windows에서 어떤 파일을 받을지, SmartScreen 경고를 넘기는 법, Windows 시작 시 실행, Claude Code에 session-hud Mod 넣기, 문제가 있을 때 쓰는 명령줄 옵션까지 차례대로 정리했습니다.</span></a></li>
+  <li><a href="/ko/guide/install-macos/"><strong>macOS 설치: 처음 실행 경고 넘기기, 메뉴 막대와 위젯 설정</strong><span>Apple Silicon·Intel 맥에 설치하는 법, '열 수 없습니다' 경고를 넘기는 법, 메뉴 막대 항목과 알림 센터 위젯, macOS 26 제어 센터 컨트롤까지 정리했습니다.</span></a></li>
+  <li><a href="/ko/guide/local-files-only/"><strong>클로드 세션 오버레이가 내 컴퓨터에서 읽는 것, 절대 건드리지 않는 것</strong><span>오버레이는 Claude Code와 Claude 데스크톱 앱이 원래 남기는 파일만 읽습니다. 무엇을 읽고 무엇을 쓰는지 파일 단위로 정리하고, 네트워크 요청을 보내지 않고 로그인 정보를 읽지 않는 이유를 적었습니다.</span></a></li>
+</ul>
+    </section>
+  </main>
+
+  <footer>
+    MIT 라이선스 · <a href="https://github.com/jsuk10/claude-overlay">github.com/jsuk10/claude-overlay</a> · <a href="/ko/privacy/">개인정보 처리방침</a> · 다른 프로젝트는 <a href="https://home.jsuk.cloud/">home.jsuk.cloud</a><br>
+    Anthropic과 관련이 없거나 Anthropic이 보증하지 않는 개인 프로젝트입니다. "Claude"와 "Claude Code"는 Anthropic의 상표입니다.
+  </footer>
+</div>
+</body>
+</html>

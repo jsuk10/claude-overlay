@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Installing Claude Session Overlay on macOS: the first-launch warning, menu bar and widgets</title>
+<meta name="description" content="How to install the Mac version on Apple Silicon or Intel, get past the 'cannot be opened' warning, and set up the menu bar item, Notification Center widgets and the macOS 26 Control Center control.">
+<meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1b1a18" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://claude-overlay.jsuk.cloud/guide/install-macos/">
+<link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/guide/install-macos/">
+<link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/guide/install-macos/">
+<link rel="alternate" hreflang="x-default" href="https://claude-overlay.jsuk.cloud/guide/install-macos/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Claude Session Overlay">
+<meta property="og:title" content="Installing Claude Session Overlay on macOS: the first-launch warning, menu bar and widgets">
+<meta property="og:description" content="How to install the Mac version on Apple Silicon or Intel, get past the 'cannot be opened' warning, and set up the menu bar item, Notification Center widgets and the macOS 26 Control Center control.">
+<meta property="og:url" content="https://claude-overlay.jsuk.cloud/guide/install-macos/">
+<meta property="og:image" content="https://claude-overlay.jsuk.cloud/screenshot-en-dark.png">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<script>
+  if (location.hostname.endsWith('github.io')) location.replace('https://claude-overlay.jsuk.cloud/' + location.pathname.replace(/^\/claude-overlay\//, '') + location.hash);
+</script>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/site.css">
+<meta name="google-adsense-account" content="ca-pub-9204832944396914">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9204832944396914" crossorigin="anonymous"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0XK79SYGFF"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-0XK79SYGFF', { anonymize_ip: true });
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[data-track]');
+    if (a) gtag('event', a.getAttribute('data-track'), { link_url: a.href });
+  });
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Installing Claude Session Overlay on macOS: the first-launch warning, menu bar and widgets",
+  "description": "How to install the Mac version on Apple Silicon or Intel, get past the 'cannot be opened' warning, and set up the menu bar item, Notification Center widgets and the macOS 26 Control Center control.",
+  "inLanguage": "en",
+  "datePublished": "2026-10-20",
+  "dateModified": "2026-10-20",
+  "mainEntityOfPage": "https://claude-overlay.jsuk.cloud/guide/install-macos/",
+  "image": "https://claude-overlay.jsuk.cloud/screenshot-en-dark.png",
+  "author": {
+    "@type": "Person",
+    "name": "jsuk10",
+    "url": "https://github.com/jsuk10"
+  },
+  "about": {
+    "@type": "SoftwareApplication",
+    "name": "Claude Session Overlay",
+    "url": "https://claude-overlay.jsuk.cloud/"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://claude-overlay.jsuk.cloud/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://claude-overlay.jsuk.cloud/guide/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Installing Claude Session Overlay on macOS: the first-launch warning, menu bar and widgets",
+      "item": "https://claude-overlay.jsuk.cloud/guide/install-macos/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="/">Claude Session Overlay</a>
+    <nav>
+      <a href="/guide/">Guides</a>
+      <a href="/ko/guide/install-macos/" hreflang="ko" lang="ko">한국어</a>
+      <a href="https://github.com/jsuk10/claude-overlay" data-track="github_click">GitHub</a>
+    </nav>
+  </header>
+
+  <main class="article">
+    <nav class="crumbs" aria-label="breadcrumb"><a href="/">Home</a> <span aria-hidden="true">›</span> <a href="/guide/">Guides</a> <span aria-hidden="true">›</span> <span aria-current="page">Installing Claude Session Overlay on macOS: the first-launch warning, menu bar and widgets</span></nav>
+    <h1>Installing Claude Session Overlay on macOS: the first-launch warning, menu bar and widgets</h1>
+    <p class="meta">Updated: <time datetime="2026-10-20">October 20, 2026</time></p>
+<p>On a Mac the overlay runs as a menu bar app. Besides the floating session list it adds a ✻ item to the menu bar, widgets for Notification Center and the desktop, and on macOS 26 a Control Center control. It needs macOS 11 or later; the widgets need macOS 14 or later.</p>
+
+<h2>Pick the right DMG</h2>
+<p>There are two builds. Macs with an M1 chip or newer need <a href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay-macos-arm64.dmg" data-track="download_mac_arm64">the Apple Silicon DMG</a>; older Intel Macs need <a href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay-macos-x64.dmg" data-track="download_mac_x64">the Intel DMG</a>. If you are not sure, open the Apple menu → <strong>About This Mac</strong>: it lists either a "Chip" (Apple M-something) or a "Processor" (Intel).</p>
+<ol>
+  <li>Open the DMG and drag <strong>Claude Session Overlay</strong> into <strong>Applications</strong>.</li>
+  <li>Launch it from Applications. A ✻ icon appears in the menu bar.</li>
+  <li>On first launch it asks whether to open at login. You can change this later with <strong>Open at login</strong> in its menu.</li>
+</ol>
+
+<h2>Getting past the first-launch warning</h2>
+<p>The app is not notarized by Apple yet, so the first time you open it macOS says it cannot verify the developer. This is the standard Gatekeeper check for apps from outside the App Store. To open it anyway, go to <strong>System Settings → Privacy &amp; Security</strong>, scroll down, and click <strong>Open Anyway</strong> next to the message about Claude Session Overlay. macOS remembers the choice.</p>
+<p>Alternatively, install from Terminal in one line. The script downloads the right DMG for your chip, copies the app into Applications without the quarantine flag, and launches it, so there is no warning at all:</p>
+<pre><code>curl -fsSL https://claude-overlay.jsuk.cloud/install.sh | bash</code></pre>
+
+<aside class="ad" aria-label="Advertisement" data-label="Advertisement">
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9204832944396914" data-ad-slot="1976878299" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</aside>
+<h2>The menu bar item</h2>
+<p>Next to the ✻ icon the menu bar shows colored counts: yellow for sessions that need input, orange for working, green for done. Once the 5-hour usage limit passes 75% its percentage appears there too. Click it for the full session list (pick one to jump to it), weekly and 5-hour usage, and the overlay's commands: show or hide, alerts, open at login, and quit.</p>
+
+<h2>Widgets</h2>
+<p>Right-click the desktop → <strong>Edit Widgets</strong> and search for "Claude Session Overlay", or add them to Notification Center (click the date and time at the right of the menu bar). There are four sizes:</p>
+<ul>
+  <li><strong>Small</strong>: counts by state and the 5-hour limit.</li>
+  <li><strong>Medium</strong>: three sessions.</li>
+  <li><strong>Large</strong>: seven sessions with usage bars.</li>
+  <li><strong>Extra large</strong> (desktop only): counts, usage and seven sessions with their folders.</li>
+</ul>
+<p>Tap a session in a widget to go to it. Elapsed time for working sessions keeps counting on its own. The widgets read a status file the overlay writes (<code>~/.claude/session-hud/status.json</code>); if the overlay is not running, after a few minutes they say so instead of showing old data.</p>
+
+<h2>Control Center (macOS 26 and later)</h2>
+<p>Open Control Center → <strong>Edit Controls</strong> and add the "Claude 세션" control to Control Center or the menu bar. It shows how many sessions need input; click it to open that session, or the overlay if none is waiting.</p>
+
+<h2>How jumping works on a Mac</h2>
+<p>Sessions in the Claude desktop app open through a <code>claude://</code> link. Terminal sessions in Terminal or iTerm2 jump to their exact tab; macOS asks once for permission to control those apps. Sessions in other apps such as VS Code bring the app to the front. The floating overlay is visible on every Space but stays out of fullscreen apps.</p>
+
+    <div class="cta-box">
+      <strong>Try the overlay</strong>
+      <p>Free and open source (MIT). Windows 10/11 and macOS 11+.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay.exe" data-track="download_click">Download for Windows</a>
+        <a class="btn" href="/#mac" data-track="download_mac_click">Download for Mac</a>
+      </div>
+    </div>
+
+    <aside class="ad" aria-label="Advertisement" data-label="Advertisement">
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9204832944396914" data-ad-slot="1976878299" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</aside>
+
+    <section class="related">
+      <h2>More guides</h2>
+      <ul class="guide-list">
+  <li><a href="/guide/context-window-usage/"><strong>How to check Claude Code context usage and see when auto-compact will kick in</strong><span>What the context window is, how Claude Code decides when to auto-compact, how to work out the threshold for your model, and how to keep an eye on it across every session.</span></a></li>
+  <li><a href="/guide/usage-limits/"><strong>Claude weekly and 5-hour usage limits: how to see what you have left</strong><span>Claude subscription plans meter usage in a rolling 5-hour window and a weekly window. Here is how the two limits relate to your Claude Code sessions and how to keep both in view while you work.</span></a></li>
+  <li><a href="/guide/multiple-sessions/"><strong>Running several Claude Code sessions at once without losing track</strong><span>Parallel Claude Code sessions are fast until one sits waiting for a permission prompt for twenty minutes. How to see every session's state, get alerted when one needs you, and jump to it in one click.</span></a></li>
+  <li><a href="/guide/install-windows/"><strong>Installing Claude Session Overlay on Windows: portable exe, installer, SmartScreen and the session-hud mod</strong><span>Step-by-step Windows setup: which download to pick, getting past the SmartScreen warning, starting with Windows, adding the optional session-hud mod to Claude Code, and the command-line switches for troubleshooting.</span></a></li>
+  <li><a href="/guide/local-files-only/"><strong>What Claude Session Overlay reads on your computer (and what it never touches)</strong><span>The overlay works only from files Claude Code and the Claude desktop app already write. A file-by-file list of what it reads, what it writes, and why it makes no network requests and never reads your credentials.</span></a></li>
+</ul>
+    </section>
+  </main>
+
+  <footer>
+    MIT License · <a href="https://github.com/jsuk10/claude-overlay">github.com/jsuk10/claude-overlay</a> · <a href="/privacy/">Privacy</a> · More projects at <a href="https://home.jsuk.cloud/">home.jsuk.cloud</a><br>
+    Not affiliated with or endorsed by Anthropic. "Claude" and "Claude Code" are trademarks of Anthropic.
+  </footer>
+</div>
+</body>
+</html>

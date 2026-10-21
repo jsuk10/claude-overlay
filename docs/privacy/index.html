@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy policy · Claude Session Overlay</title>
+<meta name="description" content="What claude-overlay.jsuk.cloud collects through Google Analytics and Google AdSense, how cookies are used, how to opt out, and why the Claude Session Overlay app itself collects nothing.">
+<meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1b1a18" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://claude-overlay.jsuk.cloud/privacy/">
+<link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/privacy/">
+<link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/privacy/">
+<link rel="alternate" hreflang="x-default" href="https://claude-overlay.jsuk.cloud/privacy/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Claude Session Overlay">
+<meta property="og:title" content="Privacy policy · Claude Session Overlay">
+<meta property="og:description" content="What claude-overlay.jsuk.cloud collects through Google Analytics and Google AdSense, how cookies are used, how to opt out, and why the Claude Session Overlay app itself collects nothing.">
+<meta property="og:url" content="https://claude-overlay.jsuk.cloud/privacy/">
+<meta property="og:image" content="https://claude-overlay.jsuk.cloud/screenshot-en-dark.png">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<script>
+  if (location.hostname.endsWith('github.io')) location.replace('https://claude-overlay.jsuk.cloud/' + location.pathname.replace(/^\/claude-overlay\//, '') + location.hash);
+</script>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/site.css">
+<meta name="google-adsense-account" content="ca-pub-9204832944396914">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9204832944396914" crossorigin="anonymous"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0XK79SYGFF"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-0XK79SYGFF', { anonymize_ip: true });
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[data-track]');
+    if (a) gtag('event', a.getAttribute('data-track'), { link_url: a.href });
+  });
+</script>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="/">Claude Session Overlay</a>
+    <nav>
+      <a href="/guide/">Guides</a>
+      <a href="/ko/privacy/" hreflang="ko" lang="ko">한국어</a>
+      <a href="https://github.com/jsuk10/claude-overlay" data-track="github_click">GitHub</a>
+    </nav>
+  </header>
+
+  <main class="article">
+    <h1>Privacy policy</h1>
+    <p class="meta">Updated: <time datetime="2026-10-20">October 20, 2026</time></p>
+<p>This policy covers the website at <strong>claude-overlay.jsuk.cloud</strong>. The Claude Session Overlay app is covered at the end: it does not collect anything.</p>
+
+<h2>The website</h2>
+<p>This site is a set of static pages. It has no accounts, forms or comments, and the server does not store anything you send. Two Google services run on the pages:</p>
+<ul>
+  <li><strong>Google Analytics</strong> counts visits, which pages are read, and clicks on download and GitHub links. IP addresses are anonymized. Google sets cookies to tell repeat visits apart.</li>
+  <li><strong>Google AdSense</strong> shows ads. Google and its partners use cookies to serve ads based on your visits to this and other websites, and to measure them. You can learn how Google uses this information at <a href="https://policies.google.com/technologies/partner-sites">How Google uses information from sites or apps that use its services</a>.</li>
+</ul>
+
+<h2>Your choices</h2>
+<ul>
+  <li>Turn off personalized ads in <a href="https://adssettings.google.com/">Google Ad Settings</a>, or opt out of third-party vendors' use of cookies for personalized ads at <a href="https://www.aboutads.info/choices/">aboutads.info</a>.</li>
+  <li>Install the <a href="https://tools.google.com/dlpage/gaoptout">Google Analytics opt-out browser add-on</a>.</li>
+  <li>Block or delete cookies in your browser settings. The site works the same without them.</li>
+</ul>
+
+<h2>The app</h2>
+<p>Claude Session Overlay reads files that Claude Code and the Claude desktop app write on your computer and shows them on your screen. It makes no network requests, has no telemetry, and never reads your credentials. Its own settings stay in <code>~/.claude/session-hud/</code> on your machine. Downloads are served by GitHub under <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub's privacy statement</a>. See <a href="/guide/local-files-only/">what the overlay reads</a> for the full list.</p>
+
+<h2>Contact</h2>
+<p>Questions about this policy: open an issue at <a href="https://github.com/jsuk10/claude-overlay/issues">github.com/jsuk10/claude-overlay/issues</a>. If this policy changes, the date at the top changes with it.</p>
+  </main>
+
+  <footer>
+    MIT License · <a href="https://github.com/jsuk10/claude-overlay">github.com/jsuk10/claude-overlay</a> · <a href="/privacy/">Privacy</a> · More projects at <a href="https://home.jsuk.cloud/">home.jsuk.cloud</a><br>
+    Not affiliated with or endorsed by Anthropic. "Claude" and "Claude Code" are trademarks of Anthropic.
+  </footer>
+</div>
+</body>
+</html>

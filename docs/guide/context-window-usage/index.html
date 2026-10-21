@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to check Claude Code context usage and see when auto-compact will kick in · Claude Session Overlay</title>
+<meta name="description" content="What the context window is, how Claude Code decides when to auto-compact, how to work out the threshold for your model, and how to keep an eye on it across every session.">
+<meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1b1a18" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://claude-overlay.jsuk.cloud/guide/context-window-usage/">
+<link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/guide/context-window-usage/">
+<link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/guide/context-window-usage/">
+<link rel="alternate" hreflang="x-default" href="https://claude-overlay.jsuk.cloud/guide/context-window-usage/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Claude Session Overlay">
+<meta property="og:title" content="How to check Claude Code context usage and see when auto-compact will kick in · Claude Session Overlay">
+<meta property="og:description" content="What the context window is, how Claude Code decides when to auto-compact, how to work out the threshold for your model, and how to keep an eye on it across every session.">
+<meta property="og:url" content="https://claude-overlay.jsuk.cloud/guide/context-window-usage/">
+<meta property="og:image" content="https://claude-overlay.jsuk.cloud/screenshot-en-dark.png">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<script>
+  if (location.hostname.endsWith('github.io')) location.replace('https://claude-overlay.jsuk.cloud/' + location.pathname.replace(/^\/claude-overlay\//, '') + location.hash);
+</script>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/site.css">
+<meta name="google-adsense-account" content="ca-pub-9204832944396914">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9204832944396914" crossorigin="anonymous"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0XK79SYGFF"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-0XK79SYGFF', { anonymize_ip: true });
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[data-track]');
+    if (a) gtag('event', a.getAttribute('data-track'), { link_url: a.href });
+  });
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "How to check Claude Code context usage and see when auto-compact will kick in",
+  "description": "What the context window is, how Claude Code decides when to auto-compact, how to work out the threshold for your model, and how to keep an eye on it across every session.",
+  "inLanguage": "en",
+  "datePublished": "2026-10-20",
+  "dateModified": "2026-10-20",
+  "mainEntityOfPage": "https://claude-overlay.jsuk.cloud/guide/context-window-usage/",
+  "image": "https://claude-overlay.jsuk.cloud/screenshot-en-dark.png",
+  "author": {
+    "@type": "Person",
+    "name": "jsuk10",
+    "url": "https://github.com/jsuk10"
+  },
+  "about": {
+    "@type": "SoftwareApplication",
+    "name": "Claude Session Overlay",
+    "url": "https://claude-overlay.jsuk.cloud/"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://claude-overlay.jsuk.cloud/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://claude-overlay.jsuk.cloud/guide/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "How to check Claude Code context usage and see when auto-compact will kick in",
+      "item": "https://claude-overlay.jsuk.cloud/guide/context-window-usage/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="/">Claude Session Overlay</a>
+    <nav>
+      <a href="/guide/">Guides</a>
+      <a href="/ko/guide/context-window-usage/" hreflang="ko" lang="ko">한국어</a>
+      <a href="https://github.com/jsuk10/claude-overlay" data-track="github_click">GitHub</a>
+    </nav>
+  </header>
+
+  <main class="article">
+    <nav class="crumbs" aria-label="breadcrumb"><a href="/">Home</a> <span aria-hidden="true">›</span> <a href="/guide/">Guides</a> <span aria-hidden="true">›</span> <span aria-current="page">How to check Claude Code context usage and see when auto-compact will kick in</span></nav>
+    <h1>How to check Claude Code context usage and see when auto-compact will kick in</h1>
+    <p class="meta">Updated: <time datetime="2026-10-20">October 20, 2026</time></p>
+<p>Every Claude Code session carries a conversation: your prompts, the files it read, tool output, and its own replies. All of that has to fit in the model's context window. When it gets close to full, Claude Code summarizes the conversation so far and carries on from the summary. That is auto-compact. It keeps the session alive, but details from earlier in the conversation get squeezed into a few paragraphs, so it pays to know when it is coming.</p>
+
+<h2>Context window vs. auto-compact threshold</h2>
+<p>The number that matters is not the window size itself. Claude Code compacts <em>before</em> the window is full, because it needs room to write the summary and a little slack on top. The overlay works out the threshold the same way:</p>
+<pre><code>threshold = min(window, autoCompactWindow) − min(max output tokens, 20,000) − 13,000</code></pre>
+<p>For a model with a 200,000-token window and 32,000 output tokens, that is 200,000 − 20,000 − 13,000 = <strong>167,000 tokens</strong>. A session sitting at 140k tokens looks like 70% of the window, but it is already 84% of the way to compaction. That gap is why the overlay shows its percentage against the threshold, not against the raw window: <strong>100% means "compacts now"</strong>.</p>
+<p>Models with a 1M-token context (the ones marked <code>[1m]</code>) get the same treatment with a much larger window, which is why they can run for hours before compacting.</p>
+
+<h2>Where the numbers come from</h2>
+<p>The model's window and output limit come from the model catalog that Claude Code caches under <code>~/.claude/cache/model-catalog/</code>. If you have lowered the compaction point yourself, the overlay picks that up too: the <code>CLAUDE_CODE_AUTO_COMPACT_WINDOW</code> environment variable wins, and otherwise it reads <code>autoCompactWindow</code> from <code>~/.claude/settings.json</code>. The token count for each session comes from the last usage entry in its transcript (<code>~/.claude/projects/&lt;project&gt;/&lt;session&gt;.jsonl</code>), so the number updates every time the model replies.</p>
+
+<aside class="ad" aria-label="Advertisement" data-label="Advertisement">
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9204832944396914" data-ad-slot="1976878299" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</aside>
+<h2>Reading the colors</h2>
+<p>Each session row shows a percentage such as <code>46%</code>. The color follows the same scale as the Claude desktop app's usage display:</p>
+<ul>
+  <li><strong>Blue</strong> under 75%: plenty of room.</li>
+  <li><strong>Yellow</strong> from 75% to 90%: start thinking about a good place to stop.</li>
+  <li><strong>Red</strong> at 90% and above: compaction is close.</li>
+</ul>
+<p>When a session crosses 90%, the overlay also plays a chime and reads out a short line such as "my-repo context 91 percent", so you hear about it even when the session is in a window you are not looking at. Alerts stay silent while the screen is locked or off.</p>
+
+<h2>Compacting on your own terms</h2>
+<p>Automatic compaction happens whenever the threshold is hit, which may be in the middle of a refactor. You get a better summary if you compact at a natural break instead: after a commit, after tests pass, or before you switch to a different part of the codebase. In Claude Code you can run <code>/compact</code> yourself at any time, and add a hint about what to keep, for example <code>/compact keep the list of files we changed</code>. The <code>/context</code> command shows what is taking up space in the current session.</p>
+<p>If you install the optional <code>session-hud</code> mod that ships with the overlay, each session row gets a <strong>⇣ compact button</strong> that runs <code>/compact</code> in that session, and Claude Code's prompt gets a one-line HUD with the same context bar.</p>
+
+<h2>Habits that keep context usage down</h2>
+<p>Large tool outputs are the usual culprit. Reading whole generated files, dumping long logs, or running a test suite with verbose output can add tens of thousands of tokens in one go. Ask for the relevant part (a function, the failing test, the last 50 lines) instead. Starting a fresh session for an unrelated task is cheaper than compacting an old one, and subagents keep their exploration out of the main conversation, since only their conclusion comes back.</p>
+<p>With several sessions open, the hard part is noticing which one is close to the limit. That is what the overlay is for: every session's percentage is in one always-on-top list, so a red number stands out before it turns into a surprise summary.</p>
+
+    <div class="cta-box">
+      <strong>Try the overlay</strong>
+      <p>Free and open source (MIT). Windows 10/11 and macOS 11+.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay.exe" data-track="download_click">Download for Windows</a>
+        <a class="btn" href="/#mac" data-track="download_mac_click">Download for Mac</a>
+      </div>
+    </div>
+
+    <aside class="ad" aria-label="Advertisement" data-label="Advertisement">
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9204832944396914" data-ad-slot="1976878299" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</aside>
+
+    <section class="related">
+      <h2>More guides</h2>
+      <ul class="guide-list">
+  <li><a href="/guide/usage-limits/"><strong>Claude weekly and 5-hour usage limits: how to see what you have left</strong><span>Claude subscription plans meter usage in a rolling 5-hour window and a weekly window. Here is how the two limits relate to your Claude Code sessions and how to keep both in view while you work.</span></a></li>
+  <li><a href="/guide/multiple-sessions/"><strong>Running several Claude Code sessions at once without losing track</strong><span>Parallel Claude Code sessions are fast until one sits waiting for a permission prompt for twenty minutes. How to see every session's state, get alerted when one needs you, and jump to it in one click.</span></a></li>
+  <li><a href="/guide/install-windows/"><strong>Installing Claude Session Overlay on Windows: portable exe, installer, SmartScreen and the session-hud mod</strong><span>Step-by-step Windows setup: which download to pick, getting past the SmartScreen warning, starting with Windows, adding the optional session-hud mod to Claude Code, and the command-line switches for troubleshooting.</span></a></li>
+  <li><a href="/guide/install-macos/"><strong>Installing Claude Session Overlay on macOS: the first-launch warning, menu bar and widgets</strong><span>How to install the Mac version on Apple Silicon or Intel, get past the 'cannot be opened' warning, and set up the menu bar item, Notification Center widgets and the macOS 26 Control Center control.</span></a></li>
+  <li><a href="/guide/local-files-only/"><strong>What Claude Session Overlay reads on your computer (and what it never touches)</strong><span>The overlay works only from files Claude Code and the Claude desktop app already write. A file-by-file list of what it reads, what it writes, and why it makes no network requests and never reads your credentials.</span></a></li>
+</ul>
+    </section>
+  </main>
+
+  <footer>
+    MIT License · <a href="https://github.com/jsuk10/claude-overlay">github.com/jsuk10/claude-overlay</a> · <a href="/privacy/">Privacy</a> · More projects at <a href="https://home.jsuk.cloud/">home.jsuk.cloud</a><br>
+    Not affiliated with or endorsed by Anthropic. "Claude" and "Claude Code" are trademarks of Anthropic.
+  </footer>
+</div>
+</body>
+</html>

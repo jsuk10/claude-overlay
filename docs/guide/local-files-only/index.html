@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What Claude Session Overlay reads on your computer (and what it never touches)</title>
+<meta name="description" content="The overlay works only from files Claude Code and the Claude desktop app already write. A file-by-file list of what it reads, what it writes, and why it makes no network requests and never reads your credentials.">
+<meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1b1a18" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://claude-overlay.jsuk.cloud/guide/local-files-only/">
+<link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/guide/local-files-only/">
+<link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/guide/local-files-only/">
+<link rel="alternate" hreflang="x-default" href="https://claude-overlay.jsuk.cloud/guide/local-files-only/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Claude Session Overlay">
+<meta property="og:title" content="What Claude Session Overlay reads on your computer (and what it never touches)">
+<meta property="og:description" content="The overlay works only from files Claude Code and the Claude desktop app already write. A file-by-file list of what it reads, what it writes, and why it makes no network requests and never reads your credentials.">
+<meta property="og:url" content="https://claude-overlay.jsuk.cloud/guide/local-files-only/">
+<meta property="og:image" content="https://claude-overlay.jsuk.cloud/screenshot-en-dark.png">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<script>
+  if (location.hostname.endsWith('github.io')) location.replace('https://claude-overlay.jsuk.cloud/' + location.pathname.replace(/^\/claude-overlay\//, '') + location.hash);
+</script>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/site.css">
+<meta name="google-adsense-account" content="ca-pub-9204832944396914">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9204832944396914" crossorigin="anonymous"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0XK79SYGFF"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-0XK79SYGFF', { anonymize_ip: true });
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[data-track]');
+    if (a) gtag('event', a.getAttribute('data-track'), { link_url: a.href });
+  });
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "What Claude Session Overlay reads on your computer (and what it never touches)",
+  "description": "The overlay works only from files Claude Code and the Claude desktop app already write. A file-by-file list of what it reads, what it writes, and why it makes no network requests and never reads your credentials.",
+  "inLanguage": "en",
+  "datePublished": "2026-10-20",
+  "dateModified": "2026-10-20",
+  "mainEntityOfPage": "https://claude-overlay.jsuk.cloud/guide/local-files-only/",
+  "image": "https://claude-overlay.jsuk.cloud/screenshot-en-dark.png",
+  "author": {
+    "@type": "Person",
+    "name": "jsuk10",
+    "url": "https://github.com/jsuk10"
+  },
+  "about": {
+    "@type": "SoftwareApplication",
+    "name": "Claude Session Overlay",
+    "url": "https://claude-overlay.jsuk.cloud/"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://claude-overlay.jsuk.cloud/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://claude-overlay.jsuk.cloud/guide/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "What Claude Session Overlay reads on your computer (and what it never touches)",
+      "item": "https://claude-overlay.jsuk.cloud/guide/local-files-only/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="/">Claude Session Overlay</a>
+    <nav>
+      <a href="/guide/">Guides</a>
+      <a href="/ko/guide/local-files-only/" hreflang="ko" lang="ko">한국어</a>
+      <a href="https://github.com/jsuk10/claude-overlay" data-track="github_click">GitHub</a>
+    </nav>
+  </header>
+
+  <main class="article">
+    <nav class="crumbs" aria-label="breadcrumb"><a href="/">Home</a> <span aria-hidden="true">›</span> <a href="/guide/">Guides</a> <span aria-hidden="true">›</span> <span aria-current="page">What Claude Session Overlay reads on your computer (and what it never touches)</span></nav>
+    <h1>What Claude Session Overlay reads on your computer (and what it never touches)</h1>
+    <p class="meta">Updated: <time datetime="2026-10-20">October 20, 2026</time></p>
+<p>An app that watches your coding sessions should be clear about what it looks at. The short version: the overlay <strong>only reads local files</strong> that Claude Code and the Claude desktop app already write on your machine. It sends no network requests, has no account or telemetry, and never reads your login tokens or API keys. The source is MIT-licensed on GitHub, so every line below can be checked.</p>
+
+<h2>What it reads</h2>
+<div class="table-scroll">
+<table>
+  <tr><th>Information</th><th>File</th></tr>
+  <tr><td>Running sessions and their state (working, idle, waiting for input)</td><td><code>~/.claude/sessions/&lt;pid&gt;.json</code></td></tr>
+  <tr><td>Model, context tokens, background tasks</td><td><code>~/.claude/projects/&lt;project&gt;/&lt;session&gt;.jsonl</code></td></tr>
+  <tr><td>Context window size and auto-compact point</td><td><code>~/.claude/cache/model-catalog/*.json</code> and <code>autoCompactWindow</code> in <code>~/.claude/settings.json</code></td></tr>
+  <tr><td>Weekly and 5-hour usage</td><td><code>plan-usage-history.json</code> from the Claude desktop app</td></tr>
+  <tr><td>Session titles and split-view layout</td><td>The desktop app's session files and <code>claude_desktop_config.json</code></td></tr>
+</table>
+</div>
+<p>The desktop app's files live in <code>%APPDATA%\Claude</code> on Windows (or the matching folder under <code>%LOCALAPPDATA%\Packages</code> for the Microsoft Store version) and in <code>~/Library/Application Support/Claude/</code> on macOS.</p>
+
+<h2>How much of the transcript it looks at</h2>
+<p>Session transcripts contain your whole conversation, so this is the file people ask about most. The overlay reads them only to find usage numbers (how many tokens the last reply used) and the start and end of background tasks. It does not display, store or send your prompts or the model's replies anywhere. Everything it pulls out stays in memory while it runs.</p>
+
+<aside class="ad" aria-label="Advertisement" data-label="Advertisement">
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9204832944396914" data-ad-slot="1976878299" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</aside>
+<h2>What it writes</h2>
+<p>The overlay keeps its own small settings in <code>~/.claude/session-hud/</code>: which sessions you have marked as seen, your favorites, window position, theme and language. On macOS it also writes <code>status.json</code> there for the widgets to read. Running <code>--dump</code> writes a diagnostic snapshot to <code>dump.txt</code> in the same folder, only when you ask for it.</p>
+<p>It never modifies Claude Code's own files. The one exception is opt-in: if you tick the session-hud mod option in the Windows installer, it adds the mod folder to <code>CLAUDE_CODE_PLUGIN_DIRS</code> in your Claude Code settings, and removes it again when you uninstall.</p>
+
+<h2>Why no network</h2>
+<p>Everything the overlay shows already exists on disk, so there is nothing to fetch. Usage limits come from the sample the desktop app saves locally rather than from calling Anthropic's servers with your credentials. That design has a cost: if the desktop app is not installed, the overlay cannot show usage limits, and it tells you so instead of guessing. The benefit is that the overlay cannot leak your conversations or tokens, because it never opens a connection.</p>
+
+<h2>The optional mod</h2>
+<p>The <code>session-hud</code> mod runs inside Claude Code, so it sees what Claude Code passes to mods: the session's usage figures, cost and limit reset times. It writes those to a small file per session in <code>~/.claude/session-hud/</code> for the overlay to pick up. It does not send anything over the network either.</p>
+
+<h2>This website</h2>
+<p>The website you are reading is separate from the app. It uses Google Analytics and shows Google ads, which use cookies. The <a href="/privacy/">privacy policy</a> covers what that means and how to opt out. None of that applies to the app itself.</p>
+
+    <div class="cta-box">
+      <strong>Try the overlay</strong>
+      <p>Free and open source (MIT). Windows 10/11 and macOS 11+.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay.exe" data-track="download_click">Download for Windows</a>
+        <a class="btn" href="/#mac" data-track="download_mac_click">Download for Mac</a>
+      </div>
+    </div>
+
+    <aside class="ad" aria-label="Advertisement" data-label="Advertisement">
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9204832944396914" data-ad-slot="1976878299" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</aside>
+
+    <section class="related">
+      <h2>More guides</h2>
+      <ul class="guide-list">
+  <li><a href="/guide/context-window-usage/"><strong>How to check Claude Code context usage and see when auto-compact will kick in</strong><span>What the context window is, how Claude Code decides when to auto-compact, how to work out the threshold for your model, and how to keep an eye on it across every session.</span></a></li>
+  <li><a href="/guide/usage-limits/"><strong>Claude weekly and 5-hour usage limits: how to see what you have left</strong><span>Claude subscription plans meter usage in a rolling 5-hour window and a weekly window. Here is how the two limits relate to your Claude Code sessions and how to keep both in view while you work.</span></a></li>
+  <li><a href="/guide/multiple-sessions/"><strong>Running several Claude Code sessions at once without losing track</strong><span>Parallel Claude Code sessions are fast until one sits waiting for a permission prompt for twenty minutes. How to see every session's state, get alerted when one needs you, and jump to it in one click.</span></a></li>
+  <li><a href="/guide/install-windows/"><strong>Installing Claude Session Overlay on Windows: portable exe, installer, SmartScreen and the session-hud mod</strong><span>Step-by-step Windows setup: which download to pick, getting past the SmartScreen warning, starting with Windows, adding the optional session-hud mod to Claude Code, and the command-line switches for troubleshooting.</span></a></li>
+  <li><a href="/guide/install-macos/"><strong>Installing Claude Session Overlay on macOS: the first-launch warning, menu bar and widgets</strong><span>How to install the Mac version on Apple Silicon or Intel, get past the 'cannot be opened' warning, and set up the menu bar item, Notification Center widgets and the macOS 26 Control Center control.</span></a></li>
+</ul>
+    </section>
+  </main>
+
+  <footer>
+    MIT License · <a href="https://github.com/jsuk10/claude-overlay">github.com/jsuk10/claude-overlay</a> · <a href="/privacy/">Privacy</a> · More projects at <a href="https://home.jsuk.cloud/">home.jsuk.cloud</a><br>
+    Not affiliated with or endorsed by Anthropic. "Claude" and "Claude Code" are trademarks of Anthropic.
+  </footer>
+</div>
+</body>
+</html>

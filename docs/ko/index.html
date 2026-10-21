@@ -25,6 +25,12 @@
 <link rel="icon" type="image/png" href="../favicon.png">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="stylesheet" href="../site.css">
+<meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1b1a18" media="(prefers-color-scheme: dark)">
+<!--ads-head-->
+<meta name="google-adsense-account" content="ca-pub-9204832944396914">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9204832944396914" crossorigin="anonymous"></script>
+<!--/ads-head-->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-0XK79SYGFF"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -53,15 +59,99 @@
   "screenshot": "https://claude-overlay.jsuk.cloud/screenshot-ko-dark.png",
   "inLanguage": "ko",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "KRW" },
-  "author": { "@type": "Person", "name": "jsuk10", "url": "https://github.com/jsuk10" }
+  "author": { "@type": "Person", "name": "jsuk10", "url": "https://github.com/jsuk10" },
+  "featureList": [
+    "돌고 있는 Claude Code 세션 목록: 작업 중, 입력 대기, 완료",
+    "세션별 컨텍스트 사용량(자동 압축 기준)",
+    "주간·5시간 사용량 한도",
+    "눌러서 그 세션의 터미널이나 데스크톱 앱 창으로 이동",
+    "소리·음성 알림",
+    "macOS 메뉴 막대와 위젯"
+  ]
 }
 </script>
+<!--faq-ld-->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "inLanguage": "ko",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "클로드 코드 세션의 컨텍스트 사용량은 어떻게 보나요?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "세션마다 % 숫자가 보입니다. Claude Code가 대화를 자동 압축하는 지점을 100%로 잡은 값이고, 75% 미만은 파랑, 90% 미만은 노랑, 그 이상은 빨강입니다."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Windows에서 클로드 주간 사용량과 5시간 한도를 볼 수 있나요?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "네. 머리 줄에 주간 사용량, 맨 아래 줄에 5시간 세션 한도가 보입니다. Claude 데스크톱 앱이 남기는 로컬 사용량 기록을 읽습니다."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Claude Code CLI와 데스크톱 앱 둘 다 되나요?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "네. 어느 터미널에서 띄운 CLI 세션이든, 데스크톱 앱 Code 탭 세션이든 한 목록에 함께 보입니다."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "맥(macOS) 버전도 있나요?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "네. macOS 11 이상에서 메뉴 막대 앱으로 돌고, Apple Silicon·Intel용 DMG를 받을 수 있습니다. 메뉴 막대에 상태별 세션 수를, 위젯에 세션 목록과 사용량을 보여 줍니다. 데스크톱 앱 세션은 눌러서 바로 열고, 터미널 세션은 Terminal·iTerm2면 그 탭까지 골라 앞으로 가져옵니다."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "컨텍스트 창은 70%만 썼는데 왜 84%로 나오나요?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Claude Code는 창이 꽉 차기 전에 요약할 자리와 여유분을 남기고 압축합니다. 20만 토큰 모델이면 자동 압축 지점이 약 16만7천 토큰이라 오버레이는 그 값을 기준으로 잽니다. 100%는 곧 압축된다는 뜻입니다."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Claude 데스크톱 앱이 꼭 있어야 하나요?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "세션 목록과 컨텍스트 사용량은 Claude Code 자체 파일에서 읽으므로 없어도 됩니다. 주간·5시간 사용량 한도는 데스크톱 앱이 저장하는 사용량 기록에서 읽어서, 이것만은 데스크톱 앱을 설치하고 로그인해 둬야 합니다. 선택 사항인 session-hud Mod로도 채울 수 있습니다."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "안전한가요? 코드나 대화를 어디로 보내지 않나요?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "보내지 않습니다. 오버레이는 로컬 파일만 읽고, 네트워크 요청을 보내지 않으며, 로그인 토큰이나 API 키를 읽지 않습니다. MIT 라이선스 오픈소스입니다."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "무료인가요?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "네. 계정, 구독, 사용 통계 수집 없이 무료로 쓰는 오픈소스입니다."
+      }
+    }
+  ]
+}
+</script>
+<!--/faq-ld-->
 </head>
 <body>
 <div class="wrap">
   <header class="top">
     <a class="brand" href="./">Claude Session Overlay</a>
     <nav>
+      <a href="guide/">가이드</a>
       <a href="../" hreflang="en" lang="en">English</a>
       <a href="https://github.com/jsuk10/claude-overlay" data-track="github_click">GitHub</a>
     </nav>
@@ -115,6 +205,7 @@
         <li>처음 실행하면 Windows 시작 시 같이 실행할지 묻습니다. 나중에 트레이 아이콘 메뉴의 <strong>Windows 시작 시 실행</strong>에서 바꿀 수 있습니다.</li>
       </ol>
       <p>서명되지 않은 앱이라 처음 실행할 때 Windows SmartScreen 경고가 뜰 수 있습니다. <strong>추가 정보 → 실행</strong>을 누르면 됩니다.</p>
+      <p>설치해서 쓰고 싶다면 <a href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay-Setup.exe" data-track="download_setup_click"><code>ClaudeSessionOverlay-Setup.exe</code></a>를 받으세요. 관리자 권한 없이 <code>%LOCALAPPDATA%\Programs</code>에 설치하고 시작 메뉴에 바로 가기를 만들며, <strong>Windows 시작 시 실행</strong>과 session-hud Mod를 설치하면서 고를 수 있습니다. 자세한 내용은 <a href="guide/install-windows/">Windows 설치 가이드</a>에 있습니다.</p>
 
       <h3 id="mac">macOS</h3>
       <p>macOS 11 이상(위젯은 macOS 14 이상), Apple Silicon과 Intel 모두 됩니다.</p>
@@ -126,6 +217,7 @@
       </ol>
       <p>아직 Apple 공증을 받지 않은 앱이라 처음 열 때 경고가 뜹니다. <strong>시스템 설정 → 개인정보 보호 및 보안</strong> 아래쪽의 <strong>그래도 열기</strong>를 누르세요.<br>터미널에서 한 줄로 설치하면 경고 없이 설치되고 바로 실행됩니다.</p>
       <pre><code>curl -fsSL https://claude-overlay.jsuk.cloud/install.sh | bash</code></pre>
+      <p>메뉴 막대, 위젯, 제어 센터 설정은 <a href="guide/install-macos/">macOS 설치 가이드</a>에 차례대로 적어 두었습니다.</p>
     </section>
 
     <section>
@@ -141,6 +233,7 @@
       </table>
       </div>
       <p>함께 들어 있는 선택 사항인 Claude Code Mod <code>session-hud</code>를 설치하면 세션별 비용, 사용량 한도 초기화 시각, 압축 버튼이 더해집니다.</p>
+      <p>읽고 쓰는 파일 전체 목록은 <a href="guide/local-files-only/">오버레이가 내 컴퓨터에서 읽는 것</a>에 있습니다.</p>
     </section>
 
     <section>
@@ -149,11 +242,36 @@
       <details><summary>Windows에서 클로드 주간 사용량과 5시간 한도를 볼 수 있나요?</summary><p>네. 머리 줄에 주간 사용량, 맨 아래 줄에 5시간 세션 한도가 보입니다. Claude 데스크톱 앱이 남기는 로컬 사용량 기록을 읽습니다.</p></details>
       <details><summary>Claude Code CLI와 데스크톱 앱 둘 다 되나요?</summary><p>네. 어느 터미널에서 띄운 CLI 세션이든, 데스크톱 앱 Code 탭 세션이든 한 목록에 함께 보입니다.</p></details>
       <details><summary>맥(macOS) 버전도 있나요?</summary><p>네. macOS 11 이상에서 메뉴 막대 앱으로 돌고, Apple Silicon·Intel용 DMG를 받을 수 있습니다. 메뉴 막대에 상태별 세션 수를, 위젯에 세션 목록과 사용량을 보여 줍니다. 데스크톱 앱 세션은 눌러서 바로 열고, 터미널 세션은 Terminal·iTerm2면 그 탭까지 골라 앞으로 가져옵니다.</p></details>
+      <details><summary>컨텍스트 창은 70%만 썼는데 왜 84%로 나오나요?</summary><p>Claude Code는 창이 꽉 차기 전에 요약할 자리와 여유분을 남기고 압축합니다. 20만 토큰 모델이면 자동 압축 지점이 약 16만7천 토큰이라 오버레이는 그 값을 기준으로 잽니다. 100%는 곧 압축된다는 뜻입니다.</p></details>
+      <details><summary>Claude 데스크톱 앱이 꼭 있어야 하나요?</summary><p>세션 목록과 컨텍스트 사용량은 Claude Code 자체 파일에서 읽으므로 없어도 됩니다. 주간·5시간 사용량 한도는 데스크톱 앱이 저장하는 사용량 기록에서 읽어서, 이것만은 데스크톱 앱을 설치하고 로그인해 둬야 합니다. 선택 사항인 session-hud Mod로도 채울 수 있습니다.</p></details>
+      <details><summary>안전한가요? 코드나 대화를 어디로 보내지 않나요?</summary><p>보내지 않습니다. 오버레이는 로컬 파일만 읽고, 네트워크 요청을 보내지 않으며, 로그인 토큰이나 API 키를 읽지 않습니다. MIT 라이선스 오픈소스입니다.</p></details>
+      <details><summary>무료인가요?</summary><p>네. 계정, 구독, 사용 통계 수집 없이 무료로 쓰는 오픈소스입니다.</p></details>
+    </section>
+
+    <!--ad-->
+<aside class="ad" aria-label="광고" data-label="광고">
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9204832944396914" data-ad-slot="1976878299" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</aside>
+<!--/ad-->
+
+    <section id="guides">
+      <h2>가이드</h2>
+      <!--guides-->
+<ul class="guide-list">
+  <li><a href="/ko/guide/context-window-usage/"><strong>클로드 코드 컨텍스트 사용량 확인하고 자동 압축 시점 미리 보기</strong><span>컨텍스트 창이 무엇인지, Claude Code가 언제 대화를 자동 압축하는지, 내 모델의 압축 기준을 계산하는 법, 세션 여러 개의 컨텍스트를 한꺼번에 지켜보는 법을 정리했습니다.</span></a></li>
+  <li><a href="/ko/guide/usage-limits/"><strong>클로드 주간·5시간 사용량 한도, 남은 양 확인하는 법</strong><span>Claude 구독 요금제는 5시간 창과 주간 창 두 가지로 사용량을 잽니다. 두 한도가 Claude Code 세션과 어떻게 맞물리는지, 작업하면서 둘 다 계속 보는 법을 정리했습니다.</span></a></li>
+  <li><a href="/ko/guide/multiple-sessions/"><strong>클로드 코드 세션 여러 개를 동시에 돌릴 때 놓치지 않는 법</strong><span>Claude Code 세션을 여러 개 띄우면 빠르지만, 하나가 권한 확인에서 20분씩 멈춰 있기도 합니다. 세션마다 상태를 한눈에 보고, 내 차례가 오면 알림을 받고, 눌러서 바로 그 세션으로 가는 법.</span></a></li>
+  <li><a href="/ko/guide/install-windows/"><strong>Windows 설치: 실행 파일과 설치 파일, SmartScreen 경고, session-hud Mod</strong><span>Windows에서 어떤 파일을 받을지, SmartScreen 경고를 넘기는 법, Windows 시작 시 실행, Claude Code에 session-hud Mod 넣기, 문제가 있을 때 쓰는 명령줄 옵션까지 차례대로 정리했습니다.</span></a></li>
+  <li><a href="/ko/guide/install-macos/"><strong>macOS 설치: 처음 실행 경고 넘기기, 메뉴 막대와 위젯 설정</strong><span>Apple Silicon·Intel 맥에 설치하는 법, '열 수 없습니다' 경고를 넘기는 법, 메뉴 막대 항목과 알림 센터 위젯, macOS 26 제어 센터 컨트롤까지 정리했습니다.</span></a></li>
+  <li><a href="/ko/guide/local-files-only/"><strong>클로드 세션 오버레이가 내 컴퓨터에서 읽는 것, 절대 건드리지 않는 것</strong><span>오버레이는 Claude Code와 Claude 데스크톱 앱이 원래 남기는 파일만 읽습니다. 무엇을 읽고 무엇을 쓰는지 파일 단위로 정리하고, 네트워크 요청을 보내지 않고 로그인 정보를 읽지 않는 이유를 적었습니다.</span></a></li>
+</ul>
+<!--/guides-->
     </section>
   </main>
 
   <footer>
-    MIT 라이선스 · <a href="https://github.com/jsuk10/claude-overlay">github.com/jsuk10/claude-overlay</a> · 다른 프로젝트: <a href="https://home.jsuk.cloud/">home.jsuk.cloud</a><br>
+    MIT 라이선스 · <a href="https://github.com/jsuk10/claude-overlay">github.com/jsuk10/claude-overlay</a> · <a href="privacy/">개인정보 처리방침</a> · 다른 프로젝트: <a href="https://home.jsuk.cloud/">home.jsuk.cloud</a><br>
     Anthropic과 관련이 없거나 Anthropic이 보증하지 않는 개인 프로젝트입니다. "Claude"와 "Claude Code"는 Anthropic의 상표입니다.
   </footer>
 </div>

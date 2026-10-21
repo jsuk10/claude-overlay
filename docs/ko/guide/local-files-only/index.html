@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>클로드 세션 오버레이가 내 컴퓨터에서 읽는 것, 절대 건드리지 않는 것 · Claude Session Overlay</title>
+<meta name="description" content="오버레이는 Claude Code와 Claude 데스크톱 앱이 원래 남기는 파일만 읽습니다. 무엇을 읽고 무엇을 쓰는지 파일 단위로 정리하고, 네트워크 요청을 보내지 않고 로그인 정보를 읽지 않는 이유를 적었습니다.">
+<meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1b1a18" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://claude-overlay.jsuk.cloud/ko/guide/local-files-only/">
+<link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/guide/local-files-only/">
+<link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/guide/local-files-only/">
+<link rel="alternate" hreflang="x-default" href="https://claude-overlay.jsuk.cloud/guide/local-files-only/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Claude Session Overlay">
+<meta property="og:title" content="클로드 세션 오버레이가 내 컴퓨터에서 읽는 것, 절대 건드리지 않는 것 · Claude Session Overlay">
+<meta property="og:description" content="오버레이는 Claude Code와 Claude 데스크톱 앱이 원래 남기는 파일만 읽습니다. 무엇을 읽고 무엇을 쓰는지 파일 단위로 정리하고, 네트워크 요청을 보내지 않고 로그인 정보를 읽지 않는 이유를 적었습니다.">
+<meta property="og:url" content="https://claude-overlay.jsuk.cloud/ko/guide/local-files-only/">
+<meta property="og:image" content="https://claude-overlay.jsuk.cloud/screenshot-ko-dark.png">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
+<script>
+  if (location.hostname.endsWith('github.io')) location.replace('https://claude-overlay.jsuk.cloud/' + location.pathname.replace(/^\/claude-overlay\//, '') + location.hash);
+</script>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/site.css">
+<meta name="google-adsense-account" content="ca-pub-9204832944396914">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9204832944396914" crossorigin="anonymous"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0XK79SYGFF"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-0XK79SYGFF', { anonymize_ip: true });
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[data-track]');
+    if (a) gtag('event', a.getAttribute('data-track'), { link_url: a.href });
+  });
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "클로드 세션 오버레이가 내 컴퓨터에서 읽는 것, 절대 건드리지 않는 것",
+  "description": "오버레이는 Claude Code와 Claude 데스크톱 앱이 원래 남기는 파일만 읽습니다. 무엇을 읽고 무엇을 쓰는지 파일 단위로 정리하고, 네트워크 요청을 보내지 않고 로그인 정보를 읽지 않는 이유를 적었습니다.",
+  "inLanguage": "ko",
+  "datePublished": "2026-10-20",
+  "dateModified": "2026-10-20",
+  "mainEntityOfPage": "https://claude-overlay.jsuk.cloud/ko/guide/local-files-only/",
+  "image": "https://claude-overlay.jsuk.cloud/screenshot-ko-dark.png",
+  "author": {
+    "@type": "Person",
+    "name": "jsuk10",
+    "url": "https://github.com/jsuk10"
+  },
+  "about": {
+    "@type": "SoftwareApplication",
+    "name": "Claude Session Overlay",
+    "url": "https://claude-overlay.jsuk.cloud/ko/"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "처음",
+      "item": "https://claude-overlay.jsuk.cloud/ko/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "가이드",
+      "item": "https://claude-overlay.jsuk.cloud/ko/guide/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "클로드 세션 오버레이가 내 컴퓨터에서 읽는 것, 절대 건드리지 않는 것",
+      "item": "https://claude-overlay.jsuk.cloud/ko/guide/local-files-only/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="/ko/">Claude Session Overlay</a>
+    <nav>
+      <a href="/ko/guide/">가이드</a>
+      <a href="/guide/local-files-only/" hreflang="en" lang="en">English</a>
+      <a href="https://github.com/jsuk10/claude-overlay" data-track="github_click">GitHub</a>
+    </nav>
+  </header>
+
+  <main class="article">
+    <nav class="crumbs" aria-label="breadcrumb"><a href="/ko/">처음</a> <span aria-hidden="true">›</span> <a href="/ko/guide/">가이드</a> <span aria-hidden="true">›</span> <span aria-current="page">클로드 세션 오버레이가 내 컴퓨터에서 읽는 것, 절대 건드리지 않는 것</span></nav>
+    <h1>클로드 세션 오버레이가 내 컴퓨터에서 읽는 것, 절대 건드리지 않는 것</h1>
+    <p class="meta">고친 날: <time datetime="2026-10-20">2026년 10월 20일</time></p>
+<p>코딩 세션을 지켜보는 앱이라면 무엇을 들여다보는지 분명해야 합니다. 짧게 말하면 오버레이는 Claude Code와 Claude 데스크톱 앱이 내 컴퓨터에 원래 남기는 <strong>로컬 파일만 읽습니다</strong>. 네트워크 요청을 보내지 않고, 계정이나 사용 통계 수집도 없고, 로그인 토큰이나 API 키를 읽지 않습니다. 소스가 MIT 라이선스로 GitHub에 있으니 아래 내용은 한 줄씩 확인할 수 있습니다.</p>
+
+<h2>읽는 파일</h2>
+<div class="table-scroll">
+<table>
+  <tr><th>정보</th><th>파일</th></tr>
+  <tr><td>돌고 있는 세션과 상태(작업 중·대기·입력 대기)</td><td><code>~/.claude/sessions/&lt;pid&gt;.json</code></td></tr>
+  <tr><td>모델, 컨텍스트 토큰, 백그라운드 작업</td><td><code>~/.claude/projects/&lt;프로젝트&gt;/&lt;세션&gt;.jsonl</code></td></tr>
+  <tr><td>컨텍스트 창 크기와 자동 압축 기준</td><td><code>~/.claude/cache/model-catalog/*.json</code>, <code>~/.claude/settings.json</code>의 <code>autoCompactWindow</code></td></tr>
+  <tr><td>주간·5시간 사용량</td><td>Claude 데스크톱 앱의 <code>plan-usage-history.json</code></td></tr>
+  <tr><td>세션 제목, 분할 화면 배치</td><td>데스크톱 앱의 세션 파일과 <code>claude_desktop_config.json</code></td></tr>
+</table>
+</div>
+<p>데스크톱 앱 파일은 Windows에서는 <code>%APPDATA%\Claude</code>(Microsoft Store 판은 <code>%LOCALAPPDATA%\Packages</code> 아래의 해당 폴더), macOS에서는 <code>~/Library/Application Support/Claude/</code>에 있습니다.</p>
+
+<h2>대화 기록은 어디까지 보나</h2>
+<p>세션 대화 기록에는 대화 전체가 들어 있어서 가장 많이 받는 질문이 이 파일입니다. 오버레이는 사용량 숫자(마지막 답에 토큰을 얼마나 썼는지)와 백그라운드 작업의 시작·끝을 찾을 때만 이 파일을 읽습니다. 내 프롬프트나 모델의 답을 화면에 띄우거나, 저장하거나, 어디로 보내지 않습니다. 뽑아낸 내용은 실행 중인 동안 메모리에만 있습니다.</p>
+
+<aside class="ad" aria-label="광고" data-label="광고">
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9204832944396914" data-ad-slot="1976878299" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</aside>
+<h2>쓰는 파일</h2>
+<p>오버레이 자신의 작은 설정은 <code>~/.claude/session-hud/</code>에 둡니다. 확인한 세션, 즐겨찾기, 창 위치, 테마, 언어입니다. macOS에서는 위젯이 읽을 <code>status.json</code>도 여기 씁니다. <code>--dump</code>로 실행하면 같은 폴더에 진단용 <code>dump.txt</code>를 남기는데, 내가 요청할 때만입니다.</p>
+<p>Claude Code 자체의 파일은 고치지 않습니다. 예외가 하나 있는데 직접 고르는 경우입니다. Windows 설치 파일에서 session-hud Mod 옵션을 체크하면 Claude Code 설정의 <code>CLAUDE_CODE_PLUGIN_DIRS</code>에 Mod 폴더를 넣고, 제거할 때 다시 뺍니다.</p>
+
+<h2>왜 네트워크를 안 쓰나</h2>
+<p>오버레이가 보여 주는 건 전부 이미 디스크에 있으니 가져올 게 없습니다. 사용량 한도도 내 로그인 정보로 Anthropic 서버를 부르는 대신 데스크톱 앱이 로컬에 저장해 둔 값을 씁니다. 대가도 있습니다. 데스크톱 앱이 없으면 사용량 한도를 보여 줄 수 없고, 그럴 땐 짐작하지 않고 그렇다고 알려 줍니다. 대신 연결을 아예 열지 않으니 대화나 토큰이 새어 나갈 길이 없습니다.</p>
+
+<h2>선택 사항인 Mod</h2>
+<p><code>session-hud</code> Mod는 Claude Code 안에서 돌기 때문에 Claude Code가 Mod에 넘겨주는 것, 즉 세션의 사용량, 비용, 한도 초기화 시각을 봅니다. 그 값을 세션마다 작은 파일로 <code>~/.claude/session-hud/</code>에 써 두면 오버레이가 가져갑니다. Mod도 네트워크로는 아무것도 보내지 않습니다.</p>
+
+<h2>이 웹사이트는 별개</h2>
+<p>지금 보고 있는 웹사이트는 앱과 별개입니다. 사이트에는 Google 애널리틱스와 Google 광고가 있고, 둘 다 쿠키를 씁니다. 무엇을 뜻하고 어떻게 거부하는지는 <a href="/ko/privacy/">개인정보 처리방침</a>에 적었습니다. 앱에는 해당하지 않는 이야기입니다.</p>
+
+    <div class="cta-box">
+      <strong>오버레이 써 보기</strong>
+      <p>무료 오픈소스(MIT)입니다. Windows 10/11, macOS 11 이상.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://github.com/jsuk10/claude-overlay/releases/latest/download/ClaudeSessionOverlay.exe" data-track="download_click">Windows용 내려받기</a>
+        <a class="btn" href="/ko/#mac" data-track="download_mac_click">macOS용 내려받기</a>
+      </div>
+    </div>
+
+    <aside class="ad" aria-label="광고" data-label="광고">
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9204832944396914" data-ad-slot="1976878299" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</aside>
+
+    <section class="related">
+      <h2>다른 가이드</h2>
+      <ul class="guide-list">
+  <li><a href="/ko/guide/context-window-usage/"><strong>클로드 코드 컨텍스트 사용량 확인하고 자동 압축 시점 미리 보기</strong><span>컨텍스트 창이 무엇인지, Claude Code가 언제 대화를 자동 압축하는지, 내 모델의 압축 기준을 계산하는 법, 세션 여러 개의 컨텍스트를 한꺼번에 지켜보는 법을 정리했습니다.</span></a></li>
+  <li><a href="/ko/guide/usage-limits/"><strong>클로드 주간·5시간 사용량 한도, 남은 양 확인하는 법</strong><span>Claude 구독 요금제는 5시간 창과 주간 창 두 가지로 사용량을 잽니다. 두 한도가 Claude Code 세션과 어떻게 맞물리는지, 작업하면서 둘 다 계속 보는 법을 정리했습니다.</span></a></li>
+  <li><a href="/ko/guide/multiple-sessions/"><strong>클로드 코드 세션 여러 개를 동시에 돌릴 때 놓치지 않는 법</strong><span>Claude Code 세션을 여러 개 띄우면 빠르지만, 하나가 권한 확인에서 20분씩 멈춰 있기도 합니다. 세션마다 상태를 한눈에 보고, 내 차례가 오면 알림을 받고, 눌러서 바로 그 세션으로 가는 법.</span></a></li>
+  <li><a href="/ko/guide/install-windows/"><strong>Windows 설치: 실행 파일과 설치 파일, SmartScreen 경고, session-hud Mod</strong><span>Windows에서 어떤 파일을 받을지, SmartScreen 경고를 넘기는 법, Windows 시작 시 실행, Claude Code에 session-hud Mod 넣기, 문제가 있을 때 쓰는 명령줄 옵션까지 차례대로 정리했습니다.</span></a></li>
+  <li><a href="/ko/guide/install-macos/"><strong>macOS 설치: 처음 실행 경고 넘기기, 메뉴 막대와 위젯 설정</strong><span>Apple Silicon·Intel 맥에 설치하는 법, '열 수 없습니다' 경고를 넘기는 법, 메뉴 막대 항목과 알림 센터 위젯, macOS 26 제어 센터 컨트롤까지 정리했습니다.</span></a></li>
+</ul>
+    </section>
+  </main>
+
+  <footer>
+    MIT 라이선스 · <a href="https://github.com/jsuk10/claude-overlay">github.com/jsuk10/claude-overlay</a> · <a href="/ko/privacy/">개인정보 처리방침</a> · 다른 프로젝트는 <a href="https://home.jsuk.cloud/">home.jsuk.cloud</a><br>
+    Anthropic과 관련이 없거나 Anthropic이 보증하지 않는 개인 프로젝트입니다. "Claude"와 "Claude Code"는 Anthropic의 상표입니다.
+  </footer>
+</div>
+</body>
+</html>

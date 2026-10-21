@@ -2,14 +2,110 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://claude-overlay.jsuk.cloud/</loc>
-    <lastmod>2026-10-18</lastmod>
+    <lastmod>2026-10-20</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/"/>
     <xhtml:link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/"/>
   </url>
   <url>
     <loc>https://claude-overlay.jsuk.cloud/ko/</loc>
-    <lastmod>2026-10-18</lastmod>
+    <lastmod>2026-10-20</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/"/>
     <xhtml:link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/"/>
+  </url>
+  <url>
+    <loc>https://claude-overlay.jsuk.cloud/guide/</loc>
+    <lastmod>2026-10-20</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/guide/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/guide/"/>
+  </url>
+  <url>
+    <loc>https://claude-overlay.jsuk.cloud/ko/guide/</loc>
+    <lastmod>2026-10-20</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/guide/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/guide/"/>
+  </url>
+  <url>
+    <loc>https://claude-overlay.jsuk.cloud/guide/context-window-usage/</loc>
+    <lastmod>2026-10-20</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/guide/context-window-usage/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/guide/context-window-usage/"/>
+  </url>
+  <url>
+    <loc>https://claude-overlay.jsuk.cloud/ko/guide/context-window-usage/</loc>
+    <lastmod>2026-10-20</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/guide/context-window-usage/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/guide/context-window-usage/"/>
+  </url>
+  <url>
+    <loc>https://claude-overlay.jsuk.cloud/guide/usage-limits/</loc>
+    <lastmod>2026-10-20</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/guide/usage-limits/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/guide/usage-limits/"/>
+  </url>
+  <url>
+    <loc>https://claude-overlay.jsuk.cloud/ko/guide/usage-limits/</loc>
+    <lastmod>2026-10-20</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/guide/usage-limits/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/guide/usage-limits/"/>
+  </url>
+  <url>
+    <loc>https://claude-overlay.jsuk.cloud/guide/multiple-sessions/</loc>
+    <lastmod>2026-10-20</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/guide/multiple-sessions/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/guide/multiple-sessions/"/>
+  </url>
+  <url>
+    <loc>https://claude-overlay.jsuk.cloud/ko/guide/multiple-sessions/</loc>
+    <lastmod>2026-10-20</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/guide/multiple-sessions/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/guide/multiple-sessions/"/>
+  </url>
+  <url>
+    <loc>https://claude-overlay.jsuk.cloud/guide/install-windows/</loc>
+    <lastmod>2026-10-20</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/guide/install-windows/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/guide/install-windows/"/>
+  </url>
+  <url>
+    <loc>https://claude-overlay.jsuk.cloud/ko/guide/install-windows/</loc>
+    <lastmod>2026-10-20</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/guide/install-windows/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/guide/install-windows/"/>
+  </url>
+  <url>
+    <loc>https://claude-overlay.jsuk.cloud/guide/install-macos/</loc>
+    <lastmod>2026-10-20</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/guide/install-macos/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/guide/install-macos/"/>
+  </url>
+  <url>
+    <loc>https://claude-overlay.jsuk.cloud/ko/guide/install-macos/</loc>
+    <lastmod>2026-10-20</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/guide/install-macos/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/guide/install-macos/"/>
+  </url>
+  <url>
+    <loc>https://claude-overlay.jsuk.cloud/guide/local-files-only/</loc>
+    <lastmod>2026-10-20</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/guide/local-files-only/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/guide/local-files-only/"/>
+  </url>
+  <url>
+    <loc>https://claude-overlay.jsuk.cloud/ko/guide/local-files-only/</loc>
+    <lastmod>2026-10-20</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/guide/local-files-only/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/guide/local-files-only/"/>
+  </url>
+  <url>
+    <loc>https://claude-overlay.jsuk.cloud/privacy/</loc>
+    <lastmod>2026-10-20</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/privacy/"/>
+  </url>
+  <url>
+    <loc>https://claude-overlay.jsuk.cloud/ko/privacy/</loc>
+    <lastmod>2026-10-20</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://claude-overlay.jsuk.cloud/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://claude-overlay.jsuk.cloud/ko/privacy/"/>
   </url>
 </urlset>
